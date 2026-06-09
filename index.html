@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python: Listas — ITB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #0D1117;
+    --surface:  #161B22;
+    --surface2: #1C2129;
+    --border:   #30363D;
+    --green:    #4ADE80;
+    --green-dim:#1a4731;
+    --blue:     #79C0FF;
+    --purple:   #D2A8FF;
+    --orange:   #FFA657;
+    --red:      #FF7B72;
+    --text:     #E6EDF3;
+    --muted:    #8B949E;
+    --radius:   10px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,17,23,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem; height: 56px;
+  }
+  .nav-brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700; font-size: 15px;
+    color: var(--green);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-brand span { color: var(--muted); font-weight: 400; }
+  .nav-links { display: flex; gap: 6px; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none;
+    font-size: 13px; padding: 4px 10px; border-radius: 6px;
+    transition: color .2s, background .2s;
+  }
+  .nav-links a:hover { color: var(--text); background: var(--surface); }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 72px 2rem 56px;
+    max-width: 860px; margin: 0 auto;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--green-dim); border: 1px solid var(--green);
+    color: var(--green); font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; padding: 4px 12px; border-radius: 20px;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700; line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .hero h1 .accent { color: var(--green); }
+  .hero h1 .dim { color: var(--muted); }
+  .hero p {
+    color: var(--muted); font-size: 17px;
+    max-width: 560px; margin: 0 auto 40px;
+  }
+  .hero-meta {
+    display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
+    color: var(--muted); font-size: 13px;
+  }
+  .hero-meta span { display: flex; align-items: center; gap: 6px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; }
+
+  /* ── SECTION WRAPPER ── */
+  .container { max-width: 900px; margin: 0 auto; padding: 0 1.5rem; }
+
+  /* ── INTRO CONCEPTOS ── */
+  .intro-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px 32px;
+    margin: 48px auto; max-width: 900px;
+  }
+  .intro-box h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .concept-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;
+  }
+  .concept-pill {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px 14px;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  }
+  .concept-pill .method { color: var(--blue); }
+  .concept-pill .desc { color: var(--muted); font-size: 11px; margin-top: 2px; }
+
+  /* ── RETO CARD ── */
+  .retos { display: flex; flex-direction: column; gap: 56px; padding: 24px 0 64px; }
+
+  .reto {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .reto-header {
+    display: flex; align-items: flex-start; gap: 20px;
+    padding: 28px 32px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .reto-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 700; letter-spacing: .1em;
+    color: var(--green); background: var(--green-dim);
+    border: 1px solid var(--green);
+    padding: 3px 10px; border-radius: 4px;
+    white-space: nowrap; margin-top: 4px;
+  }
+  .reto-title { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+  .reto-subtitle { color: var(--muted); font-size: 14px; }
+  .reto-tag {
+    margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end;
+  }
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; padding: 3px 9px; border-radius: 4px; white-space: nowrap;
+  }
+  .tag-blue { background: rgba(121,192,255,.12); color: var(--blue); border: 1px solid rgba(121,192,255,.25); }
+  .tag-purple { background: rgba(210,168,255,.12); color: var(--purple); border: 1px solid rgba(210,168,255,.25); }
+  .tag-orange { background: rgba(255,166,87,.12); color: var(--orange); border: 1px solid rgba(255,166,87,.25); }
+
+  .reto-body { padding: 28px 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  @media (max-width: 660px) { .reto-body { grid-template-columns: 1fr; } }
+
+  /* ── PASOS ── */
+  .steps-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--muted); margin-bottom: 14px;
+  }
+  .steps { display: flex; flex-direction: column; gap: 10px; }
+  .step {
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .step-n {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 700;
+    color: var(--green); background: var(--green-dim);
+    border: 1px solid var(--green);
+    min-width: 24px; height: 24px; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px; flex-shrink: 0;
+  }
+  .step-text { font-size: 14px; color: var(--text); padding-top: 2px; }
+  .step-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 2px 7px; color: var(--blue); margin-top: 4px; display: inline-block;
+  }
+
+  /* ── OBJETIVOS ── */
+  .objetivos { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .objetivos li {
+    font-size: 14px; display: flex; align-items: flex-start; gap: 8px;
+  }
+  .objetivos li::before {
+    content: '▸'; color: var(--green);
+    font-size: 12px; margin-top: 3px; flex-shrink: 0;
+  }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: #010409;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .code-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 14px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  .code-dots { display: flex; gap: 5px; }
+  .code-dots span {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .d1 { background: #FF5F56; }
+  .d2 { background: #FFBD2E; }
+  .d3 { background: #27C93F; }
+  .code-filename {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--muted);
+  }
+  .code-copy {
+    background: none; border: 1px solid var(--border);
+    color: var(--muted); font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; padding: 3px 9px; border-radius: 4px;
+    cursor: pointer; transition: all .2s;
+  }
+  .code-copy:hover { color: var(--text); border-color: var(--muted); }
+  .code-body {
+    padding: 18px 20px; overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.75;
+  }
+  /* Syntax */
+  .kw { color: var(--red); }
+  .fn { color: var(--blue); }
+  .str { color: var(--orange); }
+  .cm { color: #6A737D; font-style: italic; }
+  .num { color: var(--purple); }
+  .var { color: var(--text); }
+  .op { color: var(--muted); }
+
+  /* ── DOWNLOAD BAR ── */
+  .reto-footer {
+    padding: 16px 32px; border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+  .reto-footer .note {
+    font-size: 13px; color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .btn-download {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--green); color: #0D1117;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700;
+    font-size: 13px; padding: 8px 18px; border-radius: 7px;
+    border: none; cursor: pointer; text-decoration: none;
+    transition: opacity .2s, transform .15s;
+  }
+  .btn-download:hover { opacity: .88; transform: translateY(-1px); }
+  .btn-download:active { transform: translateY(0); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 2rem;
+    text-align: center; color: var(--muted); font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  footer span { color: var(--green); }
+
+  /* ── PREREQ BANNER ── */
+  .prereq {
+    background: rgba(121,192,255,.07);
+    border: 1px solid rgba(121,192,255,.25);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    display: flex; gap: 14px; align-items: flex-start;
+    margin-bottom: 24px;
+  }
+  .prereq-icon { color: var(--blue); font-size: 18px; flex-shrink: 0; }
+  .prereq-text { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .prereq-text strong { color: var(--blue); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+    </svg>
+    python<span>/listas</span>
+  </div>
+  <div class="nav-links">
+    <a href="#reto-1">01</a>
+    <a href="#reto-2">02</a>
+    <a href="#reto-3">03</a>
+    <a href="#reto-4">04</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    Parte 1 — Introducción a las Listas
+  </div>
+  <h1>
+    <span class="dim">list</span><span class="accent">[ ]</span><br>
+    Domina las listas<br>en Python
+  </h1>
+  <p>4 retos progresivos para entender agregar, eliminar, recorrer y ordenar elementos. Incluye código descargable para VS Code.</p>
+  <div class="hero-meta">
+    <span><span class="dot"></span> 4 retos</span>
+    <span><span class="dot"></span> Nivel: intermedio</span>
+    <span><span class="dot"></span> Python 3.x</span>
+    <span><span class="dot"></span> Sin librerías externas</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- PREREQ -->
+  <div class="prereq">
+    <div class="prereq-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    </div>
+    <div class="prereq-text">
+      <strong>Antes de empezar</strong> — Asegúrate de tener <strong>Python 3.x</strong> instalado y <strong>VS Code</strong> con la extensión de Python. Descarga cada archivo <code>.py</code>, ábrelo en VS Code y ejecútalo con <strong>▶ Run Python File</strong> o presiona <code>F5</code>.
+    </div>
+  </div>
+
+  <!-- INTRO CONCEPTOS -->
+  <div class="intro-box">
+    <h2>// Métodos clave que usarás en estos retos</h2>
+    <div class="concept-grid">
+      <div class="concept-pill"><div class="method">lista.append(x)</div><div class="desc">Agrega x al final</div></div>
+      <div class="concept-pill"><div class="method">lista.remove(x)</div><div class="desc">Elimina primera ocurrencia</div></div>
+      <div class="concept-pill"><div class="method">lista.sort()</div><div class="desc">Ordena en el lugar</div></div>
+      <div class="concept-pill"><div class="method">sorted(lista)</div><div class="desc">Retorna nueva lista ordenada</div></div>
+      <div class="concept-pill"><div class="method">x in lista</div><div class="desc">Busca elemento, retorna bool</div></div>
+      <div class="concept-pill"><div class="method">len(lista)</div><div class="desc">Cantidad de elementos</div></div>
+      <div class="concept-pill"><div class="method">lista.count(x)</div><div class="desc">Cuenta ocurrencias de x</div></div>
+      <div class="concept-pill"><div class="method">lista.insert(i, x)</div><div class="desc">Inserta en posición i</div></div>
+    </div>
+  </div>
+
+  <!-- RETOS -->
+  <div class="retos">
+
+    <!-- ────────── RETO 1 ────────── -->
+    <div class="reto" id="reto-1">
+      <div class="reto-header">
+        <div class="reto-num">RETO 01</div>
+        <div>
+          <div class="reto-title">Lista de compras inteligente</div>
+          <div class="reto-subtitle">Gestión básica: agregar, eliminar, buscar y mostrar</div>
+        </div>
+        <div class="reto-tag">
+          <span class="tag tag-blue">append</span>
+          <span class="tag tag-blue">remove</span>
+          <span class="tag tag-purple">in</span>
+        </div>
+      </div>
+
+      <div class="reto-body">
+        <div>
+          <div class="steps-label">// Paso a paso</div>
+          <div class="steps">
+            <div class="step"><div class="step-n">1</div><div class="step-text">Crea una lista vacía llamada <code class="step-code">compras</code> y un menú con <span class="step-code">while True</span></div></div>
+            <div class="step"><div class="step-n">2</div><div class="step-text">Opción Agregar: pide el producto con <span class="step-code">input()</span> y usa <span class="step-code">.append()</span></div></div>
+            <div class="step"><div class="step-n">3</div><div class="step-text">Opción Eliminar: verifica con <span class="step-code">in</span> antes de llamar <span class="step-code">.remove()</span></div></div>
+            <div class="step"><div class="step-n">4</div><div class="step-text">Opción Buscar: usa <span class="step-code">if producto in compras</span> e imprime la posición con <span class="step-code">.index()</span></div></div>
+            <div class="step"><div class="step-n">5</div><div class="step-text">Opción Mostrar: recorre con <span class="step-code">enumerate()</span> para mostrar número + producto</div></div>
+            <div class="step"><div class="step-n">6</div><div class="step-text">Valida que no se agreguen productos duplicados antes del append</div></div>
+          </div>
+          <div style="margin-top:20px;">
+            <div class="steps-label">// Objetivos del reto</div>
+            <ul class="objetivos">
+              <li>Gestionar una lista con un menú interactivo</li>
+              <li>Prevenir duplicados con la condición <code class="step-code">in</code></li>
+              <li>Mostrar posición de un producto encontrado</li>
+              <li>Manejar el error si el producto no existe</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div class="code-block">
+            <div class="code-bar">
+              <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+              <div class="code-filename">compras.py — esqueleto</div>
+              <button class="code-copy" onclick="copyCode(this, 'code1')">copiar</button>
+            </div>
+            <div class="code-body" id="code1"><span class="cm"># 🛒 Lista de Compras Inteligente
+# Completa las secciones marcadas con TODO</span>
+
+<span class="var">compras</span> <span class="op">=</span> []  <span class="cm"># tu lista vacía</span>
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="fn">print</span>(<span class="str">"\n--- MENÚ ---"</span>)
+    <span class="fn">print</span>(<span class="str">"1. Agregar producto"</span>)
+    <span class="fn">print</span>(<span class="str">"2. Eliminar producto"</span>)
+    <span class="fn">print</span>(<span class="str">"3. Buscar producto"</span>)
+    <span class="fn">print</span>(<span class="str">"4. Ver lista"</span>)
+    <span class="fn">print</span>(<span class="str">"5. Salir"</span>)
+
+    <span class="var">opcion</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"Elige: "</span>)
+
+    <span class="kw">if</span> <span class="var">opcion</span> <span class="op">==</span> <span class="str">"1"</span>:
+        <span class="var">producto</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"Producto: "</span>)
+        <span class="cm"># TODO: verificar duplicado y agregar</span>
+
+    <span class="kw">elif</span> <span class="var">opcion</span> <span class="op">==</span> <span class="str">"2"</span>:
+        <span class="var">producto</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"¿Cuál eliminar? "</span>)
+        <span class="cm"># TODO: verificar que existe y eliminar</span>
+
+    <span class="kw">elif</span> <span class="var">opcion</span> <span class="op">==</span> <span class="str">"3"</span>:
+        <span class="cm"># TODO: buscar y mostrar posición</span>
+        <span class="kw">pass</span>
+
+    <span class="kw">elif</span> <span class="var">opcion</span> <span class="op">==</span> <span class="str">"4"</span>:
+        <span class="cm"># TODO: mostrar con enumerate()</span>
+        <span class="kw">pass</span>
+
+    <span class="kw">elif</span> <span class="var">opcion</span> <span class="op">==</span> <span class="str">"5"</span>:
+        <span class="kw">break</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="reto-footer">
+        <div class="note">$ python compras.py</div>
+        <button class="btn-download" onclick="downloadCode(1)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar compras.py
+        </button>
+      </div>
+    </div>
+
+    <!-- ────────── RETO 2 ────────── -->
+    <div class="reto" id="reto-2">
+      <div class="reto-header">
+        <div class="reto-num">RETO 02</div>
+        <div>
+          <div class="reto-title">Registro de asistencia</div>
+          <div class="reto-subtitle">Recorrido de listas, ordenamiento y conteo</div>
+        </div>
+        <div class="reto-tag">
+          <span class="tag tag-blue">sort()</span>
+          <span class="tag tag-purple">len()</span>
+          <span class="tag tag-orange">for loop</span>
+        </div>
+      </div>
+
+      <div class="reto-body">
+        <div>
+          <div class="steps-label">// Paso a paso</div>
+          <div class="steps">
+            <div class="step"><div class="step-n">1</div><div class="step-text">Crea la lista <span class="step-code">presentes</span> y registra nombres con un loop hasta que el usuario ingrese "listo"</div></div>
+            <div class="step"><div class="step-n">2</div><div class="step-text">Normaliza cada nombre con <span class="step-code">.strip().title()</span> antes de guardarlo</div></div>
+            <div class="step"><div class="step-n">3</div><div class="step-text">Muestra el total usando <span class="step-code">len(presentes)</span></div></div>
+            <div class="step"><div class="step-n">4</div><div class="step-text">Ordena la lista con <span class="step-code">.sort()</span> e imprime cada nombre numerado</div></div>
+            <div class="step"><div class="step-n">5</div><div class="step-text">Muestra quién llegó primero accediendo a <span class="step-code">presentes[0]</span> (antes de ordenar)</div></div>
+          </div>
+          <div style="margin-top:20px;">
+            <div class="steps-label">// Objetivos del reto</div>
+            <ul class="objetivos">
+              <li>Registrar datos dinámicamente con input en loop</li>
+              <li>Normalizar texto con métodos de string</li>
+              <li>Ordenar una lista en su lugar con <code class="step-code">.sort()</code></li>
+              <li>Diferenciar lista original vs ordenada</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div class="code-block">
+            <div class="code-bar">
+              <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+              <div class="code-filename">asistencia.py — esqueleto</div>
+              <button class="code-copy" onclick="copyCode(this, 'code2')">copiar</button>
+            </div>
+            <div class="code-body" id="code2"><span class="cm"># 📋 Registro de Asistencia
+# Completa las secciones marcadas con TODO</span>
+
+<span class="var">presentes</span> <span class="op">=</span> []
+<span class="var">primero</span> <span class="op">=</span> <span class="kw">None</span>
+
+<span class="fn">print</span>(<span class="str">"Ingresa nombres. Escribe 'listo' para terminar."</span>)
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="var">nombre</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"Nombre: "</span>)
+
+    <span class="kw">if</span> <span class="var">nombre</span>.<span class="fn">lower</span>() <span class="op">==</span> <span class="str">"listo"</span>:
+        <span class="kw">break</span>
+
+    <span class="cm"># TODO: normalizar con .strip().title()</span>
+    <span class="cm"># TODO: guardar el primero en 'primero'</span>
+    <span class="cm"># TODO: agregar a presentes si no está duplicado</span>
+
+<span class="cm"># Mostrar resultados</span>
+<span class="fn">print</span>(<span class="str">f"\nTotal asistentes: {<span class="fn">len</span>(<span class="var">presentes</span>)}"</span>)
+<span class="fn">print</span>(<span class="str">f"Llegó primero: {<span class="var">primero</span>}"</span>)
+
+<span class="cm"># TODO: ordenar y mostrar lista numerada</span>
+<span class="fn">print</span>(<span class="str">"\n--- Lista ordenada ---"</span>)
+<span class="cm"># for i, nombre in enumerate(presentes, 1):</span>
+<span class="cm">#     print(...)</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="reto-footer">
+        <div class="note">$ python asistencia.py</div>
+        <button class="btn-download" onclick="downloadCode(2)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar asistencia.py
+        </button>
+      </div>
+    </div>
+
+    <!-- ────────── RETO 3 ────────── -->
+    <div class="reto" id="reto-3">
+      <div class="reto-header">
+        <div class="reto-num">RETO 03</div>
+        <div>
+          <div class="reto-title">Encuesta rápida</div>
+          <div class="reto-subtitle">Listas, conteo y cálculo de porcentajes</div>
+        </div>
+        <div class="reto-tag">
+          <span class="tag tag-blue">count()</span>
+          <span class="tag tag-purple">len()</span>
+          <span class="tag tag-orange">%</span>
+        </div>
+      </div>
+
+      <div class="reto-body">
+        <div>
+          <div class="steps-label">// Paso a paso</div>
+          <div class="steps">
+            <div class="step"><div class="step-n">1</div><div class="step-text">Define la pregunta y crea la lista <span class="step-code">respuestas</span></div></div>
+            <div class="step"><div class="step-n">2</div><div class="step-text">En un loop, acepta solo "si" o "no" (usa <span class="step-code">.lower()</span> para validar)</div></div>
+            <div class="step"><div class="step-n">3</div><div class="step-text">Usa <span class="step-code">respuestas.count("si")</span> y <span class="step-code">.count("no")</span> para contar</div></div>
+            <div class="step"><div class="step-n">4</div><div class="step-text">Calcula porcentajes dividiendo entre <span class="step-code">len(respuestas)</span> y multiplicando por 100</div></div>
+            <div class="step"><div class="step-n">5</div><div class="step-text">Muestra una barra visual proporcional usando caracteres <span class="step-code">█</span></div></div>
+          </div>
+          <div style="margin-top:20px;">
+            <div class="steps-label">// Objetivos del reto</div>
+            <ul class="objetivos">
+              <li>Validar entradas del usuario en loop</li>
+              <li>Usar <code class="step-code">.count()</code> para analizar datos</li>
+              <li>Calcular y formatear porcentajes</li>
+              <li>Crear visualización básica en consola</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div class="code-block">
+            <div class="code-bar">
+              <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+              <div class="code-filename">encuesta.py — esqueleto</div>
+              <button class="code-copy" onclick="copyCode(this, 'code3')">copiar</button>
+            </div>
+            <div class="code-body" id="code3"><span class="cm"># 📊 Encuesta Rápida Sí/No
+# Completa las secciones marcadas con TODO</span>
+
+<span class="var">pregunta</span> <span class="op">=</span> <span class="str">"¿Prefieres trabajar en equipo?"</span>
+<span class="var">respuestas</span> <span class="op">=</span> []
+<span class="var">n_estudiantes</span> <span class="op">=</span> <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"¿Cuántos estudiantes? "</span>))
+
+<span class="fn">print</span>(<span class="str">f"\n{<span class="var">pregunta</span>}"</span>)
+
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="var">n_estudiantes</span>):
+    <span class="kw">while</span> <span class="kw">True</span>:
+        <span class="var">r</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">f"Estudiante {<span class="var">i</span><span class="op">+</span><span class="num">1</span>} (si/no): "</span>).<span class="fn">lower</span>()
+        <span class="cm"># TODO: validar que sea "si" o "no"</span>
+        <span class="cm"># TODO: guardar en respuestas y salir del while</span>
+        <span class="kw">pass</span>
+
+<span class="cm"># TODO: contar "si" y "no"</span>
+<span class="var">total_si</span> <span class="op">=</span> <span class="num">0</span>   <span class="cm"># reemplaza con .count()</span>
+<span class="var">total_no</span> <span class="op">=</span> <span class="num">0</span>   <span class="cm"># reemplaza con .count()</span>
+
+<span class="cm"># TODO: calcular porcentajes y mostrar resultados</span>
+<span class="fn">print</span>(<span class="str">"\n--- Resultados ---"</span>)
+<span class="cm"># Sí: X votos (XX.X%)</span>
+<span class="cm"># No: X votos (XX.X%)</span>
+<span class="cm"># Barra visual: "Sí: " + "█" * int(pct_si / 5)</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="reto-footer">
+        <div class="note">$ python encuesta.py</div>
+        <button class="btn-download" onclick="downloadCode(3)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar encuesta.py
+        </button>
+      </div>
+    </div>
+
+    <!-- ────────── RETO 4 ────────── -->
+    <div class="reto" id="reto-4">
+      <div class="reto-header">
+        <div class="reto-num">RETO 04</div>
+        <div>
+          <div class="reto-title">Ranking de videojuegos</div>
+          <div class="reto-subtitle">Inserción, tuplas y ordenamiento por valor</div>
+        </div>
+        <div class="reto-tag">
+          <span class="tag tag-blue">sort(key=)</span>
+          <span class="tag tag-purple">tuplas</span>
+          <span class="tag tag-orange">lambda</span>
+        </div>
+      </div>
+
+      <div class="reto-body">
+        <div>
+          <div class="steps-label">// Paso a paso</div>
+          <div class="steps">
+            <div class="step"><div class="step-n">1</div><div class="step-text">Crea lista <span class="step-code">juegos</span> donde cada elemento sea una tupla <span class="step-code">(nombre, votos)</span></div></div>
+            <div class="step"><div class="step-n">2</div><div class="step-text">En cada iteración, pide nombre y votos, construye la tupla y la agrega con <span class="step-code">.append()</span></div></div>
+            <div class="step"><div class="step-n">3</div><div class="step-text">Ordena con <span class="step-code">.sort(key=lambda x: x[1], reverse=True)</span> para mayor a menor</div></div>
+            <div class="step"><div class="step-n">4</div><div class="step-text">Muestra el ranking con posición, nombre y votos, destacando el 🥇 primero</div></div>
+            <div class="step"><div class="step-n">5</div><div class="step-text">Añade opción para votar a un juego existente sumando a su contador de votos</div></div>
+          </div>
+          <div style="margin-top:20px;">
+            <div class="steps-label">// Objetivos del reto</div>
+            <ul class="objetivos">
+              <li>Almacenar pares de datos con tuplas en lista</li>
+              <li>Ordenar por un campo específico con <code class="step-code">key=</code></li>
+              <li>Usar <code class="step-code">lambda</code> como función de ordenamiento</li>
+              <li>Actualizar datos dentro de tuplas</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div class="code-block">
+            <div class="code-bar">
+              <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+              <div class="code-filename">ranking.py — esqueleto</div>
+              <button class="code-copy" onclick="copyCode(this, 'code4')">copiar</button>
+            </div>
+            <div class="code-body" id="code4"><span class="cm"># 🎮 Ranking de Videojuegos
+# Completa las secciones marcadas con TODO</span>
+
+<span class="var">juegos</span> <span class="op">=</span> []  <span class="cm"># lista de tuplas (nombre, votos)</span>
+
+<span class="var">n</span> <span class="op">=</span> <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"¿Cuántos juegos registrar? "</span>))
+
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="var">n</span>):
+    <span class="var">nombre</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">f"Juego {<span class="var">i</span><span class="op">+</span><span class="num">1</span>} - Nombre: "</span>)
+    <span class="var">votos</span> <span class="op">=</span> <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"  Votos iniciales: "</span>))
+    <span class="cm"># TODO: crear tupla y agregar a juegos</span>
+
+<span class="cm"># Votar por un juego</span>
+<span class="var">voto_juego</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"\n¿A qué juego votar? "</span>)
+<span class="cm"># TODO: buscar el juego, actualizar votos</span>
+<span class="cm"># Pista: las tuplas son inmutables, recrea la tupla</span>
+<span class="cm"># juegos[i] = (nombre, votos + 1)</span>
+
+<span class="cm"># TODO: ordenar por votos de mayor a menor</span>
+<span class="cm"># juegos.sort(key=lambda x: x[1], reverse=True)</span>
+
+<span class="fn">print</span>(<span class="str">"\n🏆 RANKING FINAL"</span>)
+<span class="cm"># TODO: mostrar ranking con posición y medallas</span>
+<span class="cm"># medallas = ["🥇", "🥈", "🥉"]</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="reto-footer">
+        <div class="note">$ python ranking.py</div>
+        <button class="btn-download" onclick="downloadCode(4)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar ranking.py
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /retos -->
+</div><!-- /container -->
+
+<footer>
+  ITB — Instituto Tecnológico de Negocios &nbsp;·&nbsp; Python <span>list[ ]</span> Parte 1
+</footer>
+
+<script>
+// ── COPY CODE ──
+function copyCode(btn, id) {
+  const el = document.getElementById(id);
+  // extract plain text from the syntax-highlighted spans
+  const text = el.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ copiado';
+    setTimeout(() => btn.textContent = 'copiar', 2000);
+  });
+}
+
+// ── DOWNLOAD .py FILES ──
+const codes = {
+  1: {
+    name: 'compras.py',
+    code: `# 🛒 Lista de Compras Inteligente
+# Completa las secciones marcadas con TODO
+
+compras = []  # tu lista vacía
+
+while True:
+    print("\\n--- MENÚ ---")
+    print("1. Agregar producto")
+    print("2. Eliminar producto")
+    print("3. Buscar producto")
+    print("4. Ver lista")
+    print("5. Salir")
+
+    opcion = input("Elige: ")
+
+    if opcion == "1":
+        producto = input("Producto: ").strip().lower()
+        # TODO: verificar duplicado y agregar
+        # if producto not in compras:
+        #     compras.append(producto)
+        # else:
+        #     print("Ya está en la lista.")
+
+    elif opcion == "2":
+        producto = input("¿Cuál eliminar? ").strip().lower()
+        # TODO: verificar que existe y eliminar
+        # if producto in compras:
+        #     compras.remove(producto)
+        # else:
+        #     print("No encontrado.")
+
+    elif opcion == "3":
+        producto = input("¿Qué buscar? ").strip().lower()
+        # TODO: buscar y mostrar posición
+        # if producto in compras:
+        #     print(f"Encontrado en posición {compras.index(producto) + 1}")
+        # else:
+        #     print("No está en la lista.")
+
+    elif opcion == "4":
+        # TODO: mostrar con enumerate()
+        # for i, p in enumerate(compras, 1):
+        #     print(f"{i}. {p}")
+        pass
+
+    elif opcion == "5":
+        break
+`
+  },
+  2: {
+    name: 'asistencia.py',
+    code: `# 📋 Registro de Asistencia
+# Completa las secciones marcadas con TODO
+
+presentes = []
+primero = None
+
+print("Ingresa nombres. Escribe 'listo' para terminar.")
+
+while True:
+    nombre = input("Nombre: ")
+
+    if nombre.lower() == "listo":
+        break
+
+    # TODO: normalizar con .strip().title()
+    # nombre = nombre.strip().title()
+
+    # TODO: guardar el primero en 'primero'
+    # if primero is None:
+    #     primero = nombre
+
+    # TODO: agregar a presentes si no está duplicado
+    # if nombre not in presentes:
+    #     presentes.append(nombre)
+    # else:
+    #     print("Ese nombre ya fue registrado.")
+
+# Mostrar resultados
+print(f"\\nTotal asistentes: {len(presentes)}")
+print(f"Llegó primero: {primero}")
+
+# TODO: ordenar y mostrar lista numerada
+print("\\n--- Lista ordenada ---")
+# presentes.sort()
+# for i, nombre in enumerate(presentes, 1):
+#     print(f"{i}. {nombre}")
+`
+  },
+  3: {
+    name: 'encuesta.py',
+    code: `# 📊 Encuesta Rápida Sí/No
+# Completa las secciones marcadas con TODO
+
+pregunta = "¿Prefieres trabajar en equipo?"
+respuestas = []
+n_estudiantes = int(input("¿Cuántos estudiantes? "))
+
+print(f"\\n{pregunta}")
+
+for i in range(n_estudiantes):
+    while True:
+        r = input(f"Estudiante {i+1} (si/no): ").lower().strip()
+        # TODO: validar que sea "si" o "no"
+        # if r in ["si", "sí", "no"]:
+        #     respuestas.append(r)
+        #     break
+        # else:
+        #     print("Solo se acepta 'si' o 'no'.")
+
+# TODO: contar "si" y "no"
+total_si = 0   # reemplaza con respuestas.count("si")
+total_no = 0   # reemplaza con respuestas.count("no")
+total = len(respuestas)
+
+# TODO: calcular porcentajes y mostrar resultados
+print("\\n--- Resultados ---")
+# pct_si = (total_si / total) * 100
+# pct_no = (total_no / total) * 100
+# print(f"Sí: {total_si} votos ({pct_si:.1f}%)")
+# print(f"No: {total_no} votos ({pct_no:.1f}%)")
+# Barra visual:
+# print("Sí: " + "█" * int(pct_si / 5))
+# print("No: " + "█" * int(pct_no / 5))
+`
+  },
+  4: {
+    name: 'ranking.py',
+    code: `# 🎮 Ranking de Videojuegos
+# Completa las secciones marcadas con TODO
+
+juegos = []  # lista de tuplas (nombre, votos)
+
+n = int(input("¿Cuántos juegos registrar? "))
+
+for i in range(n):
+    nombre = input(f"Juego {i+1} - Nombre: ").strip()
+    votos = int(input("  Votos iniciales: "))
+    # TODO: crear tupla y agregar a juegos
+    # juegos.append((nombre, votos))
+
+# Votar por un juego
+voto_juego = input("\\n¿A qué juego votar? ").strip()
+# TODO: buscar el juego, actualizar votos
+# for i, (nombre, votos) in enumerate(juegos):
+#     if nombre.lower() == voto_juego.lower():
+#         juegos[i] = (nombre, votos + 1)
+#         print(f"Voto registrado para {nombre}!")
+#         break
+# else:
+#     print("Juego no encontrado.")
+
+# TODO: ordenar por votos de mayor a menor
+# juegos.sort(key=lambda x: x[1], reverse=True)
+
+print("\\n🏆 RANKING FINAL")
+medallas = ["🥇", "🥈", "🥉"]
+# TODO: mostrar ranking
+# for i, (nombre, votos) in enumerate(juegos):
+#     medalla = medallas[i] if i < 3 else f"{i+1}."
+#     print(f"{medalla}  {nombre} — {votos} votos")
+`
+  }
+};
+
+function downloadCode(num) {
+  const { name, code } = codes[num];
+  const blob = new Blob([code], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
