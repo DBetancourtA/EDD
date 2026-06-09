@@ -20,7 +20,7 @@
 |# |Tema                                                                                                        |Archivo                                     |Estado        |
 |--|------------------------------------------------------------------------------------------------------------|--------------------------------------------|--------------|
 |01|**Introducción a las Listas** — Agregar, eliminar, buscar, ordenar                                          |[`index.html`](./index.html)                |✅ Disponible  |
-|02|**Taller — Uso de Listas en Python** — Sistema de calificaciones, inventario, asistencia, encuesta y ranking|[`taller-listas.html`](./taller-listas.html)|✅ Disponible  |
+|02|**Taller — Uso de Listas en Python** — Sistema de calificaciones, inventario, asistencia, encuesta y ranking|[`taller.html`](./taller.html)|✅ Disponible  |
 |03|Diccionarios en Python                                                                                      |—                                           |🔜 Próximamente|
 |04|Funciones y modularización                                                                                  |—                                           |🔜 Próximamente|
 |05|Manejo de archivos `.txt` y `.csv`                                                                          |—                                           |🔜 Próximamente|
