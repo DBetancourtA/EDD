@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 3 — Pilas (Stack) · ITB Python</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0D1117;
+  --surface:   #161B22;
+  --surface2:  #1C2129;
+  --border:    #30363D;
+  --green:     #4ADE80;
+  --green-dim: #1a4731;
+  --blue:      #79C0FF;
+  --purple:    #D2A8FF;
+  --orange:    #FFA657;
+  --red:       #FF7B72;
+  --yellow:    #E3B341;
+  --teal:      #39D0D8;
+  --text:      #E6EDF3;
+  --muted:     #8B949E;
+  --radius:    10px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(13,17,23,0.88);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem; height: 54px; gap: 12px;
+}
+.nav-brand {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700; font-size: 14px; color: var(--green);
+  display: flex; align-items: center; gap: 8px; white-space: nowrap;
+}
+.nav-brand .sep { color: var(--border); }
+.nav-brand .dim { color: var(--muted); font-weight: 400; }
+.nav-links { display: flex; gap: 4px; }
+.nav-links a {
+  color: var(--muted); text-decoration: none;
+  font-size: 12px; font-family: 'JetBrains Mono', monospace;
+  padding: 4px 10px; border-radius: 6px; transition: all .2s;
+}
+.nav-links a:hover { color: var(--text); background: var(--surface); }
+.nav-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  background: var(--green-dim); border: 1px solid var(--green);
+  color: var(--green); padding: 3px 10px; border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* ── HERO ── */
+.hero {
+  max-width: 900px; margin: 0 auto;
+  padding: 64px 1.5rem 48px; text-align: center;
+}
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  color: var(--muted); letter-spacing: .12em; text-transform: uppercase;
+  margin-bottom: 20px; display: flex; align-items: center;
+  justify-content: center; gap: 10px;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: ''; flex: 1; max-width: 80px;
+  height: 1px; background: var(--border);
+}
+.hero h1 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 700; line-height: 1.1; margin-bottom: 6px;
+}
+.hero h1 .accent { color: var(--teal); }
+.hero h1 .dim    { color: var(--muted); }
+.hero-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  color: var(--muted); margin-bottom: 20px;
+}
+.hero p { color: var(--muted); font-size: 16px; max-width: 540px; margin: 0 auto 36px; }
+.hero-chips { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.chip {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  padding: 4px 12px; border-radius: 20px;
+  border: 1px solid var(--border); color: var(--muted);
+  background: var(--surface);
+}
+.chip.active { background: rgba(57,208,216,.1); border-color: var(--teal); color: var(--teal); }
+
+/* ── CONTAINER ── */
+.wrap { max-width: 920px; margin: 0 auto; padding: 0 1.5rem; }
+
+/* ══════════════════════════════════
+   SECCIÓN 1: ESTRUCTURAS LINEALES
+   ══════════════════════════════════ */
+.section-intro {
+  margin: 0 0 64px;
+  padding: 40px 36px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.section-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--muted); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-tag::after { content:''; flex:1; height:1px; background: var(--border); }
+.intro-title {
+  font-size: 20px; font-weight: 700; margin-bottom: 10px; color: var(--text);
+}
+.intro-desc {
+  color: var(--muted); font-size: 14px; max-width: 680px; margin-bottom: 32px; line-height: 1.7;
+}
+.intro-desc strong { color: var(--text); }
+
+/* Diagrama comparativo de estructuras */
+.diagram-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  text-transform: uppercase; letter-spacing: .1em; color: var(--muted);
+  margin-bottom: 16px;
+}
+.structures-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 28px;
+}
+@media (max-width: 640px) { .structures-row { grid-template-columns: 1fr; } }
+
+.struct-box {
+  border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+  transition: border-color .25s;
+}
+.struct-box.highlight-teal { border-color: var(--teal); box-shadow: 0 0 0 1px rgba(57,208,216,.15); }
+.struct-header {
+  padding: 10px 14px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.struct-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; font-weight: 700;
+}
+.struct-name.col-blue   { color: var(--blue); }
+.struct-name.col-green  { color: var(--green); }
+.struct-name.col-teal   { color: var(--teal); }
+.struct-principle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--muted);
+  background: var(--bg); border: 1px solid var(--border);
+  padding: 2px 7px; border-radius: 4px;
+}
+.struct-body { padding: 12px 14px; }
+.struct-slots {
+  display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px;
+}
+.struct-slot {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 6px 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--text);
+  display: flex; align-items: center; justify-content: space-between;
+  position: relative;
+}
+.struct-slot .slot-idx { color: var(--muted); font-size: 10px; }
+.struct-slot.top-marker {
+  border-color: var(--teal);
+  background: rgba(57,208,216,.06);
+}
+.struct-slot.top-marker .slot-idx { color: var(--teal); }
+.struct-slot.front-marker {
+  border-color: var(--green);
+  background: rgba(74,222,128,.06);
+}
+.struct-slot.rear-marker {
+  border-color: var(--orange);
+  background: rgba(255,166,87,.06);
+}
+.struct-arrow {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: var(--teal); margin-bottom: 4px;
+}
+.struct-arrow.green { color: var(--green); }
+.struct-arrow.dual  { color: var(--blue); }
+.struct-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.struct-desc span { color: var(--text); }
+
+/* Características key-value */
+.traits-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+.trait {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 7px; padding: 12px 14px;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.trait-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.trait-key {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 600; color: var(--teal); margin-bottom: 2px;
+}
+.trait-val { font-size: 13px; color: var(--muted); line-height: 1.4; }
+
+/* ══════════════════════════════════
+   SECCIÓN 2: PILAS — CONCEPTO
+   ══════════════════════════════════ */
+.section-concept {
+  margin-bottom: 56px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+}
+@media (max-width: 680px) { .section-concept { grid-template-columns: 1fr; } }
+
+.concept-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px;
+}
+.concept-card.highlight { border-color: var(--teal); }
+
+.concept-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--muted); margin-bottom: 14px;
+}
+.concept-title {
+  font-size: 17px; font-weight: 700; margin-bottom: 10px;
+}
+.concept-body { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 16px; }
+.concept-body strong { color: var(--text); }
+
+.analogy-row {
+  display: flex; gap: 10px; flex-wrap: wrap;
+}
+.analogy-pill {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  background: var(--surface2); border: 1px solid var(--border);
+  padding: 6px 12px; border-radius: 6px; color: var(--muted);
+  display: flex; align-items: center; gap: 6px;
+}
+.analogy-pill span { font-size: 14px; }
+
+/* Métodos de pila */
+.methods-list { display: flex; flex-direction: column; gap: 8px; }
+.method-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 7px; padding: 10px 14px;
+}
+.method-name {
+  font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  color: var(--blue); font-weight: 600; white-space: nowrap;
+  min-width: 120px;
+}
+.method-desc { font-size: 13px; color: var(--muted); padding-top: 1px; }
+.method-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  padding: 2px 7px; border-radius: 4px; margin-left: auto; white-space: nowrap; align-self: center;
+}
+.mb-push   { background: rgba(74,222,128,.12);  color: var(--green);  border: 1px solid rgba(74,222,128,.2); }
+.mb-pop    { background: rgba(255,123,114,.12); color: var(--red);    border: 1px solid rgba(255,123,114,.2); }
+.mb-peek   { background: rgba(121,192,255,.12); color: var(--blue);   border: 1px solid rgba(121,192,255,.2); }
+.mb-util   { background: rgba(210,168,255,.12); color: var(--purple); border: 1px solid rgba(210,168,255,.2); }
+
+/* ══════════════════════════════════
+   SECCIÓN 3: RETOS
+   ══════════════════════════════════ */
+.retos-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--muted); margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+.retos-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.retos { display: flex; flex-direction: column; gap: 40px; padding-bottom: 72px; }
+
+.reto {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+/* Header */
+.reto-header {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 24px 28px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.reto-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700; letter-spacing: .08em;
+  color: var(--teal);
+  background: rgba(57,208,216,.1);
+  border: 1px solid rgba(57,208,216,.3);
+  padding: 3px 10px; border-radius: 4px;
+  white-space: nowrap; margin-top: 3px; flex-shrink: 0;
+}
+.reto-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.reto-subtitle { color: var(--muted); font-size: 13px; }
+.reto-tags { margin-left: auto; display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+.tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+}
+.t-teal   { background: rgba(57,208,216,.1);  color: var(--teal);   border: 1px solid rgba(57,208,216,.2); }
+.t-green  { background: rgba(74,222,128,.1);  color: var(--green);  border: 1px solid rgba(74,222,128,.2); }
+.t-purple { background: rgba(210,168,255,.1); color: var(--purple); border: 1px solid rgba(210,168,255,.2); }
+.t-orange { background: rgba(255,166,87,.1);  color: var(--orange); border: 1px solid rgba(255,166,87,.2); }
+.t-red    { background: rgba(255,123,114,.1); color: var(--red);    border: 1px solid rgba(255,123,114,.2); }
+
+/* Body 2-col */
+.reto-body {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+}
+@media (max-width: 660px) { .reto-body { grid-template-columns: 1fr; } }
+.reto-left  { padding: 24px 28px; border-right: 1px solid var(--border); }
+.reto-right { padding: 24px 28px; }
+@media (max-width: 660px) {
+  .reto-left  { border-right: none; border-bottom: 1px solid var(--border); }
+}
+
+/* Steps */
+.sub-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--muted); margin-bottom: 12px;
+}
+.steps { display: flex; flex-direction: column; gap: 9px; margin-bottom: 20px; }
+.step { display: flex; gap: 10px; align-items: flex-start; }
+.sn {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--teal); background: rgba(57,208,216,.1);
+  border: 1px solid rgba(57,208,216,.25);
+  min-width: 22px; height: 22px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px; flex-shrink: 0;
+}
+.st { font-size: 13px; color: var(--text); line-height: 1.55; }
+.ic {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--blue); padding: 1px 6px; border-radius: 4px;
+}
+
+/* Objectives */
+.obj-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.obj-list li { font-size: 13px; display: flex; gap: 8px; align-items: flex-start; color: var(--muted); }
+.obj-list li::before { content: '▸'; color: var(--teal); font-size: 11px; margin-top: 4px; flex-shrink: 0; }
+
+/* Code block */
+.code-block {
+  background: #010409; border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+}
+.code-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 14px; background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+.code-dots { display: flex; gap: 5px; }
+.code-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.d1{background:#FF5F56} .d2{background:#FFBD2E} .d3{background:#27C93F}
+.code-file { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); }
+.btn-copy {
+  background:none; border: 1px solid var(--border); color:var(--muted);
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  padding:3px 9px; border-radius:4px; cursor:pointer; transition:all .2s;
+}
+.btn-copy:hover { color:var(--text); border-color:var(--muted); }
+.code-body {
+  padding: 16px 18px; overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8;
+  white-space: pre;
+}
+.kw  { color: var(--red); }
+.fn  { color: var(--blue); }
+.str { color: var(--orange); }
+.cm  { color: #6A737D; font-style: italic; }
+.num { color: var(--purple); }
+.op  { color: var(--muted); }
+.tc  { color: var(--teal); }
+
+/* Footer */
+.reto-footer {
+  padding: 14px 28px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 10px;
+}
+.reto-footer .note {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted);
+}
+.btn-dl {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--teal); color: #0D1117;
+  font-family: 'JetBrains Mono', monospace; font-weight: 700;
+  font-size: 12px; padding: 7px 16px; border-radius: 7px;
+  border: none; cursor: pointer; transition: opacity .2s, transform .15s;
+}
+.btn-dl:hover { opacity: .85; transform: translateY(-1px); }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 28px 2rem; text-align: center;
+  color: var(--muted); font-size: 13px;
+  font-family: 'JetBrains Mono', monospace;
+}
+footer span { color: var(--teal); }
+
+/* ── LIFO visual badge ── */
+.lifo-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  background: rgba(57,208,216,.1); border: 1px solid rgba(57,208,216,.3);
+  color: var(--teal); padding: 4px 12px; border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+    ITB
+    <span class="sep">/</span>
+    <span class="dim">python</span>
+    <span class="sep">/</span>
+    clase-3
+  </div>
+  <div class="nav-links">
+    <a href="#estructuras">Estructuras</a>
+    <a href="#pilas">Pilas</a>
+    <a href="#retos">Retos</a>
+  </div>
+  <div class="nav-badge">Stack · LIFO</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Clase 3 de 6 · Estructuras de Datos</div>
+  <h1>
+    <span class="accent">Stack</span><br>
+    <span class="dim">Tipos Abstractos —</span>
+  </h1>
+  <div class="hero-sub">Pilas en Python</div>
+  <p>Comprende el principio LIFO, implementa una pila con listas de Python y aplícala en casos reales: historial, deshacer y validación de paréntesis.</p>
+  <div class="hero-chips">
+    <span class="chip">Python 3.x</span>
+    <span class="chip">Sin librerías externas</span>
+    <span class="chip">Nivel: intermedio</span>
+    <span class="chip active">● Clase actual</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ══════════════════════════════════════
+       BLOQUE 1: ESTRUCTURAS LINEALES
+       ══════════════════════════════════════ -->
+  <div id="estructuras" class="section-intro">
+    <div class="section-tag">// 01 — Contexto</div>
+    <div class="intro-title">Estructuras de Datos Abstractas Lineales</div>
+    <div class="intro-desc">
+      Una <strong>estructura de datos abstracta (EDA)</strong> define <em>qué operaciones</em> puede hacer una colección de datos, 
+      sin importar cómo están implementadas internamente. Las estructuras <strong>lineales</strong> organizan sus elementos 
+      en una sola dimensión: cada elemento tiene un predecesor y un sucesor (excepto el primero y el último). 
+      Las tres estructuras lineales fundamentales son:
+    </div>
+
+    <div class="diagram-label">// Comparativa de estructuras lineales</div>
+    <div class="structures-row">
+
+      <!-- LISTA -->
+      <div class="struct-box">
+        <div class="struct-header">
+          <div class="struct-name col-blue">Lista</div>
+          <div class="struct-principle">acceso libre</div>
+        </div>
+        <div class="struct-body">
+          <div class="struct-arrow dual">↕ cualquier posición</div>
+          <div class="struct-slots">
+            <div class="struct-slot"><span>item_0</span><span class="slot-idx">[0]</span></div>
+            <div class="struct-slot"><span>item_1</span><span class="slot-idx">[1]</span></div>
+            <div class="struct-slot"><span>item_2</span><span class="slot-idx">[2]</span></div>
+            <div class="struct-slot"><span>item_3</span><span class="slot-idx">[3]</span></div>
+          </div>
+          <div class="struct-desc">Acceso por <span>índice</span>. Se puede leer, insertar o eliminar en <span>cualquier posición</span>. La más flexible de las tres.</div>
+        </div>
+      </div>
+
+      <!-- PILA (highlight) -->
+      <div class="struct-box highlight-teal">
+        <div class="struct-header">
+          <div class="struct-name col-teal">Pila (Stack)</div>
+          <div class="struct-principle">LIFO</div>
+        </div>
+        <div class="struct-body">
+          <div class="struct-arrow">↑ push / pop (tope)</div>
+          <div class="struct-slots">
+            <div class="struct-slot top-marker"><span>item_3</span><span class="slot-idx">← TOP</span></div>
+            <div class="struct-slot"><span>item_2</span><span class="slot-idx"></span></div>
+            <div class="struct-slot"><span>item_1</span><span class="slot-idx"></span></div>
+            <div class="struct-slot"><span>item_0</span><span class="slot-idx">base</span></div>
+          </div>
+          <div class="struct-desc"><span>Last In, First Out.</span> Solo se puede insertar y extraer por el <span>tope</span>. Como una pila de platos.</div>
+        </div>
+      </div>
+
+      <!-- COLA -->
+      <div class="struct-box">
+        <div class="struct-header">
+          <div class="struct-name col-green">Cola (Queue)</div>
+          <div class="struct-principle">FIFO</div>
+        </div>
+        <div class="struct-body">
+          <div class="struct-arrow green">→ enqueue (rear) / dequeue (front)</div>
+          <div class="struct-slots">
+            <div class="struct-slot front-marker"><span>item_0</span><span class="slot-idx">← FRONT</span></div>
+            <div class="struct-slot"><span>item_1</span><span class="slot-idx"></span></div>
+            <div class="struct-slot"><span>item_2</span><span class="slot-idx"></span></div>
+            <div class="struct-slot rear-marker"><span>item_3</span><span class="slot-idx">← REAR</span></div>
+          </div>
+          <div class="struct-desc"><span>First In, First Out.</span> Entra por el <span>final</span>, sale por el <span>frente</span>. Como una fila de personas. <em>(Clase 4)</em></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="traits-grid">
+      <div class="trait">
+        <div class="trait-icon">🔒</div>
+        <div>
+          <div class="trait-key">Acceso restringido</div>
+          <div class="trait-val">En Pilas y Colas solo se puede operar por los extremos definidos — no hay acceso por índice</div>
+        </div>
+      </div>
+      <div class="trait">
+        <div class="trait-icon">📐</div>
+        <div>
+          <div class="trait-key">Abstracta</div>
+          <div class="trait-val">El concepto existe independiente del lenguaje. En Python se implementa con listas</div>
+        </div>
+      </div>
+      <div class="trait">
+        <div class="trait-icon">⚡</div>
+        <div>
+          <div class="trait-key">Orden importa</div>
+          <div class="trait-val">El orden de entrada/salida define el comportamiento. LIFO ≠ FIFO en resultados</div>
+        </div>
+      </div>
+      <div class="trait">
+        <div class="trait-icon">🔗</div>
+        <div>
+          <div class="trait-key">Lineales</div>
+          <div class="trait-val">Cada elemento tiene a lo sumo un predecesor y un sucesor — sin ramas ni ciclos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       BLOQUE 2: PILAS — CONCEPTO Y MÉTODOS
+       ══════════════════════════════════════ -->
+  <div id="pilas" class="section-concept">
+
+    <div class="concept-card highlight">
+      <div class="concept-label">// ¿Qué es una Pila?</div>
+      <div class="lifo-badge">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="12 19 5 12 12 5"/><polyline points="19 19 12 12 19 5"/></svg>
+        Last In · First Out
+      </div>
+      <div class="concept-title">Principio LIFO</div>
+      <div class="concept-body">
+        Una pila es una colección de elementos donde las operaciones de inserción y extracción ocurren 
+        siempre por el mismo extremo, llamado <strong>tope (top)</strong>. El último elemento en entrar 
+        es el primero en salir.<br><br>
+        En Python, una pila se implementa directamente con una <strong>lista vacía</strong> usando 
+        <code style="font-family:'JetBrains Mono';font-size:12px;background:#1C2129;padding:1px 5px;border-radius:3px;color:#79C0FF">.append()</code> 
+        para apilar y <code style="font-family:'JetBrains Mono';font-size:12px;background:#1C2129;padding:1px 5px;border-radius:3px;color:#79C0FF">.pop()</code> 
+        para desapilar. No necesitas importar nada.
+      </div>
+      <div class="concept-label" style="margin-bottom:10px">// Analogías del mundo real</div>
+      <div class="analogy-row">
+        <div class="analogy-pill"><span>🍽️</span> Pila de platos</div>
+        <div class="analogy-pill"><span>↩️</span> Ctrl + Z (deshacer)</div>
+        <div class="analogy-pill"><span>🌐</span> Botón Atrás del navegador</div>
+        <div class="analogy-pill"><span>📞</span> Pila de llamadas (call stack)</div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">// Operaciones de una Pila en Python</div>
+      <div class="methods-list">
+        <div class="method-row">
+          <div class="method-name">pila.append(x)</div>
+          <div class="method-desc">Apila el elemento <em>x</em> en el tope</div>
+          <div class="method-badge mb-push">push</div>
+        </div>
+        <div class="method-row">
+          <div class="method-name">pila.pop()</div>
+          <div class="method-desc">Retira y retorna el elemento del tope</div>
+          <div class="method-badge mb-pop">pop</div>
+        </div>
+        <div class="method-row">
+          <div class="method-name">pila[-1]</div>
+          <div class="method-desc">Lee el tope sin extraerlo</div>
+          <div class="method-badge mb-peek">peek</div>
+        </div>
+        <div class="method-row">
+          <div class="method-name">len(pila) == 0</div>
+          <div class="method-desc">Verifica si la pila está vacía</div>
+          <div class="method-badge mb-util">isEmpty</div>
+        </div>
+        <div class="method-row">
+          <div class="method-name">len(pila)</div>
+          <div class="method-desc">Número de elementos en la pila</div>
+          <div class="method-badge mb-util">size</div>
+        </div>
+        <div class="method-row">
+          <div class="method-name">pila = []</div>
+          <div class="method-desc">Inicializa una pila vacía</div>
+          <div class="method-badge mb-util">init</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════
+       BLOQUE 3: RETOS
+       ══════════════════════════════════════ -->
+  <div class="retos-title" id="retos">// Retos progresivos — implementa paso a paso</div>
+
+  <div class="retos">
+
+    <!-- ───────── RETO 1 ───────── -->
+    <div class="reto">
+      <div class="reto-header">
+        <div class="reto-num">RETO 01</div>
+        <div>
+          <div class="reto-title">Mi primera pila</div>
+          <div class="reto-subtitle">Crear, apilar, desapilar e inspeccionar el tope</div>
+        </div>
+        <div class="reto-tags">
+          <span class="tag t-teal">append()</span>
+          <span class="tag t-red">pop()</span>
+          <span class="tag t-purple">[-1]</span>
+        </div>
+      </div>
+      <div class="reto-body">
+        <div class="reto-left">
+          <div class="sub-label">// Paso a paso</div>
+          <div class="steps">
+            <div class="step"><div class="sn">1</div><div class="st">Crea una lista vacía: <span class="ic">pila = []</span></div></div>
+            <div class="step"><div class="sn">2</div><div class="st">Usa <span class="ic">.append()</span> para apilar 3 elementos ingresados por el usuario</div></div>
+            <div class="step"><div class="sn">3</div><div class="st">Muestra el tope con <span class="ic">pila[-1]</span> sin extraerlo</div></div>
+            <div class="step"><div class="sn">4</div><div class="st">Verifica si está vacía con <span class="ic">len(pila) == 0</span></div></div>
+            <div class="step"><div class="sn">5</div><div class="st">Usa <span class="ic">.pop()</span> para extraer los elementos uno por uno y mostrarlos</div></div>
+            <div class="step"><div class="sn">6</div><div class="st">Observa el orden de salida: el último que entró sale primero (LIFO)</div></div>
+          </div>
+          <div class="sub-label">// Qué observarás</div>
+          <ul class="obj-list">
+            <li>Los elementos salen en <strong>orden inverso</strong> al que entraron</li>
+            <li><span class="ic">pila[-1]</span> permite ver el tope sin alterar la pila</li>
+            <li><span class="ic">.pop()</span> lanza error si la pila está vacía — siempre verifica</li>
+          </ul>
+        </div>
+        <div class="reto-right">
+          <div class="sub-label">// Esqueleto</div>
+          <div class="code-block">
+            <div class="code-bar">
+              <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+              <div class="code-file">mi_primera_pila.py</div>
+              <button class="btn-copy" onclick="copyCode(this,'r1')">copiar</button>
+            </div>
+            <div class="code-body" id="r1"><span class="cm"># 📚 Mi Primera Pila — LIFO
+# TODO: completa cada sección</span>
+
+<span class="tc">pila</span> <span class="op">=</span> []  <span class="cm"># lista vacía = pila vacía</span>
+
+<span class="fn">print</span>(<span class="str">"=== Apilando elementos ==="</span>)
+<span class="kw">for</span> <span class="tc">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">3</span>):
+    <span class="tc">valor</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">f"Elemento {<span class="tc">i</span><span class="op">+</span><span class="num">1</span>}: "</span>)
+    <span class="cm"># TODO: apilar con .append()</span>
+
+<span class="cm"># TODO: mostrar tope sin extraer</span>
+<span class="fn">print</span>(<span class="str">f"Tope actual: ..."</span>)
+
+<span class="cm"># TODO: verificar si está vacía</span>
+
+<span class="fn">print</span>(<span class="str">"\n=== Desapilando (LIFO) ==="</span>)
+<span class="kw">while</span> <span class="tc">pila</span>:  <span class="cm"># mientras no esté vacía</span>
+    <span class="cm"># TODO: pop() y mostrar el elemento extraído</span>
+    <span class="kw">pass</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="reto-footer">
+        <div class="note">$ python mi_primera_pila.py</div>
+        <button class="btn-dl" onclick="downloadCode(1)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar .py
+        </button>
+      </div>
+    </div>
+
+    <!-- ───────── RETO 2 ───────── -->
+    <div class="reto">
+      <div class="reto-header">
+        <div class="reto-num">RETO 02</div>
+        <div>
+          <div class="reto-title">Deshacer acciones (Ctrl + Z)</div>
+          <div class="reto-subtitle">Simular el historial de un editor de texto con pila</div>
+        </div>
+        <div class="reto-tags">
+          <span class="tag t-teal">pila</span>
+          <span class="tag t-red">pop()</span>
+          <span class="tag t-orange">while</span>
+        </div>
+      </div>
+      <div class="reto-body">
+        <div class="reto-left">
+          <div class="sub-label">// Paso a paso</div>
+          <div class="steps">
+            <div class="step"><div class="sn">1</div><div class="st">Crea <span class="ic">historial = []</span> y muestra un menú en bucle</div></div>
+            <div class="step"><div class="sn">2</div><div class="st">Opción "Escribir": pide texto, apila con <span class="ic">.append()</span></div></div>
+            <div class="step"><div class="sn">3</div><div class="st">Opción "Deshacer": verifica que la pila no esté vacía, llama <span class="ic">.pop()</span> y muestra qué se deshizo</div></div>
+            <div class="step"><div class="sn">4</div><div class="st">Opción "Ver estado": muestra <span class="ic">historial[-1]</span> como el texto actual</div></div>
+            <div class="step"><div class="sn">5</div><div class="st">Si intentas deshacer con pila vacía, muestra "No hay acciones para deshacer"</div></div>
+          </div>
+          <div class="sub-label">// Objetivos</div>
+          <ul class="obj-list">
+            <li>Usar una pila para implementar funcionalidad real de software</li>
+            <li>Manejar el caso de pila vacía antes de hacer <span class="ic">.pop()</span></li>
+            <li>Entender que el tope = estado más reciente</li>
+          </ul>
+        </div>
+        <div class="reto-right">
+          <div class="sub-label">// Esqueleto</div>
+          <div class="code-block">
+            <div class="code-bar">
+              <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+              <div class="code-file">deshacer.py</div>
+              <button class="btn-copy" onclick="copyCode(this,'r2')">copiar</button>
+            </div>
+            <div class="code-body" id="r2"><span class="cm"># ↩️ Ctrl+Z — Deshacer con Pila
+# TODO: completa cada sección</span>
+
+<span class="tc">historial</span> <span class="op">=</span> []
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="fn">print</span>(<span class="str">"\n1. Escribir texto"</span>)
+    <span class="fn">print</span>(<span class="str">"2. Deshacer (Ctrl+Z)"</span>)
+    <span class="fn">print</span>(<span class="str">"3. Ver estado actual"</span>)
+    <span class="fn">print</span>(<span class="str">"4. Salir"</span>)
+    <span class="tc">op</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"Opción: "</span>)
+
+    <span class="kw">if</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"1"</span>:
+        <span class="tc">texto</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"Escribe: "</span>)
+        <span class="cm"># TODO: apilar</span>
+
+    <span class="kw">elif</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"2"</span>:
+        <span class="cm"># TODO: verificar vacía → pop() → mostrar</span>
+        <span class="kw">pass</span>
+
+    <span class="kw">elif</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"3"</span>:
+        <span class="cm"># TODO: mostrar tope o "Texto vacío"</span>
+        <span class="kw">pass</span>
+
+    <span class="kw">elif</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"4"</span>:
+        <span class="kw">break</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="reto-footer">
+        <div class="note">$ python deshacer.py</div>
+        <button class="btn-dl" onclick="downloadCode(2)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar .py
+        </button>
+      </div>
+    </div>
+
+    <!-- ───────── RETO 3 ───────── -->
+    <div class="reto">
+      <div class="reto-header">
+        <div class="reto-num">RETO 03</div>
+        <div>
+          <div class="reto-title">Validador de paréntesis</div>
+          <div class="reto-subtitle">Comprobar expresiones matemáticas balanceadas con una pila</div>
+        </div>
+        <div class="reto-tags">
+          <span class="tag t-teal">pila</span>
+          <span class="tag t-green">for + in</span>
+          <span class="tag t-purple">match lógico</span>
+        </div>
+      </div>
+      <div class="reto-body">
+        <div class="reto-left">
+          <div class="sub-label">// Paso a paso</div>
+          <div class="steps">
+            <div class="step"><div class="sn">1</div><div class="st">Pide al usuario una expresión como <span class="ic">(a + (b * c))</span></div></div>
+            <div class="step"><div class="sn">2</div><div class="st">Recorre cada carácter con <span class="ic">for ch in expresion:</span></div></div>
+            <div class="step"><div class="sn">3</div><div class="st">Si <span class="ic">ch == '('</span> → apila con <span class="ic">.append()</span></div></div>
+            <div class="step"><div class="sn">4</div><div class="st">Si <span class="ic">ch == ')'</span> → si pila vacía: expresión inválida. Si no: <span class="ic">.pop()</span></div></div>
+            <div class="step"><div class="sn">5</div><div class="st">Al terminar el recorrido: si <span class="ic">len(pila) == 0</span> → balanceada ✓</div></div>
+          </div>
+          <div class="sub-label">// Objetivos</div>
+          <ul class="obj-list">
+            <li>Aplicar pilas a un problema clásico de algoritmos</li>
+            <li>Combinar recorrido de strings con operaciones de pila</li>
+            <li>Entender que el tope sirve como "memoria" del último abrir</li>
+          </ul>
+        </div>
+        <div class="reto-right">
+          <div class="sub-label">// Esqueleto</div>
+          <div class="code-block">
+            <div class="code-bar">
+              <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+              <div class="code-file">parentesis.py</div>
+              <button class="btn-copy" onclick="copyCode(this,'r3')">copiar</button>
+            </div>
+            <div class="code-body" id="r3"><span class="cm"># 🔍 Validador de Paréntesis
+# TODO: completa cada sección</span>
+
+<span class="tc">expr</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"Ingresa una expresión: "</span>)
+<span class="tc">pila</span> <span class="op">=</span> []
+<span class="tc">valido</span> <span class="op">=</span> <span class="kw">True</span>
+
+<span class="kw">for</span> <span class="tc">ch</span> <span class="kw">in</span> <span class="tc">expr</span>:
+    <span class="kw">if</span> <span class="tc">ch</span> <span class="op">==</span> <span class="str">'('</span>:
+        <span class="cm"># TODO: apilar</span>
+        <span class="kw">pass</span>
+
+    <span class="kw">elif</span> <span class="tc">ch</span> <span class="op">==</span> <span class="str">')'</span>:
+        <span class="kw">if</span> <span class="fn">len</span>(<span class="tc">pila</span>) <span class="op">==</span> <span class="num">0</span>:
+            <span class="tc">valido</span> <span class="op">=</span> <span class="kw">False</span>
+            <span class="kw">break</span>
+        <span class="cm"># TODO: pop()</span>
+
+<span class="cm"># La pila debe quedar vacía si está balanceada</span>
+<span class="kw">if</span> <span class="tc">valido</span> <span class="kw">and</span> <span class="fn">len</span>(<span class="tc">pila</span>) <span class="op">==</span> <span class="num">0</span>:
+    <span class="fn">print</span>(<span class="str">"✓ Expresión BALANCEADA"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"✗ Expresión NO balanceada"</span>)</div>
+          </div>
+        </div>
+      </div>
+      <div class="reto-footer">
+        <div class="note">$ python parentesis.py</div>
+        <button class="btn-dl" onclick="downloadCode(3)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar .py
+        </button>
+      </div>
+    </div>
+
+    <!-- ───────── RETO 4 ───────── -->
+    <div class="reto">
+      <div class="reto-header">
+        <div class="reto-num">RETO 04</div>
+        <div>
+          <div class="reto-title">Historial de navegación</div>
+          <div class="reto-subtitle">Simular el botón Atrás/Adelante de un navegador con dos pilas</div>
+        </div>
+        <div class="reto-tags">
+          <span class="tag t-teal">dos pilas</span>
+          <span class="tag t-red">pop()</span>
+          <span class="tag t-orange">transferencia</span>
+        </div>
+      </div>
+      <div class="reto-body">
+        <div class="reto-left">
+          <div class="sub-label">// Paso a paso</div>
+          <div class="steps">
+            <div class="step"><div class="sn">1</div><div class="st">Crea dos pilas: <span class="ic">atras = []</span> y <span class="ic">adelante = []</span></div></div>
+            <div class="step"><div class="sn">2</div><div class="st">Navegar: apila la URL en <span class="ic">atras</span>, limpia <span class="ic">adelante</span> (nueva ruta)</div></div>
+            <div class="step"><div class="sn">3</div><div class="st">Atrás: <span class="ic">.pop()</span> de <span class="ic">atras</span> → <span class="ic">.append()</span> a <span class="ic">adelante</span>. Muestra el nuevo tope de <span class="ic">atras</span></div></div>
+            <div class="step"><div class="sn">4</div><div class="st">Adelante: <span class="ic">.pop()</span> de <span class="ic">adelante</span> → <span class="ic">.append()</span> a <span class="ic">atras</span>. Muestra el nuevo tope</div></div>
+            <div class="step"><div class="sn">5</div><div class="st">Mostrar historial: recorre <span class="ic">atras</span> e imprime todas las páginas visitadas</div></div>
+          </div>
+          <div class="sub-label">// Objetivos</div>
+          <ul class="obj-list">
+            <li>Usar <strong>dos pilas en coordinación</strong> para un problema real</li>
+            <li>Transferir elementos entre pilas con pop + append</li>
+            <li>Este patrón es la base del botón ← → de cualquier navegador</li>
+          </ul>
+        </div>
+        <div class="reto-right">
+          <div class="sub-label">// Esqueleto</div>
+          <div class="code-block">
+            <div class="code-bar">
+              <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+              <div class="code-file">navegador.py</div>
+              <button class="btn-copy" onclick="copyCode(this,'r4')">copiar</button>
+            </div>
+            <div class="code-body" id="r4"><span class="cm"># 🌐 Historial de Navegación — Dos Pilas
+# TODO: completa cada sección</span>
+
+<span class="tc">atras</span>    <span class="op">=</span> []  <span class="cm"># pila de páginas visitadas</span>
+<span class="tc">adelante</span> <span class="op">=</span> []  <span class="cm"># pila de páginas adelantadas</span>
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="fn">print</span>(<span class="str">"\n1. Navegar a URL"</span>)
+    <span class="fn">print</span>(<span class="str">"2. ← Atrás"</span>)
+    <span class="fn">print</span>(<span class="str">"3. → Adelante"</span>)
+    <span class="fn">print</span>(<span class="str">"4. Ver historial"</span>)
+    <span class="fn">print</span>(<span class="str">"5. Salir"</span>)
+    <span class="tc">op</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"Opción: "</span>)
+
+    <span class="kw">if</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"1"</span>:
+        <span class="tc">url</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"URL: "</span>)
+        <span class="cm"># TODO: apilar en 'atras', limpiar 'adelante'</span>
+
+    <span class="kw">elif</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"2"</span>:
+        <span class="kw">if</span> <span class="fn">len</span>(<span class="tc">atras</span>) <span class="op">></span> <span class="num">1</span>:
+            <span class="cm"># TODO: mover tope de atras → adelante</span>
+            <span class="fn">print</span>(<span class="str">f"Página actual: {<span class="tc">atras</span>[<span class="op">-</span><span class="num">1</span>]}"</span>)
+        <span class="kw">else</span>:
+            <span class="fn">print</span>(<span class="str">"No hay páginas anteriores."</span>)
+
+    <span class="kw">elif</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"3"</span>:
+        <span class="cm"># TODO: mover tope de adelante → atras</span>
+        <span class="kw">pass</span>
+
+    <span class="kw">elif</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"4"</span>:
+        <span class="cm"># TODO: mostrar toda la pila 'atras'</span>
+        <span class="kw">pass</span>
+
+    <span class="kw">elif</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"5"</span>:
+        <span class="kw">break</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="reto-footer">
+        <div class="note">$ python navegador.py</div>
+        <button class="btn-dl" onclick="downloadCode(4)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar .py
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /retos -->
+</div><!-- /wrap -->
+
+<footer>
+  ITB — Instituto Tecnológico de Negocios &nbsp;·&nbsp; Clase 3 — <span>Pilas (Stack)</span> · LIFO
+</footer>
+
+<script>
+function copyCode(btn, id) {
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ copiado';
+    setTimeout(() => btn.textContent = 'copiar', 2000);
+  });
+}
+
+const skeletons = {
+  1: {
+    name: 'mi_primera_pila.py',
+    code: `# 📚 Mi Primera Pila — LIFO
+# TODO: completa cada sección
+
+pila = []  # lista vacía = pila vacía
+
+print("=== Apilando elementos ===")
+for i in range(3):
+    valor = input(f"Elemento {i+1}: ")
+    # TODO: apilar con .append()
+    # pila.append(valor)
+
+# TODO: mostrar tope sin extraer
+# print(f"Tope actual: {pila[-1]}")
+
+# TODO: verificar si está vacía
+# print(f"¿Vacía? {len(pila) == 0}")
+
+print("\\n=== Desapilando (LIFO) ===")
+while pila:  # mientras no esté vacía
+    # TODO: pop() y mostrar el elemento extraído
+    # elemento = pila.pop()
+    # print(f"Extraído: {elemento}")
+    pass
+`
+  },
+  2: {
+    name: 'deshacer.py',
+    code: `# ↩️ Ctrl+Z — Deshacer con Pila
+# TODO: completa cada sección
+
+historial = []
+
+while True:
+    print("\\n1. Escribir texto")
+    print("2. Deshacer (Ctrl+Z)")
+    print("3. Ver estado actual")
+    print("4. Salir")
+    op = input("Opción: ")
+
+    if op == "1":
+        texto = input("Escribe: ")
+        # TODO: apilar
+        # historial.append(texto)
+        # print(f"Apilado: '{texto}'")
+
+    elif op == "2":
+        if len(historial) > 0:
+            # TODO: pop() y mostrar
+            # deshecho = historial.pop()
+            # print(f"Deshecho: '{deshecho}'")
+            pass
+        else:
+            print("No hay acciones para deshacer.")
+
+    elif op == "3":
+        if historial:
+            # TODO: mostrar tope
+            # print(f"Estado actual: '{historial[-1]}'")
+            pass
+        else:
+            print("Texto vacío.")
+
+    elif op == "4":
+        break
+`
+  },
+  3: {
+    name: 'parentesis.py',
+    code: `# 🔍 Validador de Paréntesis
+# TODO: completa cada sección
+
+expr = input("Ingresa una expresión: ")
+pila = []
+valido = True
+
+for ch in expr:
+    if ch == '(':
+        # TODO: apilar
+        # pila.append(ch)
+        pass
+
+    elif ch == ')':
+        if len(pila) == 0:
+            valido = False
+            break
+        # TODO: pop()
+        # pila.pop()
+
+# La pila debe quedar vacía si está balanceada
+if valido and len(pila) == 0:
+    print("✓ Expresión BALANCEADA")
+else:
+    print("✗ Expresión NO balanceada")
+`
+  },
+  4: {
+    name: 'navegador.py',
+    code: `# 🌐 Historial de Navegación — Dos Pilas
+# TODO: completa cada sección
+
+atras    = []  # pila de páginas visitadas
+adelante = []  # pila de páginas adelantadas
+
+while True:
+    print("\\n1. Navegar a URL")
+    print("2. ← Atrás")
+    print("3. → Adelante")
+    print("4. Ver historial")
+    print("5. Salir")
+    op = input("Opción: ")
+
+    if op == "1":
+        url = input("URL: ")
+        # TODO: apilar en 'atras', limpiar 'adelante'
+        # atras.append(url)
+        # adelante.clear()
+        # print(f"Navegando a: {url}")
+
+    elif op == "2":
+        if len(atras) > 1:
+            # TODO: mover tope de atras → adelante
+            # adelante.append(atras.pop())
+            print(f"Página actual: {atras[-1]}")
+        else:
+            print("No hay páginas anteriores.")
+
+    elif op == "3":
+        if adelante:
+            # TODO: mover tope de adelante → atras
+            # atras.append(adelante.pop())
+            # print(f"Página actual: {atras[-1]}")
+            pass
+        else:
+            print("No hay páginas adelante.")
+
+    elif op == "4":
+        if atras:
+            print("\\n--- Historial ---")
+            for i, url in enumerate(atras, 1):
+                marca = " ← actual" if i == len(atras) else ""
+                print(f"  {i}. {url}{marca}")
+        else:
+            print("Historial vacío.")
+
+    elif op == "5":
+        break
+`
+  }
+};
+
+function downloadCode(n) {
+  const { name, code } = skeletons[n];
+  const blob = new Blob([code], { type: 'text/plain' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = name; a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

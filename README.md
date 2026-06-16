@@ -2,7 +2,7 @@
 
 > Material interactivo de práctica para la asignatura de **Programación en Python** — Instituto Tecnológico de Negocios.
 
------
+---
 
 ## 📂 Contenido del repositorio
 
@@ -13,39 +13,39 @@
 └── README.md           → Este archivo
 ```
 
------
+---
 
 ## 🗂️ Clases disponibles
 
-|# |Tema                                                                                                        |Archivo                                     |Estado        |
-|--|------------------------------------------------------------------------------------------------------------|--------------------------------------------|--------------|
-|01|**Introducción a las Listas** — Agregar, eliminar, buscar, ordenar                                          |[`index.html`](./index.html)                |✅ Disponible  |
-|02|**Taller — Uso de Listas en Python** — Sistema de calificaciones, inventario, asistencia, encuesta y ranking|[`taller.html`](./taller.html)|✅ Disponible  |
-|03|Diccionarios en Python                                                                                      |—                                           |🔜 Próximamente|
-|04|Funciones y modularización                                                                                  |—                                           |🔜 Próximamente|
-|05|Manejo de archivos `.txt` y `.csv`                                                                          |—                                           |🔜 Próximamente|
-|06|Programación Orientada a Objetos (POO)                                                                      |—                                           |🔜 Próximamente|
-|07|Introducción a Pandas y análisis de datos                                                                   |—                                           |🔜 Próximamente|
+| # | Tema | Archivo | Estado |
+|---|------|---------|--------|
+| 01 | **Introducción a las Listas** — Agregar, eliminar, buscar, ordenar | [`index.html`](./index.html) | ✅ Disponible |
+| 02 | **Taller — Uso de Listas en Python** — Sistema de calificaciones, inventario, asistencia, encuesta y ranking | [`taller-listas.html`](./taller-listas.html) | ✅ Disponible |
+| 03 | Diccionarios en Python | — | 🔜 Próximamente |
+| 04 | Funciones y modularización | — | 🔜 Próximamente |
+| 05 | Manejo de archivos `.txt` y `.csv` | — | 🔜 Próximamente |
+| 06 | Programación Orientada a Objetos (POO) | — | 🔜 Próximamente |
+| 07 | Introducción a Pandas y análisis de datos | — | 🔜 Próximamente |
 
------
+---
 
 ## 🚀 Cómo usar este material
 
 ### Para estudiantes
 
 1. Abre el enlace de GitHub Pages que te dio el docente.
-1. Navega a la clase o taller que corresponde a la sesión.
-1. Sigue el **paso a paso** de cada ejercicio.
-1. Descarga el esqueleto `.py`, ábrelo en **VS Code** y completa las secciones marcadas con `# TODO`.
-1. Ejecuta con **▶ Run Python File** o presiona `F5`.
+2. Navega a la clase o taller que corresponde a la sesión.
+3. Sigue el **paso a paso** de cada ejercicio.
+4. Descarga el esqueleto `.py`, ábrelo en **VS Code** y completa las secciones marcadas con `# TODO`.
+5. Ejecuta con **▶ Run Python File** o presiona `F5`.
 
 ### Para el taller en grupos
 
 1. El docente asigna un número de grupo y entrega la **clave de acceso**.
-1. Ingresa la clave en el ejercicio correspondiente para desbloquearlo.
-1. Al finalizar, el docente dice la **clave de solución** para descargar el código resuelto.
+2. Ingresa la clave en el ejercicio correspondiente para desbloquearlo.
+3. Al finalizar, el docente dice la **clave de solución** para descargar el código resuelto.
 
------
+---
 
 ## 🛠️ Requisitos técnicos
 
@@ -54,7 +54,7 @@
 - **Extensión Python para VS Code** — busca `ms-python.python` en el panel de extensiones
 - Navegador moderno (Chrome, Firefox, Edge) — sin instalación adicional para ver las páginas
 
------
+---
 
 ## 👨‍🏫 Para el docente
 
@@ -74,7 +74,7 @@ const SOLUTION_PASSWORD = "profe2025"; // clave maestra para descargar solucione
 
 Cambia los valores antes de publicar. El sistema es completamente del lado del cliente — no requiere servidor ni base de datos.
 
------
+---
 
 ## 📡 Publicar en GitHub Pages
 
@@ -91,7 +91,7 @@ git push -u origin main
 # 4. Tu sitio estará en: https://TU_USUARIO.github.io/itb-python-listas
 ```
 
------
+---
 
 ## 🧱 Tecnologías
 
@@ -99,7 +99,7 @@ git push -u origin main
 - Fuentes: [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono) · [Inter](https://fonts.google.com/specimen/Inter) vía Google Fonts
 - Hospedaje: GitHub Pages (gratuito)
 
------
+---
 
 <p align="center">
   Hecho para el <strong>Instituto Tecnológico de Negocios</strong> · ITB Ecuador

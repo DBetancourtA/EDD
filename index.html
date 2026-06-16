@@ -3,871 +3,731 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Python: Listas — ITB</title>
+<title>Estructuras Dinámicas de Datos — ITB</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --bg:       #0D1117;
-    --surface:  #161B22;
-    --surface2: #1C2129;
-    --border:   #30363D;
-    --green:    #4ADE80;
-    --green-dim:#1a4731;
-    --blue:     #79C0FF;
-    --purple:   #D2A8FF;
-    --orange:   #FFA657;
-    --red:      #FF7B72;
-    --text:     #E6EDF3;
-    --muted:    #8B949E;
-    --radius:   10px;
-  }
+:root {
+  --bg:        #0D1117;
+  --surface:   #161B22;
+  --surface2:  #1C2129;
+  --border:    #30363D;
+  --green:     #4ADE80;
+  --green-dim: #1a4731;
+  --teal:      #39D0D8;
+  --teal-dim:  #0d3436;
+  --amber:     #E3B341;
+  --amber-dim: #2d2208;
+  --blue:      #79C0FF;
+  --muted:     #8B949E;
+  --text:      #E6EDF3;
+  --red:       #FF7B72;
+  --radius:    12px;
+}
 
-  html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    line-height: 1.6;
-  }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-  /* ── NAV ── */
-  nav {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(13,17,23,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 2rem; height: 56px;
-  }
-  .nav-brand {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 700; font-size: 15px;
-    color: var(--green);
-    display: flex; align-items: center; gap: 8px;
-  }
-  .nav-brand span { color: var(--muted); font-weight: 400; }
-  .nav-links { display: flex; gap: 6px; }
-  .nav-links a {
-    color: var(--muted); text-decoration: none;
-    font-size: 13px; padding: 4px 10px; border-radius: 6px;
-    transition: color .2s, background .2s;
-  }
-  .nav-links a:hover { color: var(--text); background: var(--surface); }
+/* ── GRID BACKGROUND ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(57,208,216,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57,208,216,.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
 
-  /* ── HERO ── */
-  .hero {
-    padding: 72px 2rem 56px;
-    max-width: 860px; margin: 0 auto;
-    text-align: center;
-  }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--green-dim); border: 1px solid var(--green);
-    color: var(--green); font-family: 'JetBrains Mono', monospace;
-    font-size: 12px; padding: 4px 12px; border-radius: 20px;
-    margin-bottom: 24px;
-  }
-  .hero h1 {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: clamp(2rem, 5vw, 3.2rem);
-    font-weight: 700; line-height: 1.15;
-    margin-bottom: 16px;
-  }
-  .hero h1 .accent { color: var(--green); }
-  .hero h1 .dim { color: var(--muted); }
-  .hero p {
-    color: var(--muted); font-size: 17px;
-    max-width: 560px; margin: 0 auto 40px;
-  }
-  .hero-meta {
-    display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
-    color: var(--muted); font-size: 13px;
-  }
-  .hero-meta span { display: flex; align-items: center; gap: 6px; }
-  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; }
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(13,17,23,.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2.5rem; height: 56px;
+}
+.nav-logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700; font-size: 13px;
+  color: var(--text);
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-logo .bracket { color: var(--teal); }
+.nav-logo .name    { color: var(--text); }
+.nav-logo .inst    { color: var(--muted); font-weight: 400; font-size: 12px; }
 
-  /* ── SECTION WRAPPER ── */
-  .container { max-width: 900px; margin: 0 auto; padding: 0 1.5rem; }
+.nav-right {
+  display: flex; align-items: center; gap: 16px;
+}
+.nav-period {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: var(--muted);
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 4px 12px; border-radius: 20px;
+}
+.nav-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse-green 2s ease-in-out infinite;
+}
+@keyframes pulse-green {
+  0%,100% { opacity:1; box-shadow: 0 0 8px var(--green); }
+  50%      { opacity:.5; box-shadow: 0 0 2px var(--green); }
+}
 
-  /* ── INTRO CONCEPTOS ── */
-  .intro-box {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 28px 32px;
-    margin: 48px auto; max-width: 900px;
-  }
-  .intro-box h2 {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px; text-transform: uppercase;
-    letter-spacing: .08em; color: var(--muted);
-    margin-bottom: 20px;
-  }
-  .concept-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;
-  }
-  .concept-pill {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 8px; padding: 12px 14px;
-    font-family: 'JetBrains Mono', monospace; font-size: 13px;
-  }
-  .concept-pill .method { color: var(--blue); }
-  .concept-pill .desc { color: var(--muted); font-size: 11px; margin-top: 2px; }
+/* ── HERO ── */
+.hero {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 80px 2rem 60px;
+  text-align: center;
+}
 
-  /* ── RETO CARD ── */
-  .retos { display: flex; flex-direction: column; gap: 56px; padding: 24px 0 64px; }
+.hero-kicker {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 28px;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-kicker::before, .hero-kicker::after {
+  content: ''; width: 40px; height: 1px; background: var(--border);
+}
 
-  .reto {
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--surface);
-    overflow: hidden;
-  }
-  .reto-header {
-    display: flex; align-items: flex-start; gap: 20px;
-    padding: 28px 32px 24px;
-    border-bottom: 1px solid var(--border);
-  }
-  .reto-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; font-weight: 700; letter-spacing: .1em;
-    color: var(--green); background: var(--green-dim);
-    border: 1px solid var(--green);
-    padding: 3px 10px; border-radius: 4px;
-    white-space: nowrap; margin-top: 4px;
-  }
-  .reto-title { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
-  .reto-subtitle { color: var(--muted); font-size: 14px; }
-  .reto-tag {
-    margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end;
-  }
-  .tag {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; padding: 3px 9px; border-radius: 4px; white-space: nowrap;
-  }
-  .tag-blue { background: rgba(121,192,255,.12); color: var(--blue); border: 1px solid rgba(121,192,255,.25); }
-  .tag-purple { background: rgba(210,168,255,.12); color: var(--purple); border: 1px solid rgba(210,168,255,.25); }
-  .tag-orange { background: rgba(255,166,87,.12); color: var(--orange); border: 1px solid rgba(255,166,87,.25); }
+/* Terminal window */
+.terminal {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+  width: 100%; max-width: 560px;
+  margin: 0 auto 44px;
+  text-align: left;
+}
+.term-bar {
+  background: var(--surface2); border-bottom: 1px solid var(--border);
+  padding: 10px 14px; display: flex; align-items: center; gap: 8px;
+}
+.term-dots { display: flex; gap: 5px; }
+.term-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.td1{background:#FF5F56} .td2{background:#FFBD2E} .td3{background:#27C93F}
+.term-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: var(--muted); margin: 0 auto;
+}
+.term-body {
+  padding: 18px 20px;
+  font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  line-height: 2; min-height: 120px;
+}
+.t-prompt { color: var(--green); }
+.t-cmd    { color: var(--text); }
+.t-out    { color: var(--muted); }
+.t-teal   { color: var(--teal); }
+.t-amber  { color: var(--amber); }
+.t-cursor {
+  display: inline-block; width: 8px; height: 15px;
+  background: var(--green); vertical-align: middle;
+  animation: blink .9s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
-  .reto-body { padding: 28px 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
-  @media (max-width: 660px) { .reto-body { grid-template-columns: 1fr; } }
+/* Main title */
+.hero-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 700; line-height: 1.05;
+  margin-bottom: 12px; letter-spacing: -.02em;
+}
+.hero-title .line1 { color: var(--muted); font-weight: 300; display: block; font-size: .65em; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 6px; }
+.hero-title .hl    { color: var(--teal); }
+.hero-title .hl2   { color: var(--green); }
 
-  /* ── PASOS ── */
-  .steps-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
-    color: var(--muted); margin-bottom: 14px;
-  }
-  .steps { display: flex; flex-direction: column; gap: 10px; }
-  .step {
-    display: flex; gap: 12px; align-items: flex-start;
-  }
-  .step-n {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; font-weight: 700;
-    color: var(--green); background: var(--green-dim);
-    border: 1px solid var(--green);
-    min-width: 24px; height: 24px; border-radius: 4px;
-    display: flex; align-items: center; justify-content: center;
-    margin-top: 1px; flex-shrink: 0;
-  }
-  .step-text { font-size: 14px; color: var(--text); padding-top: 2px; }
-  .step-code {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px; background: var(--surface2);
-    border: 1px solid var(--border); border-radius: 4px;
-    padding: 2px 7px; color: var(--blue); margin-top: 4px; display: inline-block;
-  }
+.hero-sub {
+  font-size: 16px; color: var(--muted);
+  max-width: 480px; margin: 0 auto 40px; line-height: 1.7;
+}
+.hero-sub strong { color: var(--text); }
 
-  /* ── OBJETIVOS ── */
-  .objetivos { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-  .objetivos li {
-    font-size: 14px; display: flex; align-items: flex-start; gap: 8px;
-  }
-  .objetivos li::before {
-    content: '▸'; color: var(--green);
-    font-size: 12px; margin-top: 3px; flex-shrink: 0;
-  }
+/* Stats row */
+.stats-row {
+  display: flex; justify-content: center; gap: 36px; flex-wrap: wrap;
+  margin-bottom: 52px;
+}
+.stat {
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+}
+.stat-n {
+  font-size: 28px; font-weight: 700; line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-l { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.sn-green  { color: var(--green); }
+.sn-teal   { color: var(--teal); }
+.sn-amber  { color: var(--amber); }
+.sn-muted  { color: var(--muted); }
 
-  /* ── CODE BLOCK ── */
-  .code-block {
-    background: #010409;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-  .code-bar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 8px 14px;
-    background: var(--surface2);
-    border-bottom: 1px solid var(--border);
-  }
-  .code-dots { display: flex; gap: 5px; }
-  .code-dots span {
-    width: 10px; height: 10px; border-radius: 50%;
-  }
-  .d1 { background: #FF5F56; }
-  .d2 { background: #FFBD2E; }
-  .d3 { background: #27C93F; }
-  .code-filename {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; color: var(--muted);
-  }
-  .code-copy {
-    background: none; border: 1px solid var(--border);
-    color: var(--muted); font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; padding: 3px 9px; border-radius: 4px;
-    cursor: pointer; transition: all .2s;
-  }
-  .code-copy:hover { color: var(--text); border-color: var(--muted); }
-  .code-body {
-    padding: 18px 20px; overflow-x: auto;
-    font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.75;
-  }
-  /* Syntax */
-  .kw { color: var(--red); }
-  .fn { color: var(--blue); }
-  .str { color: var(--orange); }
-  .cm { color: #6A737D; font-style: italic; }
-  .num { color: var(--purple); }
-  .var { color: var(--text); }
-  .op { color: var(--muted); }
+.hero-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--teal); color: #0D1117;
+  font-family: 'JetBrains Mono', monospace; font-weight: 700;
+  font-size: 14px; padding: 12px 28px; border-radius: 8px;
+  text-decoration: none; transition: opacity .2s, transform .15s;
+}
+.hero-cta:hover { opacity:.88; transform: translateY(-2px); }
 
-  /* ── DOWNLOAD BAR ── */
-  .reto-footer {
-    padding: 16px 32px; border-top: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
-  }
-  .reto-footer .note {
-    font-size: 13px; color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .btn-download {
-    display: inline-flex; align-items: center; gap: 7px;
-    background: var(--green); color: #0D1117;
-    font-family: 'JetBrains Mono', monospace; font-weight: 700;
-    font-size: 13px; padding: 8px 18px; border-radius: 7px;
-    border: none; cursor: pointer; text-decoration: none;
-    transition: opacity .2s, transform .15s;
-  }
-  .btn-download:hover { opacity: .88; transform: translateY(-1px); }
-  .btn-download:active { transform: translateY(0); }
+.scroll-hint {
+  position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  animation: float 2.5s ease-in-out infinite;
+}
+@keyframes float { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+.scroll-hint svg { opacity: .4; }
 
-  /* ── FOOTER ── */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 32px 2rem;
-    text-align: center; color: var(--muted); font-size: 13px;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  footer span { color: var(--green); }
+/* ── CLASES SECTION ── */
+.section {
+  position: relative; z-index: 1;
+  max-width: 1000px; margin: 0 auto;
+  padding: 0 1.5rem 100px;
+}
 
-  /* ── PREREQ BANNER ── */
-  .prereq {
-    background: rgba(121,192,255,.07);
-    border: 1px solid rgba(121,192,255,.25);
-    border-radius: var(--radius);
-    padding: 16px 20px;
-    display: flex; gap: 14px; align-items: flex-start;
-    margin-bottom: 24px;
-  }
-  .prereq-icon { color: var(--blue); font-size: 18px; flex-shrink: 0; }
-  .prereq-text { font-size: 13px; color: var(--muted); line-height: 1.5; }
-  .prereq-text strong { color: var(--blue); }
+.section-eyebrow {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  text-transform: uppercase; letter-spacing: .12em; color: var(--muted);
+  display: flex; align-items: center; gap: 12px; margin-bottom: 36px;
+}
+.section-eyebrow::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* Class grid */
+.class-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Class card */
+.class-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: border-color .25s, transform .2s;
+  position: relative;
+}
+.class-card:hover { transform: translateY(-3px); }
+
+/* Status variants */
+.class-card.status-dev    { border-color: rgba(227,179,65,.2); }
+.class-card.status-dev:hover  { border-color: var(--amber); }
+.class-card.status-active { border-color: rgba(74,222,128,.2); }
+.class-card.status-active:hover { border-color: var(--green); }
+.class-card.status-current{ border-color: var(--teal); box-shadow: 0 0 0 1px rgba(57,208,216,.15); }
+.class-card.status-current:hover { border-color: var(--teal); }
+.class-card.status-soon   { border-color: var(--border); opacity: .55; }
+.class-card.status-soon:hover { transform: none; }
+
+/* Card top accent bar */
+.card-accent {
+  height: 3px; width: 100%;
+}
+.acc-dev     { background: linear-gradient(90deg, var(--amber), transparent); }
+.acc-active  { background: linear-gradient(90deg, var(--green), transparent); }
+.acc-current { background: linear-gradient(90deg, var(--teal), var(--green)); }
+.acc-soon    { background: var(--border); }
+
+/* Card header */
+.card-top {
+  padding: 24px 24px 0;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px;
+}
+.card-class-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 52px; font-weight: 700; line-height: 1;
+  letter-spacing: -.03em;
+  opacity: .12; /* dimmed by default, overridden per status */
+  user-select: none;
+}
+.status-active  .card-class-num { color: var(--green);  opacity: .18; }
+.status-current .card-class-num { color: var(--teal);   opacity: .22; }
+.status-dev     .card-class-num { color: var(--amber);  opacity: .18; }
+.status-soon    .card-class-num { color: var(--muted);  opacity: .08; }
+
+.status-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+  padding: 4px 10px; border-radius: 4px; white-space: nowrap;
+}
+.badge-dev     { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(227,179,65,.3); }
+.badge-active  { background: var(--green-dim); color: var(--green); border: 1px solid rgba(74,222,128,.3); }
+.badge-current { background: var(--teal-dim);  color: var(--teal);  border: 1px solid rgba(57,208,216,.3); }
+.badge-soon    { background: var(--surface2);  color: var(--muted); border: 1px solid var(--border); }
+
+/* Card body */
+.card-body {
+  padding: 16px 24px 20px; flex: 1; display: flex; flex-direction: column; gap: 10px;
+}
+.card-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  text-transform: uppercase; letter-spacing: .1em; color: var(--muted);
+}
+.card-title { font-size: 18px; font-weight: 700; line-height: 1.2; }
+.card-desc  { font-size: 13px; color: var(--muted); line-height: 1.6; flex: 1; }
+
+/* Topics list */
+.card-topics {
+  display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px;
+}
+.topic {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--muted); padding: 3px 8px; border-radius: 4px;
+}
+.topic.active-topic { color: var(--teal); border-color: rgba(57,208,216,.2); background: var(--teal-dim); }
+
+/* Card files / links */
+.card-files { padding: 0 24px 20px; display: flex; flex-direction: column; gap: 6px; }
+
+.file-link {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 12px; border-radius: 7px;
+  background: var(--surface2); border: 1px solid var(--border);
+  text-decoration: none; color: var(--text);
+  font-size: 13px; font-family: 'JetBrains Mono', monospace;
+  transition: all .2s;
+}
+.file-link:hover { border-color: var(--teal); color: var(--teal); }
+.file-link .fl-icon { font-size: 14px; flex-shrink: 0; }
+.file-link .fl-name { flex: 1; font-size: 12px; }
+.file-link .fl-type {
+  font-size: 10px; color: var(--muted);
+  background: var(--bg); border: 1px solid var(--border);
+  padding: 1px 6px; border-radius: 3px;
+}
+
+.card-dev-msg {
+  padding: 12px 24px 20px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  color: var(--amber); opacity: .7;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-soon-msg {
+  padding: 12px 24px 20px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  color: var(--muted); opacity: .6;
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* Pulsing dot for dev */
+.pulse-dot {
+  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+}
+.pulse-dot.amber {
+  background: var(--amber);
+  animation: pulse-amber 2s ease-in-out infinite;
+}
+@keyframes pulse-amber {
+  0%,100%{ box-shadow: 0 0 0 0 rgba(227,179,65,.4); }
+  50%    { box-shadow: 0 0 0 5px rgba(227,179,65,0); }
+}
+
+/* ── ABOUT STRIP ── */
+.about-strip {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  padding: 40px 2.5rem; margin-bottom: 0;
+}
+.about-inner {
+  max-width: 1000px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px;
+}
+@media (max-width: 700px) { .about-inner { grid-template-columns: 1fr; gap: 20px; } }
+
+.about-item {}
+.about-item .ai-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  text-transform: uppercase; letter-spacing: .1em; color: var(--teal);
+  margin-bottom: 8px;
+}
+.about-item .ai-text { font-size: 14px; color: var(--muted); line-height: 1.65; }
+.about-item .ai-text strong { color: var(--text); }
+
+/* ── FOOTER ── */
+footer {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--border);
+  padding: 28px 2.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+}
+.footer-brand {
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted);
+}
+.footer-brand span { color: var(--teal); }
+.footer-links { display: flex; gap: 16px; }
+.footer-links a {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  color: var(--muted); text-decoration: none;
+  transition: color .2s;
+}
+.footer-links a:hover { color: var(--text); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  nav { padding: 0 1.2rem; }
+  .nav-period { display: none; }
+  .hero-title { letter-spacing: -.01em; }
+  .stats-row { gap: 20px; }
+  footer { flex-direction: column; align-items: center; text-align: center; }
+}
 </style>
 </head>
 <body>
 
 <!-- NAV -->
 <nav>
-  <div class="nav-brand">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-      <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
-    </svg>
-    python<span>/listas</span>
+  <div class="nav-logo">
+    <span class="bracket">{</span>
+    <span class="name">EDD</span>
+    <span class="bracket">}</span>
+    <span class="inst">Instituto Tecnológico de Negocios</span>
   </div>
-  <div class="nav-links">
-    <a href="#reto-1">01</a>
-    <a href="#reto-2">02</a>
-    <a href="#reto-3">03</a>
-    <a href="#reto-4">04</a>
+  <div class="nav-right">
+    <div class="nav-period">Período 2025 · 2026</div>
+    <div class="nav-dot"></div>
   </div>
 </nav>
 
 <!-- HERO -->
-<div class="hero">
-  <div class="hero-badge">
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-    Parte 1 — Introducción a las Listas
+<section class="hero">
+  <div class="hero-kicker">Instituto Tecnológico de Negocios · Python</div>
+
+  <!-- Terminal -->
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="term-dots"><span class="td1"></span><span class="td2"></span><span class="td3"></span></div>
+      <div class="term-title">python — edd_itb</div>
+    </div>
+    <div class="term-body" id="term-output">
+      <span class="t-prompt">→ </span><span class="t-cmd" id="term-line"></span><span class="t-cursor" id="term-cursor"></span>
+    </div>
   </div>
-  <h1>
-    <span class="dim">list</span><span class="accent">[ ]</span><br>
-    Domina las listas<br>en Python
+
+  <h1 class="hero-title">
+    <span class="line1">Materia</span>
+    Estructuras <span class="hl">Dinámicas</span><br>de <span class="hl2">Datos</span>
   </h1>
-  <p>4 retos progresivos para entender agregar, eliminar, recorrer y ordenar elementos. Incluye código descargable para VS Code.</p>
-  <div class="hero-meta">
-    <span><span class="dot"></span> 4 retos</span>
-    <span><span class="dot"></span> Nivel: intermedio</span>
-    <span><span class="dot"></span> Python 3.x</span>
-    <span><span class="dot"></span> Sin librerías externas</span>
+
+  <p class="hero-sub">
+    Aprende a organizar, manipular y aplicar las estructuras de datos más importantes en
+    <strong>Python</strong>: listas, pilas, colas y más — con ejemplos reales y código descargable.
+  </p>
+
+  <div class="stats-row">
+    <div class="stat"><div class="stat-n sn-teal">6</div><div class="stat-l">Clases</div></div>
+    <div class="stat"><div class="stat-n sn-green">2</div><div class="stat-l">Disponibles</div></div>
+    <div class="stat"><div class="stat-n sn-amber">1</div><div class="stat-l">En desarrollo</div></div>
+    <div class="stat"><div class="stat-n sn-muted">3</div><div class="stat-l">Próximamente</div></div>
+  </div>
+
+  <a href="#clases" class="hero-cta">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    Ver todas las clases
+  </a>
+
+  <div class="scroll-hint">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    scroll
+  </div>
+</section>
+
+<!-- ABOUT STRIP -->
+<div class="about-strip">
+  <div class="about-inner">
+    <div class="about-item">
+      <div class="ai-label">// Objetivo</div>
+      <div class="ai-text">Comprender las <strong>estructuras de datos abstractas lineales</strong> y aplicarlas en la resolución de problemas reales usando Python sin librerías externas.</div>
+    </div>
+    <div class="about-item">
+      <div class="ai-label">// Metodología</div>
+      <div class="ai-text">Cada clase incluye una <strong>página de referencia</strong> con teoría y retos, una <strong>actividad guiada</strong> para elaborar en clase y un <strong>taller por grupos</strong> con clave de acceso.</div>
+    </div>
+    <div class="about-item">
+      <div class="ai-label">// Requisitos</div>
+      <div class="ai-text"><strong>Python 3.x</strong> instalado y <strong>VS Code</strong> con la extensión de Python. Todo el código es descargable desde cada página. Sin instalaciones adicionales.</div>
+    </div>
   </div>
 </div>
 
-<div class="container">
+<!-- CLASES GRID -->
+<section class="section" id="clases">
+  <div class="section-eyebrow">// Contenido del curso</div>
 
-  <!-- PREREQ -->
-  <div class="prereq">
-    <div class="prereq-icon">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    </div>
-    <div class="prereq-text">
-      <strong>Antes de empezar</strong> — Asegúrate de tener <strong>Python 3.x</strong> instalado y <strong>VS Code</strong> con la extensión de Python. Descarga cada archivo <code>.py</code>, ábrelo en VS Code y ejecútalo con <strong>▶ Run Python File</strong> o presiona <code>F5</code>.
-    </div>
-  </div>
+  <div class="class-grid">
 
-  <!-- INTRO CONCEPTOS -->
-  <div class="intro-box">
-    <h2>// Métodos clave que usarás en estos retos</h2>
-    <div class="concept-grid">
-      <div class="concept-pill"><div class="method">lista.append(x)</div><div class="desc">Agrega x al final</div></div>
-      <div class="concept-pill"><div class="method">lista.remove(x)</div><div class="desc">Elimina primera ocurrencia</div></div>
-      <div class="concept-pill"><div class="method">lista.sort()</div><div class="desc">Ordena en el lugar</div></div>
-      <div class="concept-pill"><div class="method">sorted(lista)</div><div class="desc">Retorna nueva lista ordenada</div></div>
-      <div class="concept-pill"><div class="method">x in lista</div><div class="desc">Busca elemento, retorna bool</div></div>
-      <div class="concept-pill"><div class="method">len(lista)</div><div class="desc">Cantidad de elementos</div></div>
-      <div class="concept-pill"><div class="method">lista.count(x)</div><div class="desc">Cuenta ocurrencias de x</div></div>
-      <div class="concept-pill"><div class="method">lista.insert(i, x)</div><div class="desc">Inserta en posición i</div></div>
-    </div>
-  </div>
-
-  <!-- RETOS -->
-  <div class="retos">
-
-    <!-- ────────── RETO 1 ────────── -->
-    <div class="reto" id="reto-1">
-      <div class="reto-header">
-        <div class="reto-num">RETO 01</div>
-        <div>
-          <div class="reto-title">Lista de compras inteligente</div>
-          <div class="reto-subtitle">Gestión básica: agregar, eliminar, buscar y mostrar</div>
-        </div>
-        <div class="reto-tag">
-          <span class="tag tag-blue">append</span>
-          <span class="tag tag-blue">remove</span>
-          <span class="tag tag-purple">in</span>
+    <!-- CLASE 1 — EN DESARROLLO -->
+    <div class="class-card status-dev">
+      <div class="card-accent acc-dev"></div>
+      <div class="card-top">
+        <div class="card-class-num">01</div>
+        <div class="status-badge badge-dev">
+          <span class="pulse-dot amber" style="display:inline-block;margin-right:5px"></span>
+          En desarrollo
         </div>
       </div>
-
-      <div class="reto-body">
-        <div>
-          <div class="steps-label">// Paso a paso</div>
-          <div class="steps">
-            <div class="step"><div class="step-n">1</div><div class="step-text">Crea una lista vacía llamada <code class="step-code">compras</code> y un menú con <span class="step-code">while True</span></div></div>
-            <div class="step"><div class="step-n">2</div><div class="step-text">Opción Agregar: pide el producto con <span class="step-code">input()</span> y usa <span class="step-code">.append()</span></div></div>
-            <div class="step"><div class="step-n">3</div><div class="step-text">Opción Eliminar: verifica con <span class="step-code">in</span> antes de llamar <span class="step-code">.remove()</span></div></div>
-            <div class="step"><div class="step-n">4</div><div class="step-text">Opción Buscar: usa <span class="step-code">if producto in compras</span> e imprime la posición con <span class="step-code">.index()</span></div></div>
-            <div class="step"><div class="step-n">5</div><div class="step-text">Opción Mostrar: recorre con <span class="step-code">enumerate()</span> para mostrar número + producto</div></div>
-            <div class="step"><div class="step-n">6</div><div class="step-text">Valida que no se agreguen productos duplicados antes del append</div></div>
-          </div>
-          <div style="margin-top:20px;">
-            <div class="steps-label">// Objetivos del reto</div>
-            <ul class="objetivos">
-              <li>Gestionar una lista con un menú interactivo</li>
-              <li>Prevenir duplicados con la condición <code class="step-code">in</code></li>
-              <li>Mostrar posición de un producto encontrado</li>
-              <li>Manejar el error si el producto no existe</li>
-            </ul>
-          </div>
-        </div>
-        <div>
-          <div class="code-block">
-            <div class="code-bar">
-              <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
-              <div class="code-filename">compras.py — esqueleto</div>
-              <button class="code-copy" onclick="copyCode(this, 'code1')">copiar</button>
-            </div>
-            <div class="code-body" id="code1"><span class="cm"># 🛒 Lista de Compras Inteligente
-# Completa las secciones marcadas con TODO</span>
-
-<span class="var">compras</span> <span class="op">=</span> []  <span class="cm"># tu lista vacía</span>
-
-<span class="kw">while</span> <span class="kw">True</span>:
-    <span class="fn">print</span>(<span class="str">"\n--- MENÚ ---"</span>)
-    <span class="fn">print</span>(<span class="str">"1. Agregar producto"</span>)
-    <span class="fn">print</span>(<span class="str">"2. Eliminar producto"</span>)
-    <span class="fn">print</span>(<span class="str">"3. Buscar producto"</span>)
-    <span class="fn">print</span>(<span class="str">"4. Ver lista"</span>)
-    <span class="fn">print</span>(<span class="str">"5. Salir"</span>)
-
-    <span class="var">opcion</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"Elige: "</span>)
-
-    <span class="kw">if</span> <span class="var">opcion</span> <span class="op">==</span> <span class="str">"1"</span>:
-        <span class="var">producto</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"Producto: "</span>)
-        <span class="cm"># TODO: verificar duplicado y agregar</span>
-
-    <span class="kw">elif</span> <span class="var">opcion</span> <span class="op">==</span> <span class="str">"2"</span>:
-        <span class="var">producto</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"¿Cuál eliminar? "</span>)
-        <span class="cm"># TODO: verificar que existe y eliminar</span>
-
-    <span class="kw">elif</span> <span class="var">opcion</span> <span class="op">==</span> <span class="str">"3"</span>:
-        <span class="cm"># TODO: buscar y mostrar posición</span>
-        <span class="kw">pass</span>
-
-    <span class="kw">elif</span> <span class="var">opcion</span> <span class="op">==</span> <span class="str">"4"</span>:
-        <span class="cm"># TODO: mostrar con enumerate()</span>
-        <span class="kw">pass</span>
-
-    <span class="kw">elif</span> <span class="var">opcion</span> <span class="op">==</span> <span class="str">"5"</span>:
-        <span class="kw">break</span></div>
-          </div>
+      <div class="card-body">
+        <div class="card-label">Clase 1</div>
+        <div class="card-title">Introducción a las Estructuras de Datos</div>
+        <div class="card-desc">Conceptos fundamentales: tipos abstractos de datos, clasificación de estructuras, y la diferencia entre estructura estática y dinámica.</div>
+        <div class="card-topics">
+          <span class="topic">TAD</span>
+          <span class="topic">Clasificación</span>
+          <span class="topic">Estática vs Dinámica</span>
+          <span class="topic">Algoritmos base</span>
         </div>
       </div>
-      <div class="reto-footer">
-        <div class="note">$ python compras.py</div>
-        <button class="btn-download" onclick="downloadCode(1)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Descargar compras.py
-        </button>
+      <div class="card-dev-msg">
+        <span class="pulse-dot amber"></span>
+        Contenido en preparación — disponible pronto
       </div>
     </div>
 
-    <!-- ────────── RETO 2 ────────── -->
-    <div class="reto" id="reto-2">
-      <div class="reto-header">
-        <div class="reto-num">RETO 02</div>
-        <div>
-          <div class="reto-title">Registro de asistencia</div>
-          <div class="reto-subtitle">Recorrido de listas, ordenamiento y conteo</div>
-        </div>
-        <div class="reto-tag">
-          <span class="tag tag-blue">sort()</span>
-          <span class="tag tag-purple">len()</span>
-          <span class="tag tag-orange">for loop</span>
+    <!-- CLASE 2 — DISPONIBLE -->
+    <div class="class-card status-active">
+      <div class="card-accent acc-active"></div>
+      <div class="card-top">
+        <div class="card-class-num">02</div>
+        <div class="status-badge badge-active">✓ Disponible</div>
+      </div>
+      <div class="card-body">
+        <div class="card-label">Clase 2</div>
+        <div class="card-title">Tipos Abstractos — Listas</div>
+        <div class="card-desc">Listas de Python (array dinámico): agregar, eliminar, buscar, recorrer y ordenar elementos con casos reales.</div>
+        <div class="card-topics">
+          <span class="topic active-topic">append()</span>
+          <span class="topic active-topic">remove()</span>
+          <span class="topic active-topic">sort()</span>
+          <span class="topic active-topic">enumerate()</span>
+          <span class="topic active-topic">in / index()</span>
         </div>
       </div>
-
-      <div class="reto-body">
-        <div>
-          <div class="steps-label">// Paso a paso</div>
-          <div class="steps">
-            <div class="step"><div class="step-n">1</div><div class="step-text">Crea la lista <span class="step-code">presentes</span> y registra nombres con un loop hasta que el usuario ingrese "listo"</div></div>
-            <div class="step"><div class="step-n">2</div><div class="step-text">Normaliza cada nombre con <span class="step-code">.strip().title()</span> antes de guardarlo</div></div>
-            <div class="step"><div class="step-n">3</div><div class="step-text">Muestra el total usando <span class="step-code">len(presentes)</span></div></div>
-            <div class="step"><div class="step-n">4</div><div class="step-text">Ordena la lista con <span class="step-code">.sort()</span> e imprime cada nombre numerado</div></div>
-            <div class="step"><div class="step-n">5</div><div class="step-text">Muestra quién llegó primero accediendo a <span class="step-code">presentes[0]</span> (antes de ordenar)</div></div>
-          </div>
-          <div style="margin-top:20px;">
-            <div class="steps-label">// Objetivos del reto</div>
-            <ul class="objetivos">
-              <li>Registrar datos dinámicamente con input en loop</li>
-              <li>Normalizar texto con métodos de string</li>
-              <li>Ordenar una lista en su lugar con <code class="step-code">.sort()</code></li>
-              <li>Diferenciar lista original vs ordenada</li>
-            </ul>
-          </div>
-        </div>
-        <div>
-          <div class="code-block">
-            <div class="code-bar">
-              <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
-              <div class="code-filename">asistencia.py — esqueleto</div>
-              <button class="code-copy" onclick="copyCode(this, 'code2')">copiar</button>
-            </div>
-            <div class="code-body" id="code2"><span class="cm"># 📋 Registro de Asistencia
-# Completa las secciones marcadas con TODO</span>
-
-<span class="var">presentes</span> <span class="op">=</span> []
-<span class="var">primero</span> <span class="op">=</span> <span class="kw">None</span>
-
-<span class="fn">print</span>(<span class="str">"Ingresa nombres. Escribe 'listo' para terminar."</span>)
-
-<span class="kw">while</span> <span class="kw">True</span>:
-    <span class="var">nombre</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"Nombre: "</span>)
-
-    <span class="kw">if</span> <span class="var">nombre</span>.<span class="fn">lower</span>() <span class="op">==</span> <span class="str">"listo"</span>:
-        <span class="kw">break</span>
-
-    <span class="cm"># TODO: normalizar con .strip().title()</span>
-    <span class="cm"># TODO: guardar el primero en 'primero'</span>
-    <span class="cm"># TODO: agregar a presentes si no está duplicado</span>
-
-<span class="cm"># Mostrar resultados</span>
-<span class="fn">print</span>(<span class="str">f"\nTotal asistentes: {<span class="fn">len</span>(<span class="var">presentes</span>)}"</span>)
-<span class="fn">print</span>(<span class="str">f"Llegó primero: {<span class="var">primero</span>}"</span>)
-
-<span class="cm"># TODO: ordenar y mostrar lista numerada</span>
-<span class="fn">print</span>(<span class="str">"\n--- Lista ordenada ---"</span>)
-<span class="cm"># for i, nombre in enumerate(presentes, 1):</span>
-<span class="cm">#     print(...)</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="reto-footer">
-        <div class="note">$ python asistencia.py</div>
-        <button class="btn-download" onclick="downloadCode(2)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Descargar asistencia.py
-        </button>
+      <div class="card-files">
+        <a class="file-link" href="python-listas.html">
+          <span class="fl-icon">📖</span>
+          <span class="fl-name">python-listas.html</span>
+          <span class="fl-type">referencia</span>
+        </a>
+        <a class="file-link" href="taller-listas.html">
+          <span class="fl-icon">🔐</span>
+          <span class="fl-name">taller-listas.html</span>
+          <span class="fl-type">taller grupos</span>
+        </a>
       </div>
     </div>
 
-    <!-- ────────── RETO 3 ────────── -->
-    <div class="reto" id="reto-3">
-      <div class="reto-header">
-        <div class="reto-num">RETO 03</div>
-        <div>
-          <div class="reto-title">Encuesta rápida</div>
-          <div class="reto-subtitle">Listas, conteo y cálculo de porcentajes</div>
-        </div>
-        <div class="reto-tag">
-          <span class="tag tag-blue">count()</span>
-          <span class="tag tag-purple">len()</span>
-          <span class="tag tag-orange">%</span>
+    <!-- CLASE 3 — DISPONIBLE (ACTUAL) -->
+    <div class="class-card status-current">
+      <div class="card-accent acc-current"></div>
+      <div class="card-top">
+        <div class="card-class-num">03</div>
+        <div class="status-badge badge-current">● Clase actual</div>
+      </div>
+      <div class="card-body">
+        <div class="card-label">Clase 3</div>
+        <div class="card-title">Tipos Abstractos — Pilas (Stack)</div>
+        <div class="card-desc">Principio LIFO, operaciones push/pop/peek e implementación con listas de Python. Historial de navegación, deshacer acciones y validación de paréntesis.</div>
+        <div class="card-topics">
+          <span class="topic active-topic">LIFO</span>
+          <span class="topic active-topic">push / pop</span>
+          <span class="topic active-topic">peek [-1]</span>
+          <span class="topic active-topic">dos pilas</span>
         </div>
       </div>
-
-      <div class="reto-body">
-        <div>
-          <div class="steps-label">// Paso a paso</div>
-          <div class="steps">
-            <div class="step"><div class="step-n">1</div><div class="step-text">Define la pregunta y crea la lista <span class="step-code">respuestas</span></div></div>
-            <div class="step"><div class="step-n">2</div><div class="step-text">En un loop, acepta solo "si" o "no" (usa <span class="step-code">.lower()</span> para validar)</div></div>
-            <div class="step"><div class="step-n">3</div><div class="step-text">Usa <span class="step-code">respuestas.count("si")</span> y <span class="step-code">.count("no")</span> para contar</div></div>
-            <div class="step"><div class="step-n">4</div><div class="step-text">Calcula porcentajes dividiendo entre <span class="step-code">len(respuestas)</span> y multiplicando por 100</div></div>
-            <div class="step"><div class="step-n">5</div><div class="step-text">Muestra una barra visual proporcional usando caracteres <span class="step-code">█</span></div></div>
-          </div>
-          <div style="margin-top:20px;">
-            <div class="steps-label">// Objetivos del reto</div>
-            <ul class="objetivos">
-              <li>Validar entradas del usuario en loop</li>
-              <li>Usar <code class="step-code">.count()</code> para analizar datos</li>
-              <li>Calcular y formatear porcentajes</li>
-              <li>Crear visualización básica en consola</li>
-            </ul>
-          </div>
-        </div>
-        <div>
-          <div class="code-block">
-            <div class="code-bar">
-              <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
-              <div class="code-filename">encuesta.py — esqueleto</div>
-              <button class="code-copy" onclick="copyCode(this, 'code3')">copiar</button>
-            </div>
-            <div class="code-body" id="code3"><span class="cm"># 📊 Encuesta Rápida Sí/No
-# Completa las secciones marcadas con TODO</span>
-
-<span class="var">pregunta</span> <span class="op">=</span> <span class="str">"¿Prefieres trabajar en equipo?"</span>
-<span class="var">respuestas</span> <span class="op">=</span> []
-<span class="var">n_estudiantes</span> <span class="op">=</span> <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"¿Cuántos estudiantes? "</span>))
-
-<span class="fn">print</span>(<span class="str">f"\n{<span class="var">pregunta</span>}"</span>)
-
-<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="var">n_estudiantes</span>):
-    <span class="kw">while</span> <span class="kw">True</span>:
-        <span class="var">r</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">f"Estudiante {<span class="var">i</span><span class="op">+</span><span class="num">1</span>} (si/no): "</span>).<span class="fn">lower</span>()
-        <span class="cm"># TODO: validar que sea "si" o "no"</span>
-        <span class="cm"># TODO: guardar en respuestas y salir del while</span>
-        <span class="kw">pass</span>
-
-<span class="cm"># TODO: contar "si" y "no"</span>
-<span class="var">total_si</span> <span class="op">=</span> <span class="num">0</span>   <span class="cm"># reemplaza con .count()</span>
-<span class="var">total_no</span> <span class="op">=</span> <span class="num">0</span>   <span class="cm"># reemplaza con .count()</span>
-
-<span class="cm"># TODO: calcular porcentajes y mostrar resultados</span>
-<span class="fn">print</span>(<span class="str">"\n--- Resultados ---"</span>)
-<span class="cm"># Sí: X votos (XX.X%)</span>
-<span class="cm"># No: X votos (XX.X%)</span>
-<span class="cm"># Barra visual: "Sí: " + "█" * int(pct_si / 5)</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="reto-footer">
-        <div class="note">$ python encuesta.py</div>
-        <button class="btn-download" onclick="downloadCode(3)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Descargar encuesta.py
-        </button>
+      <div class="card-files">
+        <a class="file-link" href="clase3-pilas.html">
+          <span class="fl-icon">📖</span>
+          <span class="fl-name">clase3-pilas.html</span>
+          <span class="fl-type">referencia</span>
+        </a>
+        <a class="file-link" href="clase3-actividad.html">
+          <span class="fl-icon">💻</span>
+          <span class="fl-name">clase3-actividad.html</span>
+          <span class="fl-type">práctica aula</span>
+        </a>
+        <a class="file-link" href="clase3-taller.html">
+          <span class="fl-icon">🔐</span>
+          <span class="fl-name">clase3-taller.html</span>
+          <span class="fl-type">taller grupos</span>
+        </a>
       </div>
     </div>
 
-    <!-- ────────── RETO 4 ────────── -->
-    <div class="reto" id="reto-4">
-      <div class="reto-header">
-        <div class="reto-num">RETO 04</div>
-        <div>
-          <div class="reto-title">Ranking de videojuegos</div>
-          <div class="reto-subtitle">Inserción, tuplas y ordenamiento por valor</div>
-        </div>
-        <div class="reto-tag">
-          <span class="tag tag-blue">sort(key=)</span>
-          <span class="tag tag-purple">tuplas</span>
-          <span class="tag tag-orange">lambda</span>
+    <!-- CLASE 4 -->
+    <div class="class-card status-soon">
+      <div class="card-accent acc-soon"></div>
+      <div class="card-top">
+        <div class="card-class-num">04</div>
+        <div class="status-badge badge-soon">Próximamente</div>
+      </div>
+      <div class="card-body">
+        <div class="card-label">Clase 4</div>
+        <div class="card-title">Tipos Abstractos — Colas (Queue)</div>
+        <div class="card-desc">Principio FIFO, operaciones enqueue/dequeue y casos de uso reales: fila de impresión, sistema de tickets y simulación de turnos.</div>
+        <div class="card-topics">
+          <span class="topic">FIFO</span>
+          <span class="topic">enqueue</span>
+          <span class="topic">dequeue</span>
+          <span class="topic">deque</span>
         </div>
       </div>
-
-      <div class="reto-body">
-        <div>
-          <div class="steps-label">// Paso a paso</div>
-          <div class="steps">
-            <div class="step"><div class="step-n">1</div><div class="step-text">Crea lista <span class="step-code">juegos</span> donde cada elemento sea una tupla <span class="step-code">(nombre, votos)</span></div></div>
-            <div class="step"><div class="step-n">2</div><div class="step-text">En cada iteración, pide nombre y votos, construye la tupla y la agrega con <span class="step-code">.append()</span></div></div>
-            <div class="step"><div class="step-n">3</div><div class="step-text">Ordena con <span class="step-code">.sort(key=lambda x: x[1], reverse=True)</span> para mayor a menor</div></div>
-            <div class="step"><div class="step-n">4</div><div class="step-text">Muestra el ranking con posición, nombre y votos, destacando el 🥇 primero</div></div>
-            <div class="step"><div class="step-n">5</div><div class="step-text">Añade opción para votar a un juego existente sumando a su contador de votos</div></div>
-          </div>
-          <div style="margin-top:20px;">
-            <div class="steps-label">// Objetivos del reto</div>
-            <ul class="objetivos">
-              <li>Almacenar pares de datos con tuplas en lista</li>
-              <li>Ordenar por un campo específico con <code class="step-code">key=</code></li>
-              <li>Usar <code class="step-code">lambda</code> como función de ordenamiento</li>
-              <li>Actualizar datos dentro de tuplas</li>
-            </ul>
-          </div>
-        </div>
-        <div>
-          <div class="code-block">
-            <div class="code-bar">
-              <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
-              <div class="code-filename">ranking.py — esqueleto</div>
-              <button class="code-copy" onclick="copyCode(this, 'code4')">copiar</button>
-            </div>
-            <div class="code-body" id="code4"><span class="cm"># 🎮 Ranking de Videojuegos
-# Completa las secciones marcadas con TODO</span>
-
-<span class="var">juegos</span> <span class="op">=</span> []  <span class="cm"># lista de tuplas (nombre, votos)</span>
-
-<span class="var">n</span> <span class="op">=</span> <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"¿Cuántos juegos registrar? "</span>))
-
-<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="var">n</span>):
-    <span class="var">nombre</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">f"Juego {<span class="var">i</span><span class="op">+</span><span class="num">1</span>} - Nombre: "</span>)
-    <span class="var">votos</span> <span class="op">=</span> <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"  Votos iniciales: "</span>))
-    <span class="cm"># TODO: crear tupla y agregar a juegos</span>
-
-<span class="cm"># Votar por un juego</span>
-<span class="var">voto_juego</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"\n¿A qué juego votar? "</span>)
-<span class="cm"># TODO: buscar el juego, actualizar votos</span>
-<span class="cm"># Pista: las tuplas son inmutables, recrea la tupla</span>
-<span class="cm"># juegos[i] = (nombre, votos + 1)</span>
-
-<span class="cm"># TODO: ordenar por votos de mayor a menor</span>
-<span class="cm"># juegos.sort(key=lambda x: x[1], reverse=True)</span>
-
-<span class="fn">print</span>(<span class="str">"\n🏆 RANKING FINAL"</span>)
-<span class="cm"># TODO: mostrar ranking con posición y medallas</span>
-<span class="cm"># medallas = ["🥇", "🥈", "🥉"]</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="reto-footer">
-        <div class="note">$ python ranking.py</div>
-        <button class="btn-download" onclick="downloadCode(4)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Descargar ranking.py
-        </button>
+      <div class="card-soon-msg">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Disponible en la próxima clase
       </div>
     </div>
 
-  </div><!-- /retos -->
-</div><!-- /container -->
+    <!-- CLASE 5 -->
+    <div class="class-card status-soon">
+      <div class="card-accent acc-soon"></div>
+      <div class="card-top">
+        <div class="card-class-num">05</div>
+        <div class="status-badge badge-soon">Próximamente</div>
+      </div>
+      <div class="card-body">
+        <div class="card-label">Clase 5</div>
+        <div class="card-title">Por definir</div>
+        <div class="card-desc">Contenido en planificación. Se anunciará el tema antes del inicio de la clase.</div>
+        <div class="card-topics">
+          <span class="topic">—</span>
+        </div>
+      </div>
+      <div class="card-soon-msg">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Próximamente
+      </div>
+    </div>
 
+    <!-- CLASE 6 -->
+    <div class="class-card status-soon">
+      <div class="card-accent acc-soon"></div>
+      <div class="card-top">
+        <div class="card-class-num">06</div>
+        <div class="status-badge badge-soon">Próximamente</div>
+      </div>
+      <div class="card-body">
+        <div class="card-label">Clase 6</div>
+        <div class="card-title">Por definir</div>
+        <div class="card-desc">Contenido en planificación. Se anunciará el tema antes del inicio de la clase.</div>
+        <div class="card-topics">
+          <span class="topic">—</span>
+        </div>
+      </div>
+      <div class="card-soon-msg">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Próximamente
+      </div>
+    </div>
+
+  </div><!-- /class-grid -->
+</section>
+
+<!-- FOOTER -->
 <footer>
-  ITB — Instituto Tecnológico de Negocios &nbsp;·&nbsp; Python <span>list[ ]</span> Parte 1
+  <div class="footer-brand">
+    <span>{ EDD }</span> &nbsp;·&nbsp; Instituto Tecnológico de Negocios &nbsp;·&nbsp; Python 3.x
+  </div>
+  <div class="footer-links">
+    <a href="README.md">README</a>
+    <a href="https://www.python.org/downloads/" target="_blank">Python ↗</a>
+    <a href="https://code.visualstudio.com/" target="_blank">VS Code ↗</a>
+  </div>
 </footer>
 
 <script>
-// ── COPY CODE ──
-function copyCode(btn, id) {
-  const el = document.getElementById(id);
-  // extract plain text from the syntax-highlighted spans
-  const text = el.innerText;
-  navigator.clipboard.writeText(text).then(() => {
-    btn.textContent = '✓ copiado';
-    setTimeout(() => btn.textContent = 'copiar', 2000);
-  });
-}
+/* ── TERMINAL TYPEWRITER ── */
+const lines = [
+  { text: 'import estructuras_datos as edd', delay: 60 },
+  { text: 'edd.clases_disponibles()', delay: 55 },
+];
 
-// ── DOWNLOAD .py FILES ──
-const codes = {
-  1: {
-    name: 'compras.py',
-    code: `# 🛒 Lista de Compras Inteligente
-# Completa las secciones marcadas con TODO
+const outputs = [
+  '<span class="t-out">  ✓ Clase 2: Listas     [disponible]</span>',
+  '<span class="t-out">  ✓ Clase 3: Pilas      [</span><span class="t-teal">actual</span><span class="t-out">]</span>',
+  '<span class="t-out">  ○ Clase 4: Colas      [próximamente]</span>',
+];
 
-compras = []  # tu lista vacía
+const termLine   = document.getElementById('term-line');
+const termCursor = document.getElementById('term-cursor');
+const termOutput = document.getElementById('term-output');
 
-while True:
-    print("\\n--- MENÚ ---")
-    print("1. Agregar producto")
-    print("2. Eliminar producto")
-    print("3. Buscar producto")
-    print("4. Ver lista")
-    print("5. Salir")
+let phase = 0, charIdx = 0, outIdx = 0;
 
-    opcion = input("Elige: ")
+function typeChar() {
+  if (phase >= lines.length) return;
+  const current = lines[phase];
+  if (charIdx < current.text.length) {
+    termLine.textContent += current.text[charIdx];
+    charIdx++;
+    setTimeout(typeChar, current.delay);
+  } else {
+    // line done → add to output, start next line after pause
+    const done = document.createElement('div');
+    done.innerHTML = `<span class="t-prompt">→ </span><span style="color:var(--text)">${current.text}</span>`;
+    termOutput.insertBefore(done, termOutput.firstChild.nextSibling || null);
 
-    if opcion == "1":
-        producto = input("Producto: ").strip().lower()
-        # TODO: verificar duplicado y agregar
-        # if producto not in compras:
-        #     compras.append(producto)
-        # else:
-        #     print("Ya está en la lista.")
+    if (phase === 1) {
+      // print output lines
+      let delay = 300;
+      outputs.forEach(html => {
+        setTimeout(() => {
+          const el = document.createElement('div');
+          el.innerHTML = html;
+          termOutput.appendChild(el);
+        }, delay);
+        delay += 220;
+      });
+      setTimeout(()=>{
+        const ready = document.createElement('div');
+        ready.innerHTML = `<span class="t-amber">  → Bienvenido al curso</span>`;
+        termOutput.appendChild(ready);
+      }, delay + 100);
+    }
 
-    elif opcion == "2":
-        producto = input("¿Cuál eliminar? ").strip().lower()
-        # TODO: verificar que existe y eliminar
-        # if producto in compras:
-        #     compras.remove(producto)
-        # else:
-        #     print("No encontrado.")
-
-    elif opcion == "3":
-        producto = input("¿Qué buscar? ").strip().lower()
-        # TODO: buscar y mostrar posición
-        # if producto in compras:
-        #     print(f"Encontrado en posición {compras.index(producto) + 1}")
-        # else:
-        #     print("No está en la lista.")
-
-    elif opcion == "4":
-        # TODO: mostrar con enumerate()
-        # for i, p in enumerate(compras, 1):
-        #     print(f"{i}. {p}")
-        pass
-
-    elif opcion == "5":
-        break
-`
-  },
-  2: {
-    name: 'asistencia.py',
-    code: `# 📋 Registro de Asistencia
-# Completa las secciones marcadas con TODO
-
-presentes = []
-primero = None
-
-print("Ingresa nombres. Escribe 'listo' para terminar.")
-
-while True:
-    nombre = input("Nombre: ")
-
-    if nombre.lower() == "listo":
-        break
-
-    # TODO: normalizar con .strip().title()
-    # nombre = nombre.strip().title()
-
-    # TODO: guardar el primero en 'primero'
-    # if primero is None:
-    #     primero = nombre
-
-    # TODO: agregar a presentes si no está duplicado
-    # if nombre not in presentes:
-    #     presentes.append(nombre)
-    # else:
-    #     print("Ese nombre ya fue registrado.")
-
-# Mostrar resultados
-print(f"\\nTotal asistentes: {len(presentes)}")
-print(f"Llegó primero: {primero}")
-
-# TODO: ordenar y mostrar lista numerada
-print("\\n--- Lista ordenada ---")
-# presentes.sort()
-# for i, nombre in enumerate(presentes, 1):
-#     print(f"{i}. {nombre}")
-`
-  },
-  3: {
-    name: 'encuesta.py',
-    code: `# 📊 Encuesta Rápida Sí/No
-# Completa las secciones marcadas con TODO
-
-pregunta = "¿Prefieres trabajar en equipo?"
-respuestas = []
-n_estudiantes = int(input("¿Cuántos estudiantes? "))
-
-print(f"\\n{pregunta}")
-
-for i in range(n_estudiantes):
-    while True:
-        r = input(f"Estudiante {i+1} (si/no): ").lower().strip()
-        # TODO: validar que sea "si" o "no"
-        # if r in ["si", "sí", "no"]:
-        #     respuestas.append(r)
-        #     break
-        # else:
-        #     print("Solo se acepta 'si' o 'no'.")
-
-# TODO: contar "si" y "no"
-total_si = 0   # reemplaza con respuestas.count("si")
-total_no = 0   # reemplaza con respuestas.count("no")
-total = len(respuestas)
-
-# TODO: calcular porcentajes y mostrar resultados
-print("\\n--- Resultados ---")
-# pct_si = (total_si / total) * 100
-# pct_no = (total_no / total) * 100
-# print(f"Sí: {total_si} votos ({pct_si:.1f}%)")
-# print(f"No: {total_no} votos ({pct_no:.1f}%)")
-# Barra visual:
-# print("Sí: " + "█" * int(pct_si / 5))
-# print("No: " + "█" * int(pct_no / 5))
-`
-  },
-  4: {
-    name: 'ranking.py',
-    code: `# 🎮 Ranking de Videojuegos
-# Completa las secciones marcadas con TODO
-
-juegos = []  # lista de tuplas (nombre, votos)
-
-n = int(input("¿Cuántos juegos registrar? "))
-
-for i in range(n):
-    nombre = input(f"Juego {i+1} - Nombre: ").strip()
-    votos = int(input("  Votos iniciales: "))
-    # TODO: crear tupla y agregar a juegos
-    # juegos.append((nombre, votos))
-
-# Votar por un juego
-voto_juego = input("\\n¿A qué juego votar? ").strip()
-# TODO: buscar el juego, actualizar votos
-# for i, (nombre, votos) in enumerate(juegos):
-#     if nombre.lower() == voto_juego.lower():
-#         juegos[i] = (nombre, votos + 1)
-#         print(f"Voto registrado para {nombre}!")
-#         break
-# else:
-#     print("Juego no encontrado.")
-
-# TODO: ordenar por votos de mayor a menor
-# juegos.sort(key=lambda x: x[1], reverse=True)
-
-print("\\n🏆 RANKING FINAL")
-medallas = ["🥇", "🥈", "🥉"]
-# TODO: mostrar ranking
-# for i, (nombre, votos) in enumerate(juegos):
-#     medalla = medallas[i] if i < 3 else f"{i+1}."
-#     print(f"{medalla}  {nombre} — {votos} votos")
-`
+    termLine.textContent = '';
+    phase++;
+    charIdx = 0;
+    if (phase < lines.length) setTimeout(typeChar, 700);
+    else termCursor.style.display = 'none';
   }
-};
-
-function downloadCode(num) {
-  const { name, code } = codes[num];
-  const blob = new Blob([code], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = name;
-  a.click();
-  URL.revokeObjectURL(url);
 }
+
+// Clear default content and start
+termOutput.innerHTML = '<span class="t-prompt">→ </span><span class="t-cmd" id="term-line"></span><span class="t-cursor" id="term-cursor"></span>';
+setTimeout(typeChar, 800);
+
+/* ── SMOOTH SCROLL ── */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
 </script>
 </body>
 </html>

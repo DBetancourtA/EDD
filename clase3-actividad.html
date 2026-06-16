@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Práctica de Aula 2 — Pilas · ITB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0D1117;
+  --surface:   #161B22;
+  --surface2:  #1C2129;
+  --border:    #30363D;
+  --green:     #4ADE80;
+  --green-dim: #1a4731;
+  --blue:      #79C0FF;
+  --purple:    #D2A8FF;
+  --orange:    #FFA657;
+  --red:       #FF7B72;
+  --yellow:    #E3B341;
+  --teal:      #39D0D8;
+  --teal-dim:  #0d3436;
+  --text:      #E6EDF3;
+  --muted:     #8B949E;
+  --radius:    10px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'Inter', sans-serif; font-size: 15px; line-height: 1.65;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(13,17,23,.9); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem; height: 54px; gap: 12px;
+}
+.nav-brand {
+  font-family: 'JetBrains Mono', monospace; font-weight: 700;
+  font-size: 14px; color: var(--teal);
+  display: flex; align-items: center; gap: 7px;
+}
+.nav-brand .sep { color: var(--border); }
+.nav-brand .dim { color: var(--muted); font-weight: 400; }
+.nav-timer {
+  font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  color: var(--yellow); display: flex; align-items: center; gap: 6px;
+}
+#timer-disp { font-size: 16px; font-weight: 700; min-width: 58px; }
+.tbtn {
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--muted); font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; padding: 3px 8px; border-radius: 5px; cursor: pointer;
+  transition: all .2s;
+}
+.tbtn:hover { color: var(--text); border-color: var(--muted); }
+.tbtn.on { background: var(--teal-dim); color: var(--teal); border-color: var(--teal); }
+.nav-day {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  background: rgba(57,208,216,.1); border: 1px solid rgba(57,208,216,.3);
+  color: var(--teal); padding: 3px 12px; border-radius: 20px;
+}
+
+/* ── HERO ── */
+.hero {
+  max-width: 860px; margin: 0 auto;
+  padding: 56px 1.5rem 40px; text-align: center;
+}
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  color: var(--muted); letter-spacing: .12em; text-transform: uppercase;
+  margin-bottom: 18px; display: flex; align-items: center;
+  justify-content: center; gap: 10px;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: ''; flex: 1; max-width: 60px; height: 1px; background: var(--border);
+}
+.hero h1 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1.8rem, 4.5vw, 3rem);
+  font-weight: 700; line-height: 1.1; margin-bottom: 8px;
+}
+.hero h1 .ac { color: var(--teal); }
+.hero h1 .dm { color: var(--muted); }
+.hero p { color: var(--muted); font-size: 15px; max-width: 520px; margin: 0 auto 28px; }
+.hero-meta {
+  display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+  color: var(--muted); font-size: 13px; font-family: 'JetBrains Mono', monospace;
+}
+.hero-meta span { display: flex; align-items: center; gap: 5px; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); display: inline-block; }
+
+/* ── WRAP ── */
+.wrap { max-width: 900px; margin: 0 auto; padding: 0 1.5rem 80px; }
+
+/* ── ORIENTACIONES BOX ── */
+.orient-box {
+  background: rgba(57,208,216,.05);
+  border: 1px solid rgba(57,208,216,.2);
+  border-radius: var(--radius); padding: 22px 26px; margin-bottom: 40px;
+}
+.orient-box h3 {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: var(--teal); margin-bottom: 12px;
+}
+.orient-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.orient-list li { font-size: 14px; color: var(--muted); display: flex; gap: 8px; }
+.orient-list li::before { content: '→'; color: var(--teal); flex-shrink: 0; }
+.orient-list li strong { color: var(--text); }
+
+/* ── DAY TABS ── */
+.day-tabs { display: flex; gap: 8px; margin-bottom: 32px; }
+.day-tab {
+  flex: 1; padding: 14px 16px; border-radius: var(--radius);
+  border: 1px solid var(--border); background: var(--surface);
+  cursor: pointer; transition: all .25s; text-align: center;
+}
+.day-tab:hover { border-color: var(--teal); }
+.day-tab.active { border-color: var(--teal); background: var(--teal-dim); }
+.day-tab .dt-num {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .08em;
+}
+.day-tab.active .dt-num { color: var(--teal); }
+.day-tab .dt-title { font-size: 14px; font-weight: 600; }
+.day-tab .dt-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* ── DAY PANELS ── */
+.day-panel { display: none; }
+.day-panel.active { display: block; }
+
+/* ── SECTION LABEL ── */
+.slabel {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  text-transform: uppercase; letter-spacing: .1em; color: var(--muted);
+  margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+}
+.slabel::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ── OBJECTIVE CARD ── */
+.obj-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px 28px; margin-bottom: 24px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 28px;
+}
+@media (max-width: 640px) { .obj-card { grid-template-columns: 1fr; } }
+.obj-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.obj-desc { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
+.obj-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.obj-list li { font-size: 13px; color: var(--muted); display: flex; gap: 8px; }
+.obj-list li::before { content: '▸'; color: var(--teal); font-size: 11px; margin-top: 4px; flex-shrink: 0; }
+
+/* ── TWO-STACK DIAGRAM ── */
+.stack-diagram {
+  background: #010409; border: 1px solid var(--border);
+  border-radius: 8px; padding: 18px;
+  display: flex; gap: 20px; justify-content: center; align-items: flex-end;
+}
+.stack-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.stack-col-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: var(--muted); margin-bottom: 6px;
+}
+.s-slot {
+  width: 130px; padding: 6px 10px; border-radius: 5px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  text-align: center; border: 1px solid var(--border);
+  background: var(--surface2); color: var(--muted);
+}
+.s-slot.top { border-color: var(--teal); color: var(--teal); background: var(--teal-dim); }
+.s-slot.url { color: var(--text); }
+.s-arrow {
+  font-family: 'JetBrains Mono', monospace; font-size: 18px;
+  color: var(--muted); align-self: center; padding-bottom: 30px;
+}
+.s-arrow.teal { color: var(--teal); }
+
+/* ── STEP-BY-STEP GUIDE ── */
+.guide { display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px; }
+
+.guide-step {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.guide-step-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 20px; border-bottom: 1px solid var(--border);
+  cursor: pointer; user-select: none;
+}
+.guide-step-header:hover { background: var(--surface2); }
+.gs-num {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+  color: var(--teal); background: var(--teal-dim);
+  border: 1px solid rgba(57,208,216,.3);
+  min-width: 28px; height: 28px; border-radius: 5px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.gs-title { font-size: 15px; font-weight: 600; flex: 1; }
+.gs-toggle {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  color: var(--muted); transition: transform .25s;
+}
+.guide-step.open .gs-toggle { transform: rotate(180deg); }
+
+.guide-step-body { display: none; padding: 20px; border-top: 1px solid var(--border); }
+.guide-step.open .guide-step-body { display: block; }
+
+.gs-desc { font-size: 14px; color: var(--muted); margin-bottom: 16px; line-height: 1.6; }
+.gs-desc strong { color: var(--text); }
+
+.gs-substeps { display: flex; flex-direction: column; gap: 9px; margin-bottom: 16px; }
+.gs-sub { display: flex; gap: 10px; align-items: flex-start; }
+.gs-sn {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--teal); background: var(--teal-dim);
+  border: 1px solid rgba(57,208,216,.25);
+  min-width: 20px; height: 20px; border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px; flex-shrink: 0; font-size: 10px;
+}
+.gs-st { font-size: 13px; color: var(--text); line-height: 1.5; }
+.ic {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--blue); padding: 1px 6px; border-radius: 4px;
+}
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: #010409; border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden; margin-top: 4px;
+}
+.code-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 14px; background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+.code-dots { display: flex; gap: 5px; }
+.code-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.d1{background:#FF5F56} .d2{background:#FFBD2E} .d3{background:#27C93F}
+.cfile { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+.btn-cp {
+  background: none; border: 1px solid var(--border); color: var(--muted);
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  padding: 3px 9px; border-radius: 4px; cursor: pointer; transition: all .2s;
+}
+.btn-cp:hover { color: var(--text); border-color: var(--muted); }
+.code-body {
+  padding: 16px 18px; overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8;
+  white-space: pre;
+}
+.kw  { color: #FF7B72; }
+.fn  { color: #79C0FF; }
+.str { color: #FFA657; }
+.cm  { color: #6A737D; font-style: italic; }
+.num { color: #D2A8FF; }
+.op  { color: #8B949E; }
+.tc  { color: #39D0D8; }
+
+/* ── EVAL BOX ── */
+.eval-box {
+  background: rgba(227,179,65,.06);
+  border: 1px solid rgba(227,179,65,.25);
+  border-radius: var(--radius); padding: 22px 26px; margin-top: 28px;
+}
+.eval-box h3 {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: var(--yellow); margin-bottom: 14px;
+}
+.eval-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.eval-item {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 14px;
+}
+.eval-item .ei-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: var(--muted); margin-bottom: 4px;
+}
+.eval-item .ei-val { font-size: 14px; font-weight: 600; color: var(--yellow); }
+
+/* ── DL BTN ── */
+.btn-dl {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--teal); color: #0D1117;
+  font-family: 'JetBrains Mono', monospace; font-weight: 700;
+  font-size: 13px; padding: 9px 20px; border-radius: 7px;
+  border: none; cursor: pointer; transition: opacity .2s, transform .15s;
+  margin-top: 20px;
+}
+.btn-dl:hover { opacity: .85; transform: translateY(-1px); }
+
+/* ── DAY DIVIDER ── */
+.day-header-bar {
+  background: var(--teal-dim); border: 1px solid rgba(57,208,216,.3);
+  border-radius: 8px; padding: 14px 20px; margin-bottom: 24px;
+  display: flex; align-items: center; gap: 14px;
+}
+.dhb-num {
+  font-family: 'JetBrains Mono', monospace; font-size: 20px;
+  font-weight: 700; color: var(--teal);
+}
+.dhb-info .dhb-title { font-size: 16px; font-weight: 700; }
+.dhb-info .dhb-sub { font-size: 13px; color: var(--muted); }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border); padding: 28px 2rem;
+  text-align: center; color: var(--muted);
+  font-size: 13px; font-family: 'JetBrains Mono', monospace;
+}
+footer span { color: var(--teal); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+    ITB <span class="sep">/</span> <span class="dim">clase-3</span> <span class="sep">/</span> práctica-aula-2
+  </div>
+  <div class="nav-timer">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <span id="timer-disp">00:00</span>
+    <div style="display:flex;gap:4px">
+      <button class="tbtn" id="tbtn-start" onclick="tStart()">▶</button>
+      <button class="tbtn" onclick="tPause()">⏸</button>
+      <button class="tbtn" onclick="tReset()">↺</button>
+    </div>
+  </div>
+  <div class="nav-day" id="nav-day-badge">Día 1</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Práctica de Aula 2 · Clase 3 · Pilas</div>
+  <h1><span class="dm">Historial de</span><br><span class="ac">Navegación</span></h1>
+  <p>Simular el botón Atrás/Adelante de un navegador web usando el principio LIFO con dos pilas en Python.</p>
+  <div class="hero-meta">
+    <span><span class="dot"></span> 2 días de clase</span>
+    <span><span class="dot"></span> Actividad individual</span>
+    <span><span class="dot"></span> 20 puntos</span>
+    <span><span class="dot"></span> Entrega en EVA</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ORIENTACIONES -->
+  <div class="orient-box">
+    <h3>// Orientaciones generales</h3>
+    <ul class="orient-list">
+      <li>Consulta las fuentes indicadas en la preparación previa antes de comenzar.</li>
+      <li>Crea un proyecto en <strong>VS Code</strong> con el nombre <strong>historial_navegacion</strong>.</li>
+      <li>Implementa los pasos lógicos del algoritmo siguiendo la guía de esta página.</li>
+      <li>El código debe tener <strong>indentación correcta y comentarios</strong> explicativos.</li>
+      <li>Sube el archivo <strong>.py</strong> a la plataforma <strong>EVA</strong> al finalizar.</li>
+      <li>Evaluación: <strong>individual</strong> · Instrumento: rúbrica · Valor: <strong>20 puntos</strong></li>
+    </ul>
+  </div>
+
+  <!-- DAY TABS -->
+  <div class="day-tabs">
+    <div class="day-tab active" onclick="switchDay(1)">
+      <div class="dt-num">Día 1</div>
+      <div class="dt-title">Estructura y navegación</div>
+      <div class="dt-sub">Crear pilas · Navegar · Mostrar historial</div>
+    </div>
+    <div class="day-tab" onclick="switchDay(2)">
+      <div class="dt-num">Día 2</div>
+      <div class="dt-title">Atrás, Adelante y refinamiento</div>
+      <div class="dt-sub">Dos pilas · Validaciones · Entrega</div>
+    </div>
+  </div>
+
+  <!-- ═══════ DÍA 1 ═══════ -->
+  <div class="day-panel active" id="panel-1">
+
+    <div class="day-header-bar">
+      <div class="dhb-num">D1</div>
+      <div class="dhb-info">
+        <div class="dhb-title">Estructura base y operación Navegar</div>
+        <div class="dhb-sub">Objetivo: tener el menú funcionando con la opción 1 (Navegar) y 4 (Historial)</div>
+      </div>
+    </div>
+
+    <!-- Objetivo del día -->
+    <div class="obj-card">
+      <div>
+        <div class="obj-title">¿Qué construirás hoy?</div>
+        <div class="obj-desc">
+          Al terminar el Día 1 tendrás un programa con un <strong>menú de 5 opciones</strong> donde
+          el usuario puede navegar a URLs, ver el historial completo y la página actual. Las operaciones
+          Atrás y Adelante quedarán preparadas pero incompletas — eso es para mañana.
+        </div>
+        <ul class="obj-list">
+          <li>Crear las dos pilas: <span class="ic">atras = []</span> y <span class="ic">adelante = []</span></li>
+          <li>Implementar el menú principal con <span class="ic">while True</span></li>
+          <li>Opción 1: Navegar a una nueva URL</li>
+          <li>Opción 4: Mostrar historial completo</li>
+          <li>Opción 5: Salir</li>
+        </ul>
+      </div>
+      <div>
+        <div class="slabel" style="margin-bottom:12px">// Cómo funciona la pila de Atrás</div>
+        <div class="stack-diagram">
+          <div class="stack-col">
+            <div class="stack-col-label">pila: atras</div>
+            <div class="s-slot top">youtube.com ← TOP</div>
+            <div class="s-slot url">google.com</div>
+            <div class="s-slot url">github.com</div>
+            <div class="s-slot" style="color:#555">— base —</div>
+          </div>
+          <div class="s-arrow teal">↑<br><span style="font-size:10px">append<br>nueva URL</span></div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:10px;font-family:'JetBrains Mono',monospace">
+          Cada URL nueva se apila encima. El tope = página actual.
+        </div>
+      </div>
+    </div>
+
+    <!-- Guía paso a paso Día 1 -->
+    <div class="slabel">// Guía paso a paso — Día 1</div>
+    <div class="guide">
+
+      <div class="guide-step open">
+        <div class="guide-step-header" onclick="toggleStep(this)">
+          <div class="gs-num">1</div>
+          <div class="gs-title">Crear el archivo y las pilas</div>
+          <div class="gs-toggle">▼</div>
+        </div>
+        <div class="guide-step-body">
+          <div class="gs-desc">Abre VS Code, crea <strong>historial_navegacion.py</strong> y define las dos estructuras de pila que usará todo el programa.</div>
+          <div class="gs-substeps">
+            <div class="gs-sub"><div class="gs-sn">a</div><div class="gs-st">En VS Code: <span class="ic">File → New File → historial_navegacion.py</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">b</div><div class="gs-st">Escribe el encabezado con comentarios: nombre del programa, autor, fecha</div></div>
+            <div class="gs-sub"><div class="gs-sn">c</div><div class="gs-st">Declara <span class="ic">atras = []</span> — guardará las páginas visitadas. El tope = página actual.</div></div>
+            <div class="gs-sub"><div class="gs-sn">d</div><div class="gs-st">Declara <span class="ic">adelante = []</span> — guardará las páginas que quedan adelante después de retroceder.</div></div>
+          </div>
+          <div class="code-block">
+            <div class="code-bar">
+              <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+              <div class="cfile">historial_navegacion.py — inicio</div>
+              <button class="btn-cp" onclick="copyCode(this,'c1')">copiar</button>
+            </div>
+            <div class="code-body" id="c1"><span class="cm"># ============================================
+# Práctica de Aula 2 — Historial de Navegación
+# Clase 3: Pilas (Stack) — Principio LIFO
+# Autor: ___________________________
+# Fecha: ___________________________
+# ============================================</span>
+
+<span class="tc">atras</span>    <span class="op">=</span> []  <span class="cm"># Pila principal: páginas visitadas</span>
+<span class="tc">adelante</span> <span class="op">=</span> []  <span class="cm"># Pila secundaria: páginas adelantadas</span>
+
+<span class="fn">print</span>(<span class="str">"🌐 Simulador de Historial de Navegación"</span>)
+<span class="fn">print</span>(<span class="str">"=" * 40</span>)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="guide-step-header" onclick="toggleStep(this)">
+          <div class="gs-num">2</div>
+          <div class="gs-title">Crear el menú principal</div>
+          <div class="gs-toggle">▼</div>
+        </div>
+        <div class="guide-step-body">
+          <div class="gs-desc">Implementa el bucle <strong>while True</strong> con las 5 opciones del menú. Las opciones 2 y 3 quedarán con <span class="ic">pass</span> por ahora.</div>
+          <div class="gs-substeps">
+            <div class="gs-sub"><div class="gs-sn">a</div><div class="gs-st">Escribe <span class="ic">while True:</span> — el menú se repetirá hasta que el usuario elija Salir</div></div>
+            <div class="gs-sub"><div class="gs-sn">b</div><div class="gs-st">Dentro del while, imprime las 5 opciones con <span class="ic">print()</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">c</div><div class="gs-st">Lee la opción con <span class="ic">opcion = input("Elige: ")</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">d</div><div class="gs-st">Estructura los bloques <span class="ic">if / elif</span> para cada opción</div></div>
+          </div>
+          <div class="code-block">
+            <div class="code-bar">
+              <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+              <div class="cfile">menú principal</div>
+              <button class="btn-cp" onclick="copyCode(this,'c2')">copiar</button>
+            </div>
+            <div class="code-body" id="c2"><span class="kw">while</span> <span class="kw">True</span>:
+    <span class="fn">print</span>(<span class="str">"\n=== MENÚ ==="</span>)
+    <span class="fn">print</span>(<span class="str">"1. Navegar a una nueva página"</span>)
+    <span class="fn">print</span>(<span class="str">"2. ← Retroceder"</span>)
+    <span class="fn">print</span>(<span class="str">"3. → Avanzar"</span>)
+    <span class="fn">print</span>(<span class="str">"4. Mostrar historial"</span>)
+    <span class="fn">print</span>(<span class="str">"5. Salir"</span>)
+
+    <span class="tc">opcion</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"Elige (1-5): "</span>).<span class="fn">strip</span>()
+
+    <span class="kw">if</span> <span class="tc">opcion</span> <span class="op">==</span> <span class="str">"1"</span>:
+        <span class="kw">pass</span>  <span class="cm"># lo implementamos en el paso 3</span>
+    <span class="kw">elif</span> <span class="tc">opcion</span> <span class="op">==</span> <span class="str">"2"</span>:
+        <span class="kw">pass</span>  <span class="cm"># Día 2</span>
+    <span class="kw">elif</span> <span class="tc">opcion</span> <span class="op">==</span> <span class="str">"3"</span>:
+        <span class="kw">pass</span>  <span class="cm"># Día 2</span>
+    <span class="kw">elif</span> <span class="tc">opcion</span> <span class="op">==</span> <span class="str">"4"</span>:
+        <span class="kw">pass</span>  <span class="cm"># lo implementamos en el paso 4</span>
+    <span class="kw">elif</span> <span class="tc">opcion</span> <span class="op">==</span> <span class="str">"5"</span>:
+        <span class="fn">print</span>(<span class="str">"Hasta luego."</span>)
+        <span class="kw">break</span>
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">"Opción no válida."</span>)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="guide-step-header" onclick="toggleStep(this)">
+          <div class="gs-num">3</div>
+          <div class="gs-title">Opción 1 — Navegar a nueva página</div>
+          <div class="gs-toggle">▼</div>
+        </div>
+        <div class="guide-step-body">
+          <div class="gs-desc">Cuando el usuario navega a una nueva URL, hay que apilarla en <strong>atras</strong> y limpiar <strong>adelante</strong> (porque al tomar una nueva ruta, ya no hay páginas hacia adelante).</div>
+          <div class="gs-substeps">
+            <div class="gs-sub"><div class="gs-sn">a</div><div class="gs-st">Reemplaza el <span class="ic">pass</span> de la opción 1 por el código real</div></div>
+            <div class="gs-sub"><div class="gs-sn">b</div><div class="gs-st">Pide la URL con <span class="ic">input()</span> y aplica <span class="ic">.strip()</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">c</div><div class="gs-st">Apila con <span class="ic">atras.append(url)</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">d</div><div class="gs-st">Limpia adelante con <span class="ic">adelante.clear()</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">e</div><div class="gs-st">Confirma con un mensaje: <span class="ic">f"Navegando a: {url}"</span></div></div>
+          </div>
+          <div class="code-block">
+            <div class="code-bar">
+              <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+              <div class="cfile">opción 1 — navegar</div>
+              <button class="btn-cp" onclick="copyCode(this,'c3')">copiar</button>
+            </div>
+            <div class="code-body" id="c3"><span class="kw">if</span> <span class="tc">opcion</span> <span class="op">==</span> <span class="str">"1"</span>:
+    <span class="tc">url</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"Ingresa la URL: "</span>).<span class="fn">strip</span>()
+    <span class="kw">if</span> <span class="tc">url</span>:  <span class="cm"># verificar que no esté vacía</span>
+        <span class="tc">atras</span>.<span class="fn">append</span>(<span class="tc">url</span>)     <span class="cm"># apilar en historial</span>
+        <span class="tc">adelante</span>.<span class="fn">clear</span>()       <span class="cm"># nueva ruta: borrar adelante</span>
+        <span class="fn">print</span>(<span class="str">f"✓ Navegando a: {<span class="tc">url</span>}"</span>)
+        <span class="fn">print</span>(<span class="str">f"  Página actual: {<span class="tc">atras</span>[<span class="op">-</span><span class="num">1</span>]}"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">"URL vacía. Intenta de nuevo."</span>)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="guide-step-header" onclick="toggleStep(this)">
+          <div class="gs-num">4</div>
+          <div class="gs-title">Opción 4 — Mostrar historial</div>
+          <div class="gs-toggle">▼</div>
+        </div>
+        <div class="guide-step-body">
+          <div class="gs-desc">Recorre la pila <strong>atras</strong> con un <span class="ic">for</span> y muestra todas las páginas visitadas, marcando la actual (el tope) con un indicador visual.</div>
+          <div class="gs-substeps">
+            <div class="gs-sub"><div class="gs-sn">a</div><div class="gs-st">Verifica primero si la pila está vacía con <span class="ic">if not atras:</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">b</div><div class="gs-st">Recorre con <span class="ic">for i, url in enumerate(atras, 1):</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">c</div><div class="gs-st">Compara <span class="ic">if i == len(atras):</span> para marcar la página actual con <span class="ic">← actual</span></div></div>
+          </div>
+          <div class="code-block">
+            <div class="code-bar">
+              <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+              <div class="cfile">opción 4 — historial</div>
+              <button class="btn-cp" onclick="copyCode(this,'c4')">copiar</button>
+            </div>
+            <div class="code-body" id="c4"><span class="kw">elif</span> <span class="tc">opcion</span> <span class="op">==</span> <span class="str">"4"</span>:
+    <span class="kw">if</span> <span class="kw">not</span> <span class="tc">atras</span>:
+        <span class="fn">print</span>(<span class="str">"Historial vacío. Navega a alguna página primero."</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">"\n--- Historial de navegación ---"</span>)
+        <span class="kw">for</span> <span class="tc">i</span>, <span class="tc">url</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="tc">atras</span>, <span class="num">1</span>):
+            <span class="kw">if</span> <span class="tc">i</span> <span class="op">==</span> <span class="fn">len</span>(<span class="tc">atras</span>):
+                <span class="fn">print</span>(<span class="str">f"  {<span class="tc">i</span>}. {<span class="tc">url</span>}  ← actual"</span>)
+            <span class="kw">else</span>:
+                <span class="fn">print</span>(<span class="str">f"  {<span class="tc">i</span>}. {<span class="tc">url</span>}"</span>)
+        <span class="fn">print</span>(<span class="str">f"\nTotal páginas visitadas: {<span class="fn">len</span>(<span class="tc">atras</span>)}"</span>)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="guide-step-header" onclick="toggleStep(this)">
+          <div class="gs-num">5</div>
+          <div class="gs-title">Prueba del Día 1 ✓</div>
+          <div class="gs-toggle">▼</div>
+        </div>
+        <div class="guide-step-body">
+          <div class="gs-desc">Antes de terminar la sesión, verifica que lo construido funciona correctamente.</div>
+          <div class="gs-substeps">
+            <div class="gs-sub"><div class="gs-sn">✓</div><div class="gs-st">Ejecuta el programa con <span class="ic">F5</span> o <span class="ic">▶ Run Python File</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">✓</div><div class="gs-st">Navega a 3 URLs: <span class="ic">google.com</span>, <span class="ic">github.com</span>, <span class="ic">youtube.com</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">✓</div><div class="gs-st">Elige opción 4 — deberías ver las 3 URLs con <span class="ic">youtube.com ← actual</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">✓</div><div class="gs-st">Prueba elegir una opción inválida — debe mostrar "Opción no válida"</div></div>
+            <div class="gs-sub"><div class="gs-sn">✓</div><div class="gs-st">Guarda el archivo — mañana lo retomas desde aquí</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /guide día 1 -->
+
+    <button class="btn-dl" onclick="dlDay(1)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Descargar código Día 1
+    </button>
+
+  </div><!-- /panel día 1 -->
+
+  <!-- ═══════ DÍA 2 ═══════ -->
+  <div class="day-panel" id="panel-2">
+
+    <div class="day-header-bar">
+      <div class="dhb-num">D2</div>
+      <div class="dhb-info">
+        <div class="dhb-title">Retroceder, Avanzar y entrega final</div>
+        <div class="dhb-sub">Objetivo: completar las opciones 2 y 3 con la lógica de dos pilas</div>
+      </div>
+    </div>
+
+    <!-- Objetivo día 2 -->
+    <div class="obj-card">
+      <div>
+        <div class="obj-title">¿Qué construirás hoy?</div>
+        <div class="obj-desc">
+          Completas el programa implementando <strong>Retroceder</strong> (mover el tope de <span class="ic">atras</span> a <span class="ic">adelante</span>)
+          y <strong>Avanzar</strong> (mover el tope de <span class="ic">adelante</span> a <span class="ic">atras</span>).
+          Este es el corazón del patrón de dos pilas.
+        </div>
+        <ul class="obj-list">
+          <li>Opción 2: Retroceder — transferir entre pilas</li>
+          <li>Opción 3: Avanzar — transferir en sentido inverso</li>
+          <li>Validaciones: verificar que hay páginas antes de operar</li>
+          <li>Prueba integral del programa completo</li>
+          <li>Preparar y subir a EVA</li>
+        </ul>
+      </div>
+      <div>
+        <div class="slabel" style="margin-bottom:12px">// Transferencia entre dos pilas</div>
+        <div class="stack-diagram" style="flex-direction:column;gap:10px">
+          <div style="display:flex;gap:16px;align-items:flex-end">
+            <div class="stack-col">
+              <div class="stack-col-label">atras</div>
+              <div class="s-slot top">youtube ← TOP</div>
+              <div class="s-slot url">github</div>
+              <div class="s-slot url">google</div>
+            </div>
+            <div class="s-arrow" style="padding-bottom:20px;font-size:14px;color:var(--teal)">
+              ← retroceder<br>pop → append
+            </div>
+            <div class="stack-col">
+              <div class="stack-col-label">adelante</div>
+              <div class="s-slot" style="color:#555;width:100px">vacía</div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-align:center">
+            Retroceder: atras.pop() → adelante.append()
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guía paso a paso Día 2 -->
+    <div class="slabel">// Guía paso a paso — Día 2</div>
+    <div class="guide">
+
+      <div class="guide-step open">
+        <div class="guide-step-header" onclick="toggleStep(this)">
+          <div class="gs-num">1</div>
+          <div class="gs-title">Retomar el archivo del Día 1</div>
+          <div class="gs-toggle">▼</div>
+        </div>
+        <div class="guide-step-body">
+          <div class="gs-desc">Abre <strong>historial_navegacion.py</strong> en VS Code y verifica que el Día 1 funciona correctamente antes de continuar.</div>
+          <div class="gs-substeps">
+            <div class="gs-sub"><div class="gs-sn">a</div><div class="gs-st">Abre VS Code y el archivo <span class="ic">historial_navegacion.py</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">b</div><div class="gs-st">Ejecuta con <span class="ic">F5</span> y navega a 2 páginas para confirmar que funciona</div></div>
+            <div class="gs-sub"><div class="gs-sn">c</div><div class="gs-st">Localiza el bloque <span class="ic">elif opcion == "2": pass</span> — ahí trabajarás</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="guide-step-header" onclick="toggleStep(this)">
+          <div class="gs-num">2</div>
+          <div class="gs-title">Opción 2 — Retroceder ←</div>
+          <div class="gs-toggle">▼</div>
+        </div>
+        <div class="guide-step-body">
+          <div class="gs-desc">Para retroceder necesitas al menos <strong>2 páginas en atras</strong> (la actual + una anterior). El tope de <span class="ic">atras</span> se mueve a <span class="ic">adelante</span> y el nuevo tope de <span class="ic">atras</span> pasa a ser la página actual.</div>
+          <div class="gs-substeps">
+            <div class="gs-sub"><div class="gs-sn">a</div><div class="gs-st">Verifica: <span class="ic">if len(atras) &gt; 1:</span> — necesitas más de una página para retroceder</div></div>
+            <div class="gs-sub"><div class="gs-sn">b</div><div class="gs-st">Extrae el tope: <span class="ic">pagina = atras.pop()</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">c</div><div class="gs-st">Muévela a adelante: <span class="ic">adelante.append(pagina)</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">d</div><div class="gs-st">Muestra la nueva página actual: <span class="ic">atras[-1]</span></div></div>
+          </div>
+          <div class="code-block">
+            <div class="code-bar">
+              <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+              <div class="cfile">opción 2 — retroceder</div>
+              <button class="btn-cp" onclick="copyCode(this,'c5')">copiar</button>
+            </div>
+            <div class="code-body" id="c5"><span class="kw">elif</span> <span class="tc">opcion</span> <span class="op">==</span> <span class="str">"2"</span>:
+    <span class="kw">if</span> <span class="fn">len</span>(<span class="tc">atras</span>) <span class="op">></span> <span class="num">1</span>:
+        <span class="tc">pagina</span> <span class="op">=</span> <span class="tc">atras</span>.<span class="fn">pop</span>()          <span class="cm"># extraer página actual</span>
+        <span class="tc">adelante</span>.<span class="fn">append</span>(<span class="tc">pagina</span>)      <span class="cm"># guardar en adelante</span>
+        <span class="fn">print</span>(<span class="str">f"← Retrocediendo desde: {<span class="tc">pagina</span>}"</span>)
+        <span class="fn">print</span>(<span class="str">f"   Página actual: {<span class="tc">atras</span>[<span class="op">-</span><span class="num">1</span>]}"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">"No hay páginas anteriores."</span>)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="guide-step-header" onclick="toggleStep(this)">
+          <div class="gs-num">3</div>
+          <div class="gs-title">Opción 3 — Avanzar →</div>
+          <div class="gs-toggle">▼</div>
+        </div>
+        <div class="guide-step-body">
+          <div class="gs-desc">Avanzar es el proceso inverso: si la pila <span class="ic">adelante</span> tiene páginas, movemos el tope de vuelta a <span class="ic">atras</span>.</div>
+          <div class="gs-substeps">
+            <div class="gs-sub"><div class="gs-sn">a</div><div class="gs-st">Verifica: <span class="ic">if adelante:</span> — solo avanzas si hay páginas adelante</div></div>
+            <div class="gs-sub"><div class="gs-sn">b</div><div class="gs-st">Extrae de adelante: <span class="ic">pagina = adelante.pop()</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">c</div><div class="gs-st">Apila en atras: <span class="ic">atras.append(pagina)</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">d</div><div class="gs-st">Muestra la nueva página actual: <span class="ic">atras[-1]</span></div></div>
+          </div>
+          <div class="code-block">
+            <div class="code-bar">
+              <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+              <div class="cfile">opción 3 — avanzar</div>
+              <button class="btn-cp" onclick="copyCode(this,'c6')">copiar</button>
+            </div>
+            <div class="code-body" id="c6"><span class="kw">elif</span> <span class="tc">opcion</span> <span class="op">==</span> <span class="str">"3"</span>:
+    <span class="kw">if</span> <span class="tc">adelante</span>:
+        <span class="tc">pagina</span> <span class="op">=</span> <span class="tc">adelante</span>.<span class="fn">pop</span>()        <span class="cm"># extraer página adelantada</span>
+        <span class="tc">atras</span>.<span class="fn">append</span>(<span class="tc">pagina</span>)         <span class="cm"># volver al historial</span>
+        <span class="fn">print</span>(<span class="str">f"→ Avanzando a: {<span class="tc">pagina</span>}"</span>)
+        <span class="fn">print</span>(<span class="str">f"   Página actual: {<span class="tc">atras</span>[<span class="op">-</span><span class="num">1</span>]}"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">"No hay páginas adelante."</span>)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="guide-step-header" onclick="toggleStep(this)">
+          <div class="gs-num">4</div>
+          <div class="gs-title">Prueba integral del programa completo</div>
+          <div class="gs-toggle">▼</div>
+        </div>
+        <div class="guide-step-body">
+          <div class="gs-desc">Ejecuta el programa completo y verifica este flujo de prueba exacto:</div>
+          <div class="gs-substeps">
+            <div class="gs-sub"><div class="gs-sn">1</div><div class="gs-st">Opción 1: navega a <span class="ic">google.com</span>, <span class="ic">github.com</span>, <span class="ic">youtube.com</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">2</div><div class="gs-st">Opción 4: verifica que el historial muestra las 3 páginas con <span class="ic">youtube.com ← actual</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">3</div><div class="gs-st">Opción 2 (retroceder): debe mostrar <span class="ic">Página actual: github.com</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">4</div><div class="gs-st">Opción 2 de nuevo: debe mostrar <span class="ic">Página actual: google.com</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">5</div><div class="gs-st">Opción 3 (avanzar): debe mostrar <span class="ic">Página actual: github.com</span></div></div>
+            <div class="gs-sub"><div class="gs-sn">6</div><div class="gs-st">Opción 1: navega a <span class="ic">anthropic.com</span> — la pila adelante debe limpiarse</div></div>
+            <div class="gs-sub"><div class="gs-sn">7</div><div class="gs-st">Opción 3: debe responder <span class="ic">No hay páginas adelante</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="guide-step-header" onclick="toggleStep(this)">
+          <div class="gs-num">5</div>
+          <div class="gs-title">Revisión final y entrega en EVA</div>
+          <div class="gs-toggle">▼</div>
+        </div>
+        <div class="guide-step-body">
+          <div class="gs-desc">Antes de subir el archivo, revisa estos puntos de la rúbrica:</div>
+          <div class="gs-substeps">
+            <div class="gs-sub"><div class="gs-sn">✓</div><div class="gs-st"><strong>Indentación:</strong> todo el código dentro de <span class="ic">while</span> e <span class="ic">if</span> debe tener 4 espacios</div></div>
+            <div class="gs-sub"><div class="gs-sn">✓</div><div class="gs-st"><strong>Comentarios:</strong> cada bloque debe tener un comentario que explique qué hace</div></div>
+            <div class="gs-sub"><div class="gs-sn">✓</div><div class="gs-st"><strong>Encabezado:</strong> nombre, fecha y descripción del programa al inicio</div></div>
+            <div class="gs-sub"><div class="gs-sn">✓</div><div class="gs-st"><strong>Validaciones:</strong> todas las operaciones verifican si la pila tiene elementos antes de operar</div></div>
+            <div class="gs-sub"><div class="gs-sn">✓</div><div class="gs-st">Sube el archivo <span class="ic">historial_navegacion.py</span> a la plataforma <strong>EVA</strong></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /guide día 2 -->
+
+    <!-- EVALUACIÓN -->
+    <div class="eval-box">
+      <h3>// Criterios de evaluación — 20 puntos</h3>
+      <div class="eval-grid">
+        <div class="eval-item">
+          <div class="ei-label">Funcionalidad</div>
+          <div class="ei-val">8 pts</div>
+        </div>
+        <div class="eval-item">
+          <div class="ei-label">Uso correcto de pilas</div>
+          <div class="ei-val">5 pts</div>
+        </div>
+        <div class="eval-item">
+          <div class="ei-label">Indentación</div>
+          <div class="ei-val">3 pts</div>
+        </div>
+        <div class="eval-item">
+          <div class="ei-label">Comentarios</div>
+          <div class="ei-val">2 pts</div>
+        </div>
+        <div class="eval-item">
+          <div class="ei-label">Validaciones</div>
+          <div class="ei-val">2 pts</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-dl" onclick="dlDay(2)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Descargar código completo (Días 1 + 2)
+    </button>
+
+  </div><!-- /panel día 2 -->
+
+</div><!-- /wrap -->
+
+<footer>
+  ITB — Instituto Tecnológico de Negocios &nbsp;·&nbsp; <span>Práctica de Aula 2</span> · Clase 3 — Pilas
+</footer>
+
+<script>
+/* ── TABS ── */
+function switchDay(n) {
+  document.querySelectorAll('.day-tab').forEach((t,i)=> t.classList.toggle('active', i===n-1));
+  document.querySelectorAll('.day-panel').forEach((p,i)=> p.classList.toggle('active', i===n-1));
+  document.getElementById('nav-day-badge').textContent = `Día ${n}`;
+}
+
+/* ── ACCORDION ── */
+function toggleStep(header) {
+  const step = header.parentElement;
+  step.classList.toggle('open');
+}
+
+/* ── COPY ── */
+function copyCode(btn, id) {
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(()=>{
+    btn.textContent='✓ copiado';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+
+/* ── TIMER ── */
+let sec=0, iv=null, running=false;
+function tStart(){
+  if(running) return; running=true;
+  document.getElementById('tbtn-start').classList.add('on');
+  iv=setInterval(()=>{
+    sec++;
+    document.getElementById('timer-disp').textContent=
+      String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0');
+  },1000);
+}
+function tPause(){clearInterval(iv);running=false;document.getElementById('tbtn-start').classList.remove('on');}
+function tReset(){tPause();sec=0;document.getElementById('timer-disp').textContent='00:00';}
+
+/* ── DOWNLOADS ── */
+const day1code = `# ============================================
+# Práctica de Aula 2 — Historial de Navegación
+# Clase 3: Pilas (Stack) — Principio LIFO
+# Autor: ___________________________
+# Fecha: ___________________________
+# ============================================
+
+atras    = []  # Pila principal: páginas visitadas
+adelante = []  # Pila secundaria: páginas adelantadas
+
+print("🌐 Simulador de Historial de Navegación")
+print("=" * 40)
+
+while True:
+    print("\\n=== MENÚ ===")
+    print("1. Navegar a una nueva página")
+    print("2. ← Retroceder")
+    print("3. → Avanzar")
+    print("4. Mostrar historial")
+    print("5. Salir")
+
+    opcion = input("Elige (1-5): ").strip()
+
+    if opcion == "1":
+        url = input("Ingresa la URL: ").strip()
+        if url:
+            atras.append(url)     # apilar en historial
+            adelante.clear()       # nueva ruta: borrar adelante
+            print(f"✓ Navegando a: {url}")
+            print(f"  Página actual: {atras[-1]}")
+        else:
+            print("URL vacía. Intenta de nuevo.")
+
+    elif opcion == "2":
+        pass  # TODO Día 2: implementar retroceder
+
+    elif opcion == "3":
+        pass  # TODO Día 2: implementar avanzar
+
+    elif opcion == "4":
+        if not atras:
+            print("Historial vacío. Navega a alguna página primero.")
+        else:
+            print("\\n--- Historial de navegación ---")
+            for i, url in enumerate(atras, 1):
+                if i == len(atras):
+                    print(f"  {i}. {url}  <- actual")
+                else:
+                    print(f"  {i}. {url}")
+            print(f"\\nTotal páginas visitadas: {len(atras)}")
+
+    elif opcion == "5":
+        print("Hasta luego.")
+        break
+
+    else:
+        print("Opción no válida.")
+`;
+
+const day2code = `# ============================================
+# Práctica de Aula 2 — Historial de Navegación
+# Clase 3: Pilas (Stack) — Principio LIFO
+# Autor: ___________________________
+# Fecha: ___________________________
+# ============================================
+
+atras    = []  # Pila principal: páginas visitadas
+adelante = []  # Pila secundaria: páginas adelantadas
+
+print("Simulador de Historial de Navegacion")
+print("=" * 40)
+
+while True:
+    print("\\n=== MENU ===")
+    print("1. Navegar a una nueva pagina")
+    print("2. <- Retroceder")
+    print("3. -> Avanzar")
+    print("4. Mostrar historial")
+    print("5. Salir")
+
+    opcion = input("Elige (1-5): ").strip()
+
+    if opcion == "1":
+        url = input("Ingresa la URL: ").strip()
+        if url:
+            atras.append(url)      # apilar en historial
+            adelante.clear()        # nueva ruta: borrar adelante
+            print(f"Navegando a: {url}")
+            print(f"  Pagina actual: {atras[-1]}")
+        else:
+            print("URL vacia. Intenta de nuevo.")
+
+    elif opcion == "2":
+        # Retroceder: mover tope de atras -> adelante
+        if len(atras) > 1:
+            pagina = atras.pop()           # extraer pagina actual
+            adelante.append(pagina)         # guardar en adelante
+            print(f"<- Retrocediendo desde: {pagina}")
+            print(f"   Pagina actual: {atras[-1]}")
+        else:
+            print("No hay paginas anteriores.")
+
+    elif opcion == "3":
+        # Avanzar: mover tope de adelante -> atras
+        if adelante:
+            pagina = adelante.pop()         # extraer pagina adelantada
+            atras.append(pagina)            # volver al historial
+            print(f"-> Avanzando a: {pagina}")
+            print(f"   Pagina actual: {atras[-1]}")
+        else:
+            print("No hay paginas adelante.")
+
+    elif opcion == "4":
+        # Mostrar todas las paginas visitadas
+        if not atras:
+            print("Historial vacio. Navega a alguna pagina primero.")
+        else:
+            print("\\n--- Historial de navegacion ---")
+            for i, url in enumerate(atras, 1):
+                if i == len(atras):
+                    print(f"  {i}. {url}  <- actual")
+                else:
+                    print(f"  {i}. {url}")
+            print(f"\\nTotal paginas visitadas: {len(atras)}")
+
+    elif opcion == "5":
+        print("Hasta luego.")
+        break
+
+    else:
+        print("Opcion no valida.")
+`;
+
+function dlDay(n) {
+  const content = n === 1 ? day1code : day2code;
+  const fname   = n === 1 ? 'historial_dia1.py' : 'historial_navegacion.py';
+  const blob = new Blob([content], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = fname; a.click();
+}
+</script>
+</body>
+</html>

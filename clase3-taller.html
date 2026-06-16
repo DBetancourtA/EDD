@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taller — Pilas (Stack) · ITB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script>
+  /* ╔══════════════════════════════════════════════════════════╗
+     ║  CONFIGURACIÓN DEL DOCENTE — edita solo aquí            ║
+     ╚══════════════════════════════════════════════════════════╝ */
+
+  const ACCESS_PASSWORDS = {
+    1: "pila1",
+    2: "pila2",
+    3: "pila3",
+    4: "pila4",
+    5: "pila5"
+  };
+
+  const SOLUTION_PASSWORD = "stack2025"; // ← clave maestra de soluciones
+</script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0D1117;
+  --surface:   #161B22;
+  --surface2:  #1C2129;
+  --border:    #30363D;
+  --green:     #4ADE80;
+  --green-dim: #1a4731;
+  --blue:      #79C0FF;
+  --purple:    #D2A8FF;
+  --orange:    #FFA657;
+  --red:       #FF7B72;
+  --yellow:    #E3B341;
+  --teal:      #39D0D8;
+  --teal-dim:  #0d3436;
+  --text:      #E6EDF3;
+  --muted:     #8B949E;
+  --radius:    10px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'Inter', sans-serif; font-size: 15px; line-height: 1.65;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(13,17,23,.92); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem; height: 54px; gap: 12px;
+}
+.nav-brand {
+  font-family: 'JetBrains Mono', monospace; font-weight: 700;
+  font-size: 14px; color: var(--teal);
+  display: flex; align-items: center; gap: 7px; white-space: nowrap;
+}
+.nav-brand .sep { color: var(--border); }
+.nav-brand .dim { color: var(--muted); font-weight: 400; }
+.nav-timer {
+  font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  color: var(--yellow); display: flex; align-items: center; gap: 6px;
+}
+#td { font-size: 16px; font-weight: 700; min-width: 58px; }
+.tbtn {
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--muted); font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; padding: 3px 8px; border-radius: 5px; cursor: pointer; transition: all .2s;
+}
+.tbtn:hover { color: var(--text); border-color: var(--muted); }
+.tbtn.on { background: var(--teal-dim); color: var(--teal); border-color: var(--teal); }
+
+/* ── HERO ── */
+.hero {
+  max-width: 820px; margin: 0 auto;
+  padding: 56px 1.5rem 36px; text-align: center;
+}
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  color: var(--muted); letter-spacing: .12em; text-transform: uppercase;
+  margin-bottom: 18px; display: flex; align-items: center;
+  justify-content: center; gap: 10px;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: ''; flex: 1; max-width: 60px; height: 1px; background: var(--border);
+}
+.hero h1 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+  font-weight: 700; line-height: 1.1; margin-bottom: 10px;
+}
+.hero h1 .ac { color: var(--teal); }
+.hero h1 .dm { color: var(--muted); }
+.hero p { color: var(--muted); font-size: 15px; max-width: 500px; margin: 0 auto 28px; }
+.hero-meta {
+  display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+  color: var(--muted); font-size: 13px; font-family: 'JetBrains Mono', monospace;
+}
+.hero-meta span { display: flex; align-items: center; gap: 5px; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); display: inline-block; }
+
+/* ── WRAP ── */
+.wrap { max-width: 880px; margin: 0 auto; padding: 0 1.5rem; }
+
+/* ── INSTR ── */
+.instr-box {
+  background: rgba(57,208,216,.05);
+  border: 1px solid rgba(57,208,216,.2);
+  border-radius: var(--radius); padding: 20px 24px; margin-bottom: 36px;
+}
+.instr-box h3 {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: var(--teal); margin-bottom: 10px;
+}
+.instr-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.instr-list li { font-size: 14px; color: var(--muted); display: flex; gap: 8px; }
+.instr-list li::before { content: '→'; color: var(--teal); flex-shrink: 0; }
+.instr-list li strong { color: var(--text); }
+
+/* ── CARDS ── */
+.exercises { display: flex; flex-direction: column; gap: 28px; padding-bottom: 72px; }
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+  transition: border-color .3s;
+}
+.card.unlocked { border-color: var(--teal); }
+
+/* Lock */
+.lock-overlay {
+  padding: 28px 32px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 14px; text-align: center;
+}
+.lock-icon {
+  width: 42px; height: 42px; border-radius: 9px;
+  background: var(--surface2); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted);
+}
+.lock-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px;
+  font-weight: 600; color: var(--muted);
+}
+.lock-sub { font-size: 13px; color: var(--muted); opacity: .65; }
+.lock-form { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.lock-input {
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; padding: 8px 14px; border-radius: 7px;
+  outline: none; transition: border-color .2s; width: 170px;
+}
+.lock-input:focus { border-color: var(--teal); }
+.lock-input.err { border-color: var(--red); animation: shake .3s; }
+.lock-input::placeholder { color: var(--muted); opacity: .5; }
+.btn-unlock {
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; padding: 8px 16px; border-radius: 7px;
+  cursor: pointer; transition: all .2s;
+}
+.btn-unlock:hover { border-color: var(--teal); color: var(--teal); }
+.lock-err { font-size: 12px; color: var(--red); font-family: 'JetBrains Mono', monospace; }
+
+@keyframes shake {
+  0%,100%{ transform: translateX(0) }
+  25%{ transform: translateX(-6px) }
+  75%{ transform: translateX(6px) }
+}
+
+/* Content */
+.card-content { display: none; }
+.card.unlocked .card-content { display: block; }
+.card.unlocked .lock-overlay { display: none; }
+
+/* Card header */
+.card-header {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 22px 26px 18px; border-bottom: 1px solid var(--border);
+}
+.card-num {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  font-weight: 700; letter-spacing: .08em; color: var(--teal);
+  background: var(--teal-dim); border: 1px solid rgba(57,208,216,.3);
+  padding: 3px 10px; border-radius: 4px;
+  white-space: nowrap; margin-top: 3px; flex-shrink: 0;
+}
+.card-title { font-size: 18px; font-weight: 700; margin-bottom: 3px; }
+.card-desc { color: var(--muted); font-size: 13px; }
+.card-tags { margin-left: auto; display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+.tag {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+}
+.t-teal   { background: rgba(57,208,216,.1);  color: var(--teal);   border: 1px solid rgba(57,208,216,.2); }
+.t-red    { background: rgba(255,123,114,.1); color: var(--red);    border: 1px solid rgba(255,123,114,.2); }
+.t-purple { background: rgba(210,168,255,.1); color: var(--purple); border: 1px solid rgba(210,168,255,.2); }
+.t-orange { background: rgba(255,166,87,.1);  color: var(--orange); border: 1px solid rgba(255,166,87,.2); }
+.t-green  { background: rgba(74,222,128,.1);  color: var(--green);  border: 1px solid rgba(74,222,128,.2); }
+
+/* Body 2-col */
+.card-body { display: grid; grid-template-columns: 1fr 1fr; }
+@media (max-width: 640px) { .card-body { grid-template-columns: 1fr; } }
+.card-left  { padding: 22px 26px; border-right: 1px solid var(--border); }
+.card-right { padding: 22px 26px; }
+@media (max-width: 640px) {
+  .card-left { border-right: none; border-bottom: 1px solid var(--border); }
+}
+
+.slabel {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  text-transform: uppercase; letter-spacing: .08em; color: var(--muted);
+  margin-bottom: 12px;
+}
+.req-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.req-list li { font-size: 13px; display: flex; gap: 8px; color: var(--muted); }
+.req-list li::before { content: '▸'; color: var(--teal); font-size: 11px; margin-top: 4px; flex-shrink: 0; }
+.req-list li strong { color: var(--text); }
+
+.steps { display: flex; flex-direction: column; gap: 8px; }
+.step { display: flex; gap: 9px; align-items: flex-start; }
+.sn {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--teal); background: var(--teal-dim);
+  border: 1px solid rgba(57,208,216,.25);
+  min-width: 21px; height: 21px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px; flex-shrink: 0;
+}
+.st { font-size: 13px; color: var(--text); line-height: 1.5; }
+.ic {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--blue); padding: 1px 6px; border-radius: 4px;
+}
+
+/* Code */
+.code-block {
+  background: #010409; border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+}
+.code-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 13px; background: var(--surface2); border-bottom: 1px solid var(--border);
+}
+.code-dots { display: flex; gap: 5px; }
+.code-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.d1{background:#FF5F56} .d2{background:#FFBD2E} .d3{background:#27C93F}
+.cfile { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); }
+.btn-cp {
+  background:none; border:1px solid var(--border); color:var(--muted);
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  padding:3px 9px; border-radius:4px; cursor:pointer; transition:all .2s;
+}
+.btn-cp:hover { color:var(--text); border-color:var(--muted); }
+.code-body {
+  padding: 14px 16px; overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.8;
+  white-space: pre;
+}
+.kw  { color: #FF7B72; }
+.fn  { color: #79C0FF; }
+.str { color: #FFA657; }
+.cm  { color: #6A737D; font-style: italic; }
+.num { color: #D2A8FF; }
+.op  { color: #8B949E; }
+.tc  { color: #39D0D8; }
+
+/* Footer */
+.card-footer {
+  padding: 14px 26px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.sol-note { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); flex: 1; min-width: 140px; }
+.sol-form { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.sol-input {
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; padding: 7px 12px; border-radius: 7px;
+  outline: none; transition: border-color .2s; width: 150px;
+}
+.sol-input:focus { border-color: var(--yellow); }
+.sol-input.err { border-color: var(--red); animation: shake .3s; }
+.sol-input::placeholder { color: var(--muted); opacity: .5; }
+.btn-sol {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--yellow); color: #0D1117;
+  font-family: 'JetBrains Mono', monospace; font-weight: 700;
+  font-size: 12px; padding: 7px 14px; border-radius: 7px;
+  border: none; cursor: pointer; transition: opacity .2s, transform .15s; white-space: nowrap;
+}
+.btn-sol:hover { opacity:.85; transform:translateY(-1px); }
+.sol-err { font-size: 12px; color: var(--red); font-family: 'JetBrains Mono', monospace; width: 100%; }
+.sol-ok  { font-size: 12px; color: var(--green); font-family: 'JetBrains Mono', monospace; width: 100%; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 22px; right: 22px; z-index: 999;
+  background: var(--teal-dim); border: 1px solid var(--teal);
+  color: var(--teal); font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; padding: 10px 18px; border-radius: 8px;
+  opacity: 0; transform: translateY(8px); transition: all .25s; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* Footer page */
+footer {
+  border-top: 1px solid var(--border); padding: 26px 2rem;
+  text-align: center; color: var(--muted);
+  font-size: 13px; font-family: 'JetBrains Mono', monospace;
+}
+footer span { color: var(--teal); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+    ITB <span class="sep">/</span> <span class="dim">clase-3</span> <span class="sep">/</span> taller-pilas
+  </div>
+  <div class="nav-timer">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <span id="td">00:00</span>
+    <div style="display:flex;gap:4px">
+      <button class="tbtn" id="tbs" onclick="tStart()">▶</button>
+      <button class="tbtn" onclick="tPause()">⏸</button>
+      <button class="tbtn" onclick="tReset()">↺</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Taller en grupos · Clase 3 · Pilas</div>
+  <h1><span class="dm">Taller —</span><br><span class="ac">Pilas (Stack)</span></h1>
+  <p>Cada grupo recibe una clave para desbloquear su ejercicio. Al finalizar, el docente entrega la clave de solución.</p>
+  <div class="hero-meta">
+    <span><span class="dot"></span> 5 grupos</span>
+    <span><span class="dot"></span> 5 ejercicios</span>
+    <span><span class="dot"></span> Principio LIFO</span>
+    <span><span class="dot"></span> Python 3.x</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="instr-box">
+    <h3>// Instrucciones</h3>
+    <ul class="instr-list">
+      <li><strong>Paso 1:</strong> El docente te asigna tu número de grupo y la clave de acceso.</li>
+      <li><strong>Paso 2:</strong> Ingresa la clave en tu ejercicio y haz clic en Desbloquear.</li>
+      <li><strong>Paso 3:</strong> Lee los requerimientos, sigue el paso a paso y desarrolla el programa en VS Code.</li>
+      <li><strong>Paso 4:</strong> Cuando el docente lo indique, ingresa la <strong>clave de solución</strong> para descargar el código resuelto.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+
+    <!-- ═══════════════ EJERCICIO 1 ═══════════════ -->
+    <div class="card" id="card-1">
+      <div class="lock-overlay">
+        <div class="lock-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div class="lock-title">Ejercicio 1 — Pila de Enteros</div>
+        <div class="lock-sub">Solo el Grupo 1 puede acceder</div>
+        <div class="lock-form">
+          <input class="lock-input" id="ai-1" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')unlock(1)">
+          <button class="btn-unlock" onclick="unlock(1)">Desbloquear →</button>
+        </div>
+        <div class="lock-err" id="ae-1" style="display:none">Clave incorrecta.</div>
+      </div>
+      <div class="card-content">
+        <div class="card-header">
+          <div class="card-num">GRUPO 1</div>
+          <div>
+            <div class="card-title">Pila de Enteros con menú</div>
+            <div class="card-desc">Implementar todas las operaciones básicas de una pila: push, pop, peek, isEmpty</div>
+          </div>
+          <div class="card-tags">
+            <span class="tag t-teal">append()</span>
+            <span class="tag t-red">pop()</span>
+            <span class="tag t-purple">[-1]</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-left">
+            <div class="slabel">// Qué debe hacer tu programa</div>
+            <ul class="req-list">
+              <li>Mostrar un menú con las operaciones de pila en bucle</li>
+              <li><strong>Push:</strong> apilar un número entero ingresado por el usuario</li>
+              <li><strong>Pop:</strong> extraer y mostrar el elemento del tope</li>
+              <li><strong>Peek:</strong> ver el tope sin extraerlo</li>
+              <li><strong>isEmpty:</strong> indicar si la pila está vacía</li>
+              <li><strong>Mostrar:</strong> imprimir todos los elementos de la pila</li>
+            </ul>
+            <div class="slabel">// Paso a paso</div>
+            <div class="steps">
+              <div class="step"><div class="sn">1</div><div class="st">Crea <span class="ic">pila = []</span> e inicia el menú con <span class="ic">while True:</span></div></div>
+              <div class="step"><div class="sn">2</div><div class="st">Push: pide un <span class="ic">int(input())</span> y usa <span class="ic">.append()</span></div></div>
+              <div class="step"><div class="sn">3</div><div class="st">Pop: verifica <span class="ic">if pila:</span> antes de llamar <span class="ic">.pop()</span></div></div>
+              <div class="step"><div class="sn">4</div><div class="st">Peek: accede a <span class="ic">pila[-1]</span> sin extraer</div></div>
+              <div class="step"><div class="sn">5</div><div class="st">Mostrar: recorre con <span class="ic">for i, x in enumerate(pila):</span></div></div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="slabel">// Esqueleto</div>
+            <div class="code-block">
+              <div class="code-bar">
+                <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+                <div class="cfile">pila_enteros.py</div>
+                <button class="btn-cp" onclick="copyCode(this,'sk1')">copiar</button>
+              </div>
+              <div class="code-body" id="sk1"><span class="cm"># Pila de Enteros — LIFO
+# TODO: completa cada sección</span>
+
+<span class="tc">pila</span> <span class="op">=</span> []
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="fn">print</span>(<span class="str">"\n1.Push 2.Pop 3.Peek 4.isEmpty 5.Ver 6.Salir"</span>)
+    <span class="tc">op</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"Opción: "</span>)
+
+    <span class="kw">if</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"1"</span>:
+        <span class="tc">n</span> <span class="op">=</span> <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Número: "</span>))
+        <span class="cm"># TODO: apilar</span>
+    <span class="kw">elif</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"2"</span>:
+        <span class="cm"># TODO: verificar y pop()</span>
+        <span class="kw">pass</span>
+    <span class="kw">elif</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"3"</span>:
+        <span class="cm"># TODO: peek con pila[-1]</span>
+        <span class="kw">pass</span>
+    <span class="kw">elif</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"4"</span>:
+        <span class="cm"># TODO: len(pila) == 0</span>
+        <span class="kw">pass</span>
+    <span class="kw">elif</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"5"</span>:
+        <span class="cm"># TODO: mostrar con enumerate()</span>
+        <span class="kw">pass</span>
+    <span class="kw">elif</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"6"</span>:
+        <span class="kw">break</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="sol-note">🔒 Ingresa la clave cuando el docente la indique</div>
+          <div class="sol-form">
+            <input class="sol-input" id="si-1" type="password" placeholder="clave solución" onkeydown="if(event.key==='Enter')dlSol(1)">
+            <button class="btn-sol" onclick="dlSol(1)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Descargar solución
+            </button>
+            <div class="sol-err" id="se-1" style="display:none">Clave incorrecta.</div>
+            <div class="sol-ok"  id="so-1" style="display:none">✓ Descargando pila_enteros_sol.py…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ EJERCICIO 2 ═══════════════ -->
+    <div class="card" id="card-2">
+      <div class="lock-overlay">
+        <div class="lock-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div class="lock-title">Ejercicio 2 — Validador de Paréntesis</div>
+        <div class="lock-sub">Solo el Grupo 2 puede acceder</div>
+        <div class="lock-form">
+          <input class="lock-input" id="ai-2" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')unlock(2)">
+          <button class="btn-unlock" onclick="unlock(2)">Desbloquear →</button>
+        </div>
+        <div class="lock-err" id="ae-2" style="display:none">Clave incorrecta.</div>
+      </div>
+      <div class="card-content">
+        <div class="card-header">
+          <div class="card-num">GRUPO 2</div>
+          <div>
+            <div class="card-title">Validador de Paréntesis</div>
+            <div class="card-desc">Usar una pila para verificar si una expresión tiene paréntesis balanceados</div>
+          </div>
+          <div class="card-tags">
+            <span class="tag t-teal">pila</span>
+            <span class="tag t-green">for + in</span>
+            <span class="tag t-purple">balanceo</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-left">
+            <div class="slabel">// Qué debe hacer tu programa</div>
+            <ul class="req-list">
+              <li>Pedir una expresión matemática como <strong>(a + (b * c))</strong></li>
+              <li>Recorrer cada carácter de la expresión</li>
+              <li>Apilar <strong>(</strong> al encontrar apertura, desapilar al encontrar <strong>)</strong></li>
+              <li>Si al cerrar la pila está vacía → inválido</li>
+              <li>Al terminar: pila vacía = balanceada ✓</li>
+              <li>Permitir múltiples expresiones en bucle</li>
+            </ul>
+            <div class="slabel">// Paso a paso</div>
+            <div class="steps">
+              <div class="step"><div class="sn">1</div><div class="st">Crea un bucle que pida expresiones hasta escribir "salir"</div></div>
+              <div class="step"><div class="sn">2</div><div class="st">Para cada expresión crea <span class="ic">pila = []</span> y <span class="ic">valido = True</span></div></div>
+              <div class="step"><div class="sn">3</div><div class="st">Recorre con <span class="ic">for ch in expresion:</span></div></div>
+              <div class="step"><div class="sn">4</div><div class="st">Si <span class="ic">ch == '('</span> → <span class="ic">pila.append(ch)</span></div></div>
+              <div class="step"><div class="sn">5</div><div class="st">Si <span class="ic">ch == ')'</span> → verifica <span class="ic">if not pila:</span> antes de <span class="ic">.pop()</span></div></div>
+              <div class="step"><div class="sn">6</div><div class="st">Al final: <span class="ic">if valido and not pila:</span> → balanceada</div></div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="slabel">// Esqueleto</div>
+            <div class="code-block">
+              <div class="code-bar">
+                <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+                <div class="cfile">validador.py</div>
+                <button class="btn-cp" onclick="copyCode(this,'sk2')">copiar</button>
+              </div>
+              <div class="code-body" id="sk2"><span class="cm"># Validador de Paréntesis con Pila
+# TODO: completa cada sección</span>
+
+<span class="fn">print</span>(<span class="str">"Validador de paréntesis. Escribe 'salir' para terminar."</span>)
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="tc">expr</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"Expresión: "</span>)
+    <span class="kw">if</span> <span class="tc">expr</span>.<span class="fn">lower</span>() <span class="op">==</span> <span class="str">"salir"</span>:
+        <span class="kw">break</span>
+
+    <span class="tc">pila</span>  <span class="op">=</span> []
+    <span class="tc">valido</span> <span class="op">=</span> <span class="kw">True</span>
+
+    <span class="kw">for</span> <span class="tc">ch</span> <span class="kw">in</span> <span class="tc">expr</span>:
+        <span class="kw">if</span> <span class="tc">ch</span> <span class="op">==</span> <span class="str">'('</span>:
+            <span class="cm"># TODO: apilar</span>
+            <span class="kw">pass</span>
+        <span class="kw">elif</span> <span class="tc">ch</span> <span class="op">==</span> <span class="str">')'</span>:
+            <span class="kw">if</span> <span class="kw">not</span> <span class="tc">pila</span>:
+                <span class="tc">valido</span> <span class="op">=</span> <span class="kw">False</span>
+                <span class="kw">break</span>
+            <span class="cm"># TODO: pop()</span>
+
+    <span class="kw">if</span> <span class="tc">valido</span> <span class="kw">and</span> <span class="kw">not</span> <span class="tc">pila</span>:
+        <span class="fn">print</span>(<span class="str">"✓ Balanceada"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">"✗ No balanceada"</span>)</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="sol-note">🔒 Ingresa la clave cuando el docente la indique</div>
+          <div class="sol-form">
+            <input class="sol-input" id="si-2" type="password" placeholder="clave solución" onkeydown="if(event.key==='Enter')dlSol(2)">
+            <button class="btn-sol" onclick="dlSol(2)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Descargar solución
+            </button>
+            <div class="sol-err" id="se-2" style="display:none">Clave incorrecta.</div>
+            <div class="sol-ok"  id="so-2" style="display:none">✓ Descargando validador_sol.py…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ EJERCICIO 3 ═══════════════ -->
+    <div class="card" id="card-3">
+      <div class="lock-overlay">
+        <div class="lock-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div class="lock-title">Ejercicio 3 — Conversor de Decimal a Binario</div>
+        <div class="lock-sub">Solo el Grupo 3 puede acceder</div>
+        <div class="lock-form">
+          <input class="lock-input" id="ai-3" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')unlock(3)">
+          <button class="btn-unlock" onclick="unlock(3)">Desbloquear →</button>
+        </div>
+        <div class="lock-err" id="ae-3" style="display:none">Clave incorrecta.</div>
+      </div>
+      <div class="card-content">
+        <div class="card-header">
+          <div class="card-num">GRUPO 3</div>
+          <div>
+            <div class="card-title">Conversor Decimal → Binario</div>
+            <div class="card-desc">Usar una pila para convertir números decimales a binario por divisiones sucesivas</div>
+          </div>
+          <div class="card-tags">
+            <span class="tag t-teal">pila</span>
+            <span class="tag t-orange">módulo %</span>
+            <span class="tag t-red">pop()</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-left">
+            <div class="slabel">// Qué debe hacer tu programa</div>
+            <ul class="req-list">
+              <li>Pedir un número decimal positivo</li>
+              <li>Dividirlo entre 2 repetidamente, apilando los <strong>residuos</strong></li>
+              <li>Vaciar la pila con <span class="ic">.pop()</span> para construir el binario</li>
+              <li>Mostrar el resultado: <strong>13 → 1101</strong></li>
+              <li>Repetir para varios números hasta que el usuario salga</li>
+            </ul>
+            <div class="slabel">// Paso a paso</div>
+            <div class="steps">
+              <div class="step"><div class="sn">1</div><div class="st">Pide un número entero con <span class="ic">int(input())</span></div></div>
+              <div class="step"><div class="sn">2</div><div class="st">Mientras <span class="ic">numero > 0:</span> → apila <span class="ic">numero % 2</span>, luego <span class="ic">numero = numero // 2</span></div></div>
+              <div class="step"><div class="sn">3</div><div class="st">Construye el resultado con: <span class="ic">resultado = ""</span> y <span class="ic">while pila: resultado += str(pila.pop())</span></div></div>
+              <div class="step"><div class="sn">4</div><div class="st">Muestra <span class="ic">f"Binario: {resultado}"</span></div></div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="slabel">// Esqueleto</div>
+            <div class="code-block">
+              <div class="code-bar">
+                <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+                <div class="cfile">decimal_binario.py</div>
+                <button class="btn-cp" onclick="copyCode(this,'sk3')">copiar</button>
+              </div>
+              <div class="code-body" id="sk3"><span class="cm"># Conversor Decimal a Binario con Pila
+# TODO: completa cada sección</span>
+
+<span class="fn">print</span>(<span class="str">"Conversor Decimal → Binario. '0' para salir."</span>)
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="tc">numero</span> <span class="op">=</span> <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Decimal: "</span>))
+    <span class="kw">if</span> <span class="tc">numero</span> <span class="op">==</span> <span class="num">0</span>:
+        <span class="kw">break</span>
+    <span class="kw">if</span> <span class="tc">numero</span> <span class="op"><</span> <span class="num">0</span>:
+        <span class="fn">print</span>(<span class="str">"Solo números positivos."</span>)
+        <span class="kw">continue</span>
+
+    <span class="tc">pila</span> <span class="op">=</span> []
+    <span class="tc">temp</span> <span class="op">=</span> <span class="tc">numero</span>
+
+    <span class="cm"># TODO: dividir y apilar residuos</span>
+    <span class="kw">while</span> <span class="tc">temp</span> <span class="op">></span> <span class="num">0</span>:
+        <span class="cm"># pila.append(temp % 2)</span>
+        <span class="cm"># temp = temp // 2</span>
+        <span class="kw">pass</span>
+
+    <span class="cm"># TODO: construir el binario con pop()</span>
+    <span class="tc">resultado</span> <span class="op">=</span> <span class="str">""</span>
+    <span class="cm"># while pila: resultado += str(pila.pop())</span>
+
+    <span class="fn">print</span>(<span class="str">f"{<span class="tc">numero</span>} en binario = {<span class="tc">resultado</span>}"</span>)</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="sol-note">🔒 Ingresa la clave cuando el docente la indique</div>
+          <div class="sol-form">
+            <input class="sol-input" id="si-3" type="password" placeholder="clave solución" onkeydown="if(event.key==='Enter')dlSol(3)">
+            <button class="btn-sol" onclick="dlSol(3)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Descargar solución
+            </button>
+            <div class="sol-err" id="se-3" style="display:none">Clave incorrecta.</div>
+            <div class="sol-ok"  id="so-3" style="display:none">✓ Descargando decimal_binario_sol.py…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ EJERCICIO 4 ═══════════════ -->
+    <div class="card" id="card-4">
+      <div class="lock-overlay">
+        <div class="lock-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div class="lock-title">Ejercicio 4 — Invertir una Cadena</div>
+        <div class="lock-sub">Solo el Grupo 4 puede acceder</div>
+        <div class="lock-form">
+          <input class="lock-input" id="ai-4" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')unlock(4)">
+          <button class="btn-unlock" onclick="unlock(4)">Desbloquear →</button>
+        </div>
+        <div class="lock-err" id="ae-4" style="display:none">Clave incorrecta.</div>
+      </div>
+      <div class="card-content">
+        <div class="card-header">
+          <div class="card-num">GRUPO 4</div>
+          <div>
+            <div class="card-title">Invertir una Cadena de Texto</div>
+            <div class="card-desc">Usar una pila para invertir el orden de los caracteres de una cadena</div>
+          </div>
+          <div class="card-tags">
+            <span class="tag t-teal">pila</span>
+            <span class="tag t-green">for + str</span>
+            <span class="tag t-orange">concatenar</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-left">
+            <div class="slabel">// Qué debe hacer tu programa</div>
+            <ul class="req-list">
+              <li>Pedir una palabra o frase al usuario</li>
+              <li>Apilar cada carácter de la cadena con <span class="ic">.append()</span></li>
+              <li>Desapilar con <span class="ic">.pop()</span> para construir la cadena invertida</li>
+              <li>Mostrar la cadena original y la invertida</li>
+              <li>Detectar si la palabra es <strong>palíndromo</strong> (ej: "radar")</li>
+            </ul>
+            <div class="slabel">// Paso a paso</div>
+            <div class="steps">
+              <div class="step"><div class="sn">1</div><div class="st">Pide la cadena con <span class="ic">input()</span> y aplica <span class="ic">.strip()</span></div></div>
+              <div class="step"><div class="sn">2</div><div class="st">Recorre con <span class="ic">for ch in cadena:</span> y apila cada carácter</div></div>
+              <div class="step"><div class="sn">3</div><div class="st">Construye la inversa: <span class="ic">invertida = ""</span> y <span class="ic">while pila: invertida += pila.pop()</span></div></div>
+              <div class="step"><div class="sn">4</div><div class="st">Compara <span class="ic">if cadena == invertida:</span> para detectar palíndromo</div></div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="slabel">// Esqueleto</div>
+            <div class="code-block">
+              <div class="code-bar">
+                <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+                <div class="cfile">invertir_cadena.py</div>
+                <button class="btn-cp" onclick="copyCode(this,'sk4')">copiar</button>
+              </div>
+              <div class="code-body" id="sk4"><span class="cm"># Invertir Cadena con Pila
+# TODO: completa cada sección</span>
+
+<span class="fn">print</span>(<span class="str">"Inversor de cadenas. Escribe 'salir' para terminar."</span>)
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="tc">cadena</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"Texto: "</span>).<span class="fn">strip</span>()
+    <span class="kw">if</span> <span class="tc">cadena</span>.<span class="fn">lower</span>() <span class="op">==</span> <span class="str">"salir"</span>:
+        <span class="kw">break</span>
+
+    <span class="tc">pila</span> <span class="op">=</span> []
+
+    <span class="cm"># TODO: apilar cada carácter</span>
+    <span class="kw">for</span> <span class="tc">ch</span> <span class="kw">in</span> <span class="tc">cadena</span>:
+        <span class="kw">pass</span>  <span class="cm"># pila.append(ch)</span>
+
+    <span class="cm"># TODO: construir cadena invertida con pop()</span>
+    <span class="tc">invertida</span> <span class="op">=</span> <span class="str">""</span>
+    <span class="cm"># while pila: invertida += pila.pop()</span>
+
+    <span class="fn">print</span>(<span class="str">f"Original : {<span class="tc">cadena</span>}"</span>)
+    <span class="fn">print</span>(<span class="str">f"Invertida: {<span class="tc">invertida</span>}"</span>)
+
+    <span class="cm"># TODO: detectar palíndromo</span>
+    <span class="cm"># if cadena.lower() == invertida.lower():</span>
+    <span class="cm">#     print("¡Es un palíndromo! 🎉")</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="sol-note">🔒 Ingresa la clave cuando el docente la indique</div>
+          <div class="sol-form">
+            <input class="sol-input" id="si-4" type="password" placeholder="clave solución" onkeydown="if(event.key==='Enter')dlSol(4)">
+            <button class="btn-sol" onclick="dlSol(4)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Descargar solución
+            </button>
+            <div class="sol-err" id="se-4" style="display:none">Clave incorrecta.</div>
+            <div class="sol-ok"  id="so-4" style="display:none">✓ Descargando invertir_cadena_sol.py…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ EJERCICIO 5 ═══════════════ -->
+    <div class="card" id="card-5">
+      <div class="lock-overlay">
+        <div class="lock-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div class="lock-title">Ejercicio 5 — Historial de Navegación</div>
+        <div class="lock-sub">Solo el Grupo 5 puede acceder</div>
+        <div class="lock-form">
+          <input class="lock-input" id="ai-5" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')unlock(5)">
+          <button class="btn-unlock" onclick="unlock(5)">Desbloquear →</button>
+        </div>
+        <div class="lock-err" id="ae-5" style="display:none">Clave incorrecta.</div>
+      </div>
+      <div class="card-content">
+        <div class="card-header">
+          <div class="card-num">GRUPO 5</div>
+          <div>
+            <div class="card-title">Historial de Navegación (Dos Pilas)</div>
+            <div class="card-desc">Simular el botón Atrás y Adelante de un navegador con dos pilas coordinadas</div>
+          </div>
+          <div class="card-tags">
+            <span class="tag t-teal">dos pilas</span>
+            <span class="tag t-red">pop()</span>
+            <span class="tag t-orange">clear()</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-left">
+            <div class="slabel">// Qué debe hacer tu programa</div>
+            <ul class="req-list">
+              <li>Navegar a una URL: apilar en <strong>atras</strong>, limpiar <strong>adelante</strong></li>
+              <li>Retroceder: mover tope de <strong>atras</strong> → <strong>adelante</strong></li>
+              <li>Avanzar: mover tope de <strong>adelante</strong> → <strong>atras</strong></li>
+              <li>Mostrar historial completo con la página actual marcada</li>
+              <li>Validar operaciones cuando la pila está vacía</li>
+            </ul>
+            <div class="slabel">// Paso a paso</div>
+            <div class="steps">
+              <div class="step"><div class="sn">1</div><div class="st">Crea <span class="ic">atras = []</span> y <span class="ic">adelante = []</span></div></div>
+              <div class="step"><div class="sn">2</div><div class="st">Navegar: <span class="ic">atras.append(url)</span> y <span class="ic">adelante.clear()</span></div></div>
+              <div class="step"><div class="sn">3</div><div class="st">Retroceder: <span class="ic">adelante.append(atras.pop())</span> si <span class="ic">len(atras) &gt; 1</span></div></div>
+              <div class="step"><div class="sn">4</div><div class="st">Avanzar: <span class="ic">atras.append(adelante.pop())</span> si <span class="ic">adelante</span></div></div>
+              <div class="step"><div class="sn">5</div><div class="st">Historial: recorre <span class="ic">atras</span>, marca el último con <span class="ic">← actual</span></div></div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="slabel">// Esqueleto</div>
+            <div class="code-block">
+              <div class="code-bar">
+                <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+                <div class="cfile">historial.py</div>
+                <button class="btn-cp" onclick="copyCode(this,'sk5')">copiar</button>
+              </div>
+              <div class="code-body" id="sk5"><span class="cm"># Historial de Navegación — Dos Pilas
+# TODO: completa cada sección</span>
+
+<span class="tc">atras</span>    <span class="op">=</span> []
+<span class="tc">adelante</span> <span class="op">=</span> []
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="fn">print</span>(<span class="str">"\n1.Navegar 2.Atrás 3.Adelante 4.Historial 5.Salir"</span>)
+    <span class="tc">op</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"Opción: "</span>)
+
+    <span class="kw">if</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"1"</span>:
+        <span class="tc">url</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"URL: "</span>)
+        <span class="cm"># TODO: apilar y limpiar adelante</span>
+    <span class="kw">elif</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"2"</span>:
+        <span class="cm"># TODO: retroceder si len(atras) > 1</span>
+        <span class="kw">pass</span>
+    <span class="kw">elif</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"3"</span>:
+        <span class="cm"># TODO: avanzar si adelante no está vacía</span>
+        <span class="kw">pass</span>
+    <span class="kw">elif</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"4"</span>:
+        <span class="cm"># TODO: mostrar historial con marca ← actual</span>
+        <span class="kw">pass</span>
+    <span class="kw">elif</span> <span class="tc">op</span> <span class="op">==</span> <span class="str">"5"</span>:
+        <span class="kw">break</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="sol-note">🔒 Ingresa la clave cuando el docente la indique</div>
+          <div class="sol-form">
+            <input class="sol-input" id="si-5" type="password" placeholder="clave solución" onkeydown="if(event.key==='Enter')dlSol(5)">
+            <button class="btn-sol" onclick="dlSol(5)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Descargar solución
+            </button>
+            <div class="sol-err" id="se-5" style="display:none">Clave incorrecta.</div>
+            <div class="sol-ok"  id="so-5" style="display:none">✓ Descargando historial_sol.py…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /exercises -->
+</div><!-- /wrap -->
+
+<footer>
+  ITB — Instituto Tecnológico de Negocios &nbsp;·&nbsp; <span>Taller — Pilas (Stack)</span> · Clase 3
+</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── UNLOCK ── */
+function unlock(n) {
+  const inp = document.getElementById(`ai-${n}`);
+  const err = document.getElementById(`ae-${n}`);
+  if (inp.value.trim() === ACCESS_PASSWORDS[n]) {
+    const card = document.getElementById(`card-${n}`);
+    card.classList.add('unlocked');
+    card.scrollIntoView({behavior:'smooth',block:'start'});
+    toast(`✓ Ejercicio ${n} desbloqueado`);
+  } else {
+    inp.classList.add('err');
+    err.style.display = 'block';
+    setTimeout(()=>inp.classList.remove('err'),400);
+    inp.value=''; inp.focus();
+  }
+}
+
+/* ── SOLUTIONS ── */
+const solutions = {
+  1:{
+    file:'pila_enteros_sol.py',
+    code:`# SOLUCION — Pila de Enteros
+pila = []
+
+while True:
+    print("\\n1.Push 2.Pop 3.Peek 4.isEmpty 5.Ver 6.Salir")
+    op = input("Opcion: ")
+
+    if op == "1":
+        n = int(input("Numero: "))
+        pila.append(n)
+        print(f"Apilado: {n} | Tope: {pila[-1]}")
+
+    elif op == "2":
+        if pila:
+            print(f"Pop: {pila.pop()}")
+        else:
+            print("Pila vacia.")
+
+    elif op == "3":
+        if pila:
+            print(f"Tope (peek): {pila[-1]}")
+        else:
+            print("Pila vacia.")
+
+    elif op == "4":
+        print(f"isEmpty: {len(pila) == 0}")
+
+    elif op == "5":
+        if pila:
+            print("--- Pila (tope arriba) ---")
+            for i, x in enumerate(reversed(pila), 1):
+                print(f"  {x}")
+        else:
+            print("Pila vacia.")
+
+    elif op == "6":
+        break
+`},{
+    file:'validador_sol.py',
+    code:`# SOLUCION — Validador de Parentesis
+print("Validador de parentesis. Escribe 'salir' para terminar.")
+
+while True:
+    expr = input("Expresion: ")
+    if expr.lower() == "salir":
+        break
+
+    pila  = []
+    valido = True
+
+    for ch in expr:
+        if ch == '(':
+            pila.append(ch)
+        elif ch == ')':
+            if not pila:
+                valido = False
+                break
+            pila.pop()
+
+    if valido and not pila:
+        print("Balanceada")
+    else:
+        print("No balanceada")
+`},{
+    file:'decimal_binario_sol.py',
+    code:`# SOLUCION — Conversor Decimal a Binario
+print("Conversor Decimal a Binario. '0' para salir.")
+
+while True:
+    numero = int(input("Decimal: "))
+    if numero == 0:
+        break
+    if numero < 0:
+        print("Solo numeros positivos.")
+        continue
+
+    pila = []
+    temp = numero
+
+    while temp > 0:
+        pila.append(temp % 2)
+        temp = temp // 2
+
+    resultado = ""
+    while pila:
+        resultado += str(pila.pop())
+
+    print(f"{numero} en binario = {resultado}")
+`},{
+    file:'invertir_cadena_sol.py',
+    code:`# SOLUCION — Invertir Cadena con Pila
+print("Inversor de cadenas. Escribe 'salir' para terminar.")
+
+while True:
+    cadena = input("Texto: ").strip()
+    if cadena.lower() == "salir":
+        break
+
+    pila = []
+    for ch in cadena:
+        pila.append(ch)
+
+    invertida = ""
+    while pila:
+        invertida += pila.pop()
+
+    print(f"Original : {cadena}")
+    print(f"Invertida: {invertida}")
+
+    if cadena.lower() == invertida.lower():
+        print("Es un palindromo!")
+    else:
+        print("No es palindromo.")
+`},{
+    file:'historial_sol.py',
+    code:`# SOLUCION — Historial de Navegacion con Dos Pilas
+atras    = []
+adelante = []
+
+while True:
+    print("\\n1.Navegar 2.Atras 3.Adelante 4.Historial 5.Salir")
+    op = input("Opcion: ")
+
+    if op == "1":
+        url = input("URL: ").strip()
+        if url:
+            atras.append(url)
+            adelante.clear()
+            print(f"Navegando a: {url}")
+
+    elif op == "2":
+        if len(atras) > 1:
+            adelante.append(atras.pop())
+            print(f"Atras. Pagina actual: {atras[-1]}")
+        else:
+            print("No hay paginas anteriores.")
+
+    elif op == "3":
+        if adelante:
+            atras.append(adelante.pop())
+            print(f"Adelante. Pagina actual: {atras[-1]}")
+        else:
+            print("No hay paginas adelante.")
+
+    elif op == "4":
+        if atras:
+            print("--- Historial ---")
+            for i, url in enumerate(atras, 1):
+                marca = " <- actual" if i == len(atras) else ""
+                print(f"  {i}. {url}{marca}")
+        else:
+            print("Historial vacio.")
+
+    elif op == "5":
+        break
+`}
+};
+
+function dlSol(n) {
+  const inp = document.getElementById(`si-${n}`);
+  const err = document.getElementById(`se-${n}`);
+  const ok  = document.getElementById(`so-${n}`);
+  err.style.display = ok.style.display = 'none';
+
+  if (inp.value.trim() === SOLUTION_PASSWORD) {
+    const {file, code} = solutions[n];
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([code],{type:'text/plain'}));
+    a.download = file; a.click();
+    ok.style.display = 'block';
+    toast(`✓ ${file} descargado`);
+  } else {
+    inp.classList.add('err');
+    err.style.display = 'block';
+    setTimeout(()=>inp.classList.remove('err'),400);
+    inp.value=''; inp.focus();
+  }
+}
+
+/* ── COPY ── */
+function copyCode(btn, id) {
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(()=>{
+    btn.textContent='✓ copiado';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+
+/* ── TIMER ── */
+let sec=0,iv=null,run=false;
+function tStart(){if(run)return;run=true;document.getElementById('tbs').classList.add('on');iv=setInterval(()=>{sec++;document.getElementById('td').textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0');},1000);}
+function tPause(){clearInterval(iv);run=false;document.getElementById('tbs').classList.remove('on');}
+function tReset(){tPause();sec=0;document.getElementById('td').textContent='00:00';}
+
+/* ── TOAST ── */
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+</script>
+</body>
+</html>
