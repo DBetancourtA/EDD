@@ -7,393 +7,191 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0D1117;--surface:#161B22;--surface2:#1C2129;--border:#30363D;
+  --green:#4ADE80;--green-dim:#1a4731;--teal:#39D0D8;--teal-dim:#0d3436;
+  --amber:#E3B341;--amber-dim:#2d2208;--blue:#79C0FF;--muted:#8B949E;
+  --text:#E6EDF3;--red:#FF7B72;--radius:12px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(57,208,216,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(57,208,216,.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
 
-:root {
-  --bg:        #0D1117;
-  --surface:   #161B22;
-  --surface2:  #1C2129;
-  --border:    #30363D;
-  --green:     #4ADE80;
-  --green-dim: #1a4731;
-  --teal:      #39D0D8;
-  --teal-dim:  #0d3436;
-  --amber:     #E3B341;
-  --amber-dim: #2d2208;
-  --blue:      #79C0FF;
-  --muted:     #8B949E;
-  --text:      #E6EDF3;
-  --red:       #FF7B72;
-  --radius:    12px;
-}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,17,23,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:56px;gap:12px}
+.nav-logo{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:var(--text);display:flex;align-items:center;gap:10px}
+.nav-logo .bracket{color:var(--teal)}
+.nav-logo .inst{color:var(--muted);font-weight:400;font-size:12px}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-period{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:4px 12px;border-radius:20px}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse-green 2s ease-in-out infinite}
+@keyframes pulse-green{0%,100%{opacity:1;box-shadow:0 0 8px var(--green)}50%{opacity:.5;box-shadow:0 0 2px var(--green)}}
+.nav-entrega-btn{display:flex;align-items:center;gap:6px;background:rgba(255,123,114,.1);border:1px solid rgba(255,123,114,.3);color:#FF7B72;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;padding:5px 14px;border-radius:6px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.nav-entrega-btn:hover{background:rgba(255,123,114,.2);border-color:#FF7B72}
+.nav-entrega-btn .pdot{width:6px;height:6px;border-radius:50%;background:#FF7B72;animation:pulse-red 2s ease-in-out infinite;flex-shrink:0}
+@keyframes pulse-red{0%,100%{box-shadow:0 0 0 0 rgba(255,123,114,.4)}50%{box-shadow:0 0 0 5px rgba(255,123,114,0)}}
 
-html { scroll-behavior: smooth; }
+/* HERO */
+.hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 2rem 60px;text-align:center}
+.hero-kicker{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:28px;display:flex;align-items:center;justify-content:center;gap:12px}
+.hero-kicker::before,.hero-kicker::after{content:'';width:40px;height:1px;background:var(--border)}
+.terminal{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;width:100%;max-width:560px;margin:0 auto 44px;text-align:left}
+.term-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:8px}
+.term-dots{display:flex;gap:5px}
+.term-dots span{width:10px;height:10px;border-radius:50%}
+.td1{background:#FF5F56}.td2{background:#FFBD2E}.td3{background:#27C93F}
+.term-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:0 auto}
+.term-body{padding:18px 20px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;min-height:120px}
+.t-prompt{color:var(--green)}.t-cmd{color:var(--text)}.t-out{color:var(--muted)}.t-teal{color:var(--teal)}.t-amber{color:var(--amber)}
+.t-cursor{display:inline-block;width:8px;height:15px;background:var(--green);vertical-align:middle;animation:blink .9s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.hero-title{font-family:'JetBrains Mono',monospace;font-size:clamp(2rem,6vw,4rem);font-weight:700;line-height:1.05;margin-bottom:12px;letter-spacing:-.02em}
+.hero-title .line1{color:var(--muted);font-weight:300;display:block;font-size:.65em;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.hero-title .hl{color:var(--teal)}.hero-title .hl2{color:var(--green)}
+.hero-sub{font-size:16px;color:var(--muted);max-width:480px;margin:0 auto 40px;line-height:1.7}
+.hero-sub strong{color:var(--text)}
+.stats-row{display:flex;justify-content:center;gap:36px;flex-wrap:wrap;margin-bottom:52px}
+.stat{text-align:center;font-family:'JetBrains Mono',monospace}
+.stat-n{font-size:28px;font-weight:700;line-height:1;margin-bottom:4px}
+.stat-l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.sn-green{color:var(--green)}.sn-teal{color:var(--teal)}.sn-amber{color:var(--amber)}.sn-muted{color:var(--muted)}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;background:var(--teal);color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:12px 28px;border-radius:8px;text-decoration:none;transition:opacity .2s,transform .15s}
+.hero-cta:hover{opacity:.88;transform:translateY(-2px)}
+.scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:6px;animation:float 2.5s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+.scroll-hint svg{opacity:.4}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', sans-serif;
-  font-size: 15px;
-  line-height: 1.6;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+/* ABOUT */
+.about-strip{position:relative;z-index:1;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--surface);padding:40px 2.5rem}
+.about-inner{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px}
+.ai-label{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);margin-bottom:8px}
+.ai-text{font-size:14px;color:var(--muted);line-height:1.65}
+.ai-text strong{color:var(--text)}
 
-/* ── GRID BACKGROUND ── */
-body::before {
-  content: '';
-  position: fixed; inset: 0; z-index: 0;
-  background-image:
-    linear-gradient(rgba(57,208,216,.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(57,208,216,.03) 1px, transparent 1px);
-  background-size: 48px 48px;
-  pointer-events: none;
-}
+/* SECTION */
+.section{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:56px 1.5rem 100px}
+.section-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);display:flex;align-items:center;gap:12px;margin-bottom:36px}
+.section-eyebrow::after{content:'';flex:1;height:1px;background:var(--border)}
 
-/* ── NAV ── */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(13,17,23,.85);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 2.5rem; height: 56px;
-}
-.nav-logo {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700; font-size: 13px;
-  color: var(--text);
-  display: flex; align-items: center; gap: 10px;
-}
-.nav-logo .bracket { color: var(--teal); }
-.nav-logo .name    { color: var(--text); }
-.nav-logo .inst    { color: var(--muted); font-weight: 400; font-size: 12px; }
+/* CLASS GRID */
+.class-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.class-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:border-color .25s,transform .2s;position:relative}
+.class-card:hover{transform:translateY(-3px)}
+.class-card.status-dev{border-color:rgba(227,179,65,.2)}.class-card.status-dev:hover{border-color:var(--amber)}
+.class-card.status-active{border-color:rgba(74,222,128,.2)}.class-card.status-active:hover{border-color:var(--green)}
+.class-card.status-current{border-color:var(--teal);box-shadow:0 0 0 1px rgba(57,208,216,.15)}.class-card.status-current:hover{border-color:var(--teal)}
+.class-card.status-soon{border-color:var(--border);opacity:.55}.class-card.status-soon:hover{transform:none}
+.card-accent{height:3px;width:100%}
+.acc-dev{background:linear-gradient(90deg,var(--amber),transparent)}
+.acc-active{background:linear-gradient(90deg,var(--green),transparent)}
+.acc-current{background:linear-gradient(90deg,var(--teal),var(--green))}
+.acc-soon{background:var(--border)}
+.card-top{padding:24px 24px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.card-class-num{font-family:'JetBrains Mono',monospace;font-size:52px;font-weight:700;line-height:1;letter-spacing:-.03em;opacity:.12;user-select:none}
+.status-active .card-class-num{color:var(--green);opacity:.18}
+.status-current .card-class-num{color:var(--teal);opacity:.22}
+.status-dev .card-class-num{color:var(--amber);opacity:.18}
+.status-soon .card-class-num{color:var(--muted);opacity:.08}
+.status-badge{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:4px 10px;border-radius:4px;white-space:nowrap}
+.badge-dev{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(227,179,65,.3)}
+.badge-active{background:var(--green-dim);color:var(--green);border:1px solid rgba(74,222,128,.3)}
+.badge-current{background:var(--teal-dim);color:var(--teal);border:1px solid rgba(57,208,216,.3)}
+.badge-soon{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+.card-body{padding:16px 24px 20px;flex:1;display:flex;flex-direction:column;gap:10px}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.card-title{font-size:18px;font-weight:700;line-height:1.2}
+.card-desc{font-size:13px;color:var(--muted);line-height:1.6;flex:1}
+.card-topics{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.topic{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:4px}
+.topic.active-topic{color:var(--teal);border-color:rgba(57,208,216,.2);background:var(--teal-dim)}
+.card-files{padding:0 24px 20px;display:flex;flex-direction:column;gap:6px}
+.file-link{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:7px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-size:13px;font-family:'JetBrains Mono',monospace;transition:all .2s}
+.file-link:hover{border-color:var(--teal);color:var(--teal)}
+.fl-name{flex:1;font-size:12px}
+.fl-type{font-size:10px;color:var(--muted);background:var(--bg);border:1px solid var(--border);padding:1px 6px;border-radius:3px}
+.card-dev-msg,.card-soon-msg{padding:12px 24px 20px;font-family:'JetBrains Mono',monospace;font-size:12px;display:flex;align-items:center;gap:8px}
+.card-dev-msg{color:var(--amber);opacity:.8}
+.card-soon-msg{color:var(--muted);opacity:.7}
+.pulse-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.pulse-dot.amber{background:var(--amber);animation:pulse-amber 2s ease-in-out infinite}
+@keyframes pulse-amber{0%,100%{box-shadow:0 0 0 0 rgba(227,179,65,.4)}50%{box-shadow:0 0 0 5px rgba(227,179,65,0)}}
 
-.nav-right {
-  display: flex; align-items: center; gap: 16px;
-}
-.nav-period {
-  font-family: 'JetBrains Mono', monospace; font-size: 11px;
-  color: var(--muted);
-  background: var(--surface); border: 1px solid var(--border);
-  padding: 4px 12px; border-radius: 20px;
-}
-.nav-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 8px var(--green);
-  animation: pulse-green 2s ease-in-out infinite;
-}
-@keyframes pulse-green {
-  0%,100% { opacity:1; box-shadow: 0 0 8px var(--green); }
-  50%      { opacity:.5; box-shadow: 0 0 2px var(--green); }
-}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);display:flex;align-items:flex-start;justify-content:center;padding:64px 1rem 2rem;opacity:0;pointer-events:none;transition:opacity .25s;overflow-y:auto}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;width:100%;max-width:780px;overflow:hidden;position:relative;transform:translateY(24px);transition:transform .3s;margin-bottom:2rem}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-head{background:var(--surface2);border-bottom:1px solid var(--border);padding:22px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.modal-head-left{display:flex;align-items:center;gap:14px}
+.modal-icon{width:42px;height:42px;border-radius:9px;background:rgba(255,123,114,.1);border:1px solid rgba(255,123,114,.25);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.modal-head-title{font-size:17px;font-weight:700;margin-bottom:2px}
+.modal-head-sub{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+.modal-close{width:34px;height:34px;border-radius:7px;background:none;border:1px solid var(--border);color:var(--muted);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.modal-close:hover{color:var(--text);border-color:var(--muted)}
+.modal-body{padding:28px;display:flex;flex-direction:column;gap:28px}
+.alert-banner{background:rgba(255,123,114,.07);border:1px solid rgba(255,123,114,.25);border-radius:9px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start}
+.ab-icon{font-size:18px;flex-shrink:0}
+.ab-text{font-size:14px;color:var(--muted);line-height:1.6}
+.ab-text strong{color:#FF7B72}
+.m-section-title{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.m-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.delivery-steps{display:flex;flex-direction:column;gap:0}
+.d-step{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--border)}
+.d-step:last-child{border-bottom:none}
+.d-step-num{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:#FF7B72;background:rgba(255,123,114,.1);border:1px solid rgba(255,123,114,.25);min-width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.d-step-title{font-size:15px;font-weight:600;margin-bottom:5px}
+.d-step-desc{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:10px}
+.d-step-desc strong{color:var(--text)}
+.d-step-desc em{color:#FF7B72;font-style:normal}
+.doc-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.doc-opt{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);transition:border-color .2s}
+.doc-opt:hover{border-color:var(--teal)}
+.do-icon{font-size:22px;flex-shrink:0}
+.do-name{font-size:13px;font-weight:600}
+.do-url{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-top:1px}
+.format-box{background:var(--surface2);border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-top:4px}
+.format-box-head{background:#010409;border-bottom:1px solid var(--border);padding:8px 14px;display:flex;align-items:center;gap:8px}
+.fbh-dots{display:flex;gap:4px}
+.fbh-dots span{width:9px;height:9px;border-radius:50%}
+.fbd1{background:#FF5F56}.fbd2{background:#FFBD2E}.fbd3{background:#27C93F}
+.fbh-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:0 auto}
+.format-row{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);gap:10px}
+.format-row:last-child{border-bottom:none}
+.fr-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);min-width:160px;flex-shrink:0}
+.fr-value{font-size:13px;color:var(--text)}
+.fv-hl{font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(57,208,216,.1);border:1px solid rgba(57,208,216,.2);color:var(--teal);padding:2px 8px;border-radius:4px}
+.fr-warn{font-family:'JetBrains Mono',monospace;font-size:11px;color:#FF7B72;margin-left:auto;white-space:nowrap}
+.sm-mock{background:#1e1e1e;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-top:4px}
+.sm-bar{background:#252526;border-bottom:1px solid #333;padding:8px 14px;display:flex;align-items:center;gap:8px}
+.sm-dots{display:flex;gap:4px}
+.sm-dots span{width:9px;height:9px;border-radius:50%}
+.sm-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:#888;margin:0 auto}
+.sm-body{padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;background:#1e1e1e}
+.skw{color:#569cd6}.sstr{color:#ce9178}.scm{color:#6a9955;font-style:italic}.sfn{color:#dcdcaa}
+.sm-caption{padding:9px 14px;font-size:12px;color:var(--muted);border-top:1px solid #333;font-family:'JetBrains Mono',monospace;background:#1e1e1e}
+.checklist{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.check-item{display:flex;gap:10px;align-items:flex-start;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px 14px}
+.ci-box{width:18px;height:18px;border-radius:4px;border:2px solid var(--green-dim);background:var(--green-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.ci-box::after{content:'✓';color:var(--green);font-size:11px;font-weight:700}
+.ci-text{font-size:13px;color:var(--muted);line-height:1.5}
+.ci-text strong{color:var(--text)}
+.ci-code{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--surface);border:1px solid var(--border);padding:1px 6px;border-radius:3px;color:var(--blue)}
+.platform-badge{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:11px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);color:var(--green);padding:2px 8px;border-radius:4px}
 
-/* ── HERO ── */
-.hero {
-  position: relative; z-index: 1;
-  min-height: 100vh;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 80px 2rem 60px;
-  text-align: center;
-}
+/* FOOTER */
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:28px 2.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-brand{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted)}
+.footer-brand span{color:var(--teal)}
+.footer-links{display:flex;gap:16px}
+.footer-links a{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--text)}
 
-.hero-kicker {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 28px;
-  display: flex; align-items: center; gap: 12px;
-}
-.hero-kicker::before, .hero-kicker::after {
-  content: ''; width: 40px; height: 1px; background: var(--border);
-}
-
-/* Terminal window */
-.terminal {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; overflow: hidden;
-  width: 100%; max-width: 560px;
-  margin: 0 auto 44px;
-  text-align: left;
-}
-.term-bar {
-  background: var(--surface2); border-bottom: 1px solid var(--border);
-  padding: 10px 14px; display: flex; align-items: center; gap: 8px;
-}
-.term-dots { display: flex; gap: 5px; }
-.term-dots span { width: 10px; height: 10px; border-radius: 50%; }
-.td1{background:#FF5F56} .td2{background:#FFBD2E} .td3{background:#27C93F}
-.term-title {
-  font-family: 'JetBrains Mono', monospace; font-size: 11px;
-  color: var(--muted); margin: 0 auto;
-}
-.term-body {
-  padding: 18px 20px;
-  font-family: 'JetBrains Mono', monospace; font-size: 13px;
-  line-height: 2; min-height: 120px;
-}
-.t-prompt { color: var(--green); }
-.t-cmd    { color: var(--text); }
-.t-out    { color: var(--muted); }
-.t-teal   { color: var(--teal); }
-.t-amber  { color: var(--amber); }
-.t-cursor {
-  display: inline-block; width: 8px; height: 15px;
-  background: var(--green); vertical-align: middle;
-  animation: blink .9s step-end infinite;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-
-/* Main title */
-.hero-title {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: clamp(2rem, 6vw, 4rem);
-  font-weight: 700; line-height: 1.05;
-  margin-bottom: 12px; letter-spacing: -.02em;
-}
-.hero-title .line1 { color: var(--muted); font-weight: 300; display: block; font-size: .65em; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 6px; }
-.hero-title .hl    { color: var(--teal); }
-.hero-title .hl2   { color: var(--green); }
-
-.hero-sub {
-  font-size: 16px; color: var(--muted);
-  max-width: 480px; margin: 0 auto 40px; line-height: 1.7;
-}
-.hero-sub strong { color: var(--text); }
-
-/* Stats row */
-.stats-row {
-  display: flex; justify-content: center; gap: 36px; flex-wrap: wrap;
-  margin-bottom: 52px;
-}
-.stat {
-  text-align: center;
-  font-family: 'JetBrains Mono', monospace;
-}
-.stat-n {
-  font-size: 28px; font-weight: 700; line-height: 1;
-  margin-bottom: 4px;
-}
-.stat-l { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
-.sn-green  { color: var(--green); }
-.sn-teal   { color: var(--teal); }
-.sn-amber  { color: var(--amber); }
-.sn-muted  { color: var(--muted); }
-
-.hero-cta {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--teal); color: #0D1117;
-  font-family: 'JetBrains Mono', monospace; font-weight: 700;
-  font-size: 14px; padding: 12px 28px; border-radius: 8px;
-  text-decoration: none; transition: opacity .2s, transform .15s;
-}
-.hero-cta:hover { opacity:.88; transform: translateY(-2px); }
-
-.scroll-hint {
-  position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
-  font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted);
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  animation: float 2.5s ease-in-out infinite;
-}
-@keyframes float { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
-.scroll-hint svg { opacity: .4; }
-
-/* ── CLASES SECTION ── */
-.section {
-  position: relative; z-index: 1;
-  max-width: 1000px; margin: 0 auto;
-  padding: 0 1.5rem 100px;
-}
-
-.section-eyebrow {
-  font-family: 'JetBrains Mono', monospace; font-size: 11px;
-  text-transform: uppercase; letter-spacing: .12em; color: var(--muted);
-  display: flex; align-items: center; gap: 12px; margin-bottom: 36px;
-}
-.section-eyebrow::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-/* Class grid */
-.class-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-}
-
-/* Class card */
-.class-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); overflow: hidden;
-  display: flex; flex-direction: column;
-  transition: border-color .25s, transform .2s;
-  position: relative;
-}
-.class-card:hover { transform: translateY(-3px); }
-
-/* Status variants */
-.class-card.status-dev    { border-color: rgba(227,179,65,.2); }
-.class-card.status-dev:hover  { border-color: var(--amber); }
-.class-card.status-active { border-color: rgba(74,222,128,.2); }
-.class-card.status-active:hover { border-color: var(--green); }
-.class-card.status-current{ border-color: var(--teal); box-shadow: 0 0 0 1px rgba(57,208,216,.15); }
-.class-card.status-current:hover { border-color: var(--teal); }
-.class-card.status-soon   { border-color: var(--border); opacity: .55; }
-.class-card.status-soon:hover { transform: none; }
-
-/* Card top accent bar */
-.card-accent {
-  height: 3px; width: 100%;
-}
-.acc-dev     { background: linear-gradient(90deg, var(--amber), transparent); }
-.acc-active  { background: linear-gradient(90deg, var(--green), transparent); }
-.acc-current { background: linear-gradient(90deg, var(--teal), var(--green)); }
-.acc-soon    { background: var(--border); }
-
-/* Card header */
-.card-top {
-  padding: 24px 24px 0;
-  display: flex; align-items: flex-start; justify-content: space-between;
-  gap: 12px;
-}
-.card-class-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 52px; font-weight: 700; line-height: 1;
-  letter-spacing: -.03em;
-  opacity: .12; /* dimmed by default, overridden per status */
-  user-select: none;
-}
-.status-active  .card-class-num { color: var(--green);  opacity: .18; }
-.status-current .card-class-num { color: var(--teal);   opacity: .22; }
-.status-dev     .card-class-num { color: var(--amber);  opacity: .18; }
-.status-soon    .card-class-num { color: var(--muted);  opacity: .08; }
-
-.status-badge {
-  font-family: 'JetBrains Mono', monospace; font-size: 10px;
-  font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
-  padding: 4px 10px; border-radius: 4px; white-space: nowrap;
-}
-.badge-dev     { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(227,179,65,.3); }
-.badge-active  { background: var(--green-dim); color: var(--green); border: 1px solid rgba(74,222,128,.3); }
-.badge-current { background: var(--teal-dim);  color: var(--teal);  border: 1px solid rgba(57,208,216,.3); }
-.badge-soon    { background: var(--surface2);  color: var(--muted); border: 1px solid var(--border); }
-
-/* Card body */
-.card-body {
-  padding: 16px 24px 20px; flex: 1; display: flex; flex-direction: column; gap: 10px;
-}
-.card-label {
-  font-family: 'JetBrains Mono', monospace; font-size: 11px;
-  text-transform: uppercase; letter-spacing: .1em; color: var(--muted);
-}
-.card-title { font-size: 18px; font-weight: 700; line-height: 1.2; }
-.card-desc  { font-size: 13px; color: var(--muted); line-height: 1.6; flex: 1; }
-
-/* Topics list */
-.card-topics {
-  display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px;
-}
-.topic {
-  font-family: 'JetBrains Mono', monospace; font-size: 11px;
-  background: var(--surface2); border: 1px solid var(--border);
-  color: var(--muted); padding: 3px 8px; border-radius: 4px;
-}
-.topic.active-topic { color: var(--teal); border-color: rgba(57,208,216,.2); background: var(--teal-dim); }
-
-/* Card files / links */
-.card-files { padding: 0 24px 20px; display: flex; flex-direction: column; gap: 6px; }
-
-.file-link {
-  display: flex; align-items: center; gap: 9px;
-  padding: 9px 12px; border-radius: 7px;
-  background: var(--surface2); border: 1px solid var(--border);
-  text-decoration: none; color: var(--text);
-  font-size: 13px; font-family: 'JetBrains Mono', monospace;
-  transition: all .2s;
-}
-.file-link:hover { border-color: var(--teal); color: var(--teal); }
-.file-link .fl-icon { font-size: 14px; flex-shrink: 0; }
-.file-link .fl-name { flex: 1; font-size: 12px; }
-.file-link .fl-type {
-  font-size: 10px; color: var(--muted);
-  background: var(--bg); border: 1px solid var(--border);
-  padding: 1px 6px; border-radius: 3px;
-}
-
-.card-dev-msg {
-  padding: 12px 24px 20px;
-  font-family: 'JetBrains Mono', monospace; font-size: 12px;
-  color: var(--amber); opacity: .7;
-  display: flex; align-items: center; gap: 8px;
-}
-.card-soon-msg {
-  padding: 12px 24px 20px;
-  font-family: 'JetBrains Mono', monospace; font-size: 12px;
-  color: var(--muted); opacity: .6;
-  display: flex; align-items: center; gap: 8px;
-}
-
-/* Pulsing dot for dev */
-.pulse-dot {
-  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
-}
-.pulse-dot.amber {
-  background: var(--amber);
-  animation: pulse-amber 2s ease-in-out infinite;
-}
-@keyframes pulse-amber {
-  0%,100%{ box-shadow: 0 0 0 0 rgba(227,179,65,.4); }
-  50%    { box-shadow: 0 0 0 5px rgba(227,179,65,0); }
-}
-
-/* ── ABOUT STRIP ── */
-.about-strip {
-  position: relative; z-index: 1;
-  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-  background: var(--surface);
-  padding: 40px 2.5rem; margin-bottom: 0;
-}
-.about-inner {
-  max-width: 1000px; margin: 0 auto;
-  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px;
-}
-@media (max-width: 700px) { .about-inner { grid-template-columns: 1fr; gap: 20px; } }
-
-.about-item {}
-.about-item .ai-label {
-  font-family: 'JetBrains Mono', monospace; font-size: 11px;
-  text-transform: uppercase; letter-spacing: .1em; color: var(--teal);
-  margin-bottom: 8px;
-}
-.about-item .ai-text { font-size: 14px; color: var(--muted); line-height: 1.65; }
-.about-item .ai-text strong { color: var(--text); }
-
-/* ── FOOTER ── */
-footer {
-  position: relative; z-index: 1;
-  border-top: 1px solid var(--border);
-  padding: 28px 2.5rem;
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 12px;
-}
-.footer-brand {
-  font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted);
-}
-.footer-brand span { color: var(--teal); }
-.footer-links { display: flex; gap: 16px; }
-.footer-links a {
-  font-family: 'JetBrains Mono', monospace; font-size: 12px;
-  color: var(--muted); text-decoration: none;
-  transition: color .2s;
-}
-.footer-links a:hover { color: var(--text); }
-
-/* ── RESPONSIVE ── */
-@media (max-width: 600px) {
-  nav { padding: 0 1.2rem; }
-  .nav-period { display: none; }
-  .hero-title { letter-spacing: -.01em; }
-  .stats-row { gap: 20px; }
-  footer { flex-direction: column; align-items: center; text-align: center; }
+@media(max-width:700px){
+  nav{padding:0 1rem}.nav-period{display:none}
+  .about-inner{grid-template-columns:1fr}
+  .doc-options{grid-template-columns:1fr}
+  footer{flex-direction:column;align-items:center;text-align:center}
 }
 </style>
 </head>
@@ -403,111 +201,229 @@ footer {
 <nav>
   <div class="nav-logo">
     <span class="bracket">{</span>
-    <span class="name">EDD</span>
+    <span>EDD</span>
     <span class="bracket">}</span>
     <span class="inst">Instituto Tecnológico de Negocios</span>
   </div>
   <div class="nav-right">
     <div class="nav-period">Período 2025 · 2026</div>
+    <button class="nav-entrega-btn" onclick="openModal()">
+      <span class="pdot"></span>
+      ¿Cómo entregar?
+    </button>
     <div class="nav-dot"></div>
   </div>
 </nav>
 
+<!-- ═══════════════ MODAL ENTREGA ═══════════════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-head-left">
+        <div class="modal-icon">📋</div>
+        <div>
+          <div class="modal-head-title">¿Cómo entregar mis actividades?</div>
+          <div class="modal-head-sub">// Guía paso a paso para la entrega en EVA</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="alert-banner">
+        <div class="ab-icon">⚠️</div>
+        <div class="ab-text">
+          <strong>Atención:</strong> La entrega no es solo el archivo <span style="font-family:'JetBrains Mono';font-size:12px;background:#1C2129;padding:1px 6px;border-radius:3px;color:#79C0FF">.py</span>.
+          Debes redactar un <strong>documento Word</strong> con capturas de pantalla, el código formateado correctamente y la explicación de tu solución.
+        </div>
+      </div>
+
+      <div>
+        <div class="m-section-title">// Pasos para la entrega</div>
+        <div class="delivery-steps">
+
+          <div class="d-step">
+            <div class="d-step-num">1</div>
+            <div>
+              <div class="d-step-title">Crea un documento Word</div>
+              <div class="d-step-desc">Abre uno de estos servicios y crea un <strong>documento en blanco</strong>. Nómbralo así: <em>Apellido_Nombre_PracticaAula_N.docx</em> — Ej: <em>Torres_Diego_PracticaAula_2.docx</em></div>
+              <div class="doc-options">
+                <a class="doc-opt" href="https://www.office.com/launch/word" target="_blank">
+                  <div class="do-icon">🔵</div>
+                  <div><div class="do-name">Word Online</div><div class="do-url">office.com → Word ↗</div></div>
+                </a>
+                <a class="doc-opt" href="https://docs.google.com/document" target="_blank">
+                  <div class="do-icon">📄</div>
+                  <div><div class="do-name">Google Docs</div><div class="do-url">docs.google.com ↗</div></div>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-step">
+            <div class="d-step-num">2</div>
+            <div>
+              <div class="d-step-title">Redacta la solución obtenida</div>
+              <div class="d-step-desc">Escribe con tus propias palabras <strong>cómo resolviste el problema</strong> planteado. Explica qué estructuras usaste, cuál fue tu lógica y qué dificultades encontraste. No copies la consigna — describe <em>tu solución</em>.</div>
+            </div>
+          </div>
+
+          <div class="d-step">
+            <div class="d-step-num">3</div>
+            <div>
+              <div class="d-step-title">Pega capturas de pantalla del IDE</div>
+              <div class="d-step-desc">Incluye <strong>al menos dos capturas</strong> de VS Code: una del código abierto en el editor y otra de la <em>ejecución con resultado correcto</em> en la terminal integrada.</div>
+              <div class="sm-mock">
+                <div class="sm-bar">
+                  <div class="sm-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+                  <div class="sm-title">historial_navegacion.py — Visual Studio Code</div>
+                </div>
+                <div class="sm-body"><span class="scm"># Práctica de Aula 2 — Historial de Navegación</span>
+<span class="scm"># Autor: Torres Diego | Fecha: 16/06/2025</span>
+
+<span class="skw">atras</span>    = []
+<span class="skw">adelante</span> = []
+
+<span class="skw">while</span> <span class="sfn">True</span>:
+    <span class="sfn">print</span>(<span class="sstr">"1. Navegar  2. Atrás  3. Adelante  4. Salir"</span>)
+    opcion = <span class="sfn">input</span>(<span class="sstr">"Elige: "</span>)
+    ...</div>
+                <div class="sm-caption">📸 Captura 1: código en editor &nbsp;·&nbsp; 📸 Captura 2: ejecución en terminal con resultado correcto</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-step">
+            <div class="d-step-num">4</div>
+            <div>
+              <div class="d-step-title">Pega el código con formato correcto</div>
+              <div class="d-step-desc">Copia <strong>todo el código</strong> desde VS Code, pégalo en el documento y selecciónalo completo. Aplica exactamente este formato:</div>
+              <div class="format-box">
+                <div class="format-box-head">
+                  <div class="fbh-dots"><span class="fbd1"></span><span class="fbd2"></span><span class="fbd3"></span></div>
+                  <div class="fbh-label">// Formato requerido para el bloque de código</div>
+                </div>
+                <div class="format-row">
+                  <div class="fr-label">Fuente</div>
+                  <div class="fr-value"><span class="fv-hl">Arial</span> &nbsp;o&nbsp; <span class="fv-hl">Verdana</span></div>
+                </div>
+                <div class="format-row">
+                  <div class="fr-label">Tamaño</div>
+                  <div class="fr-value"><span class="fv-hl">11 pt</span></div>
+                </div>
+                <div class="format-row">
+                  <div class="fr-label">Interlineado</div>
+                  <div class="fr-value"><span class="fv-hl">Sencillo (1.0)</span></div>
+                  <div class="fr-warn">⚠ Sin espacios entre párrafos</div>
+                </div>
+                <div class="format-row">
+                  <div class="fr-label">Espacio antes / después</div>
+                  <div class="fr-value"><span class="fv-hl">0 pt</span> antes &nbsp;·&nbsp; <span class="fv-hl">0 pt</span> después</div>
+                </div>
+                <div class="format-row">
+                  <div class="fr-label">Nombre del archivo</div>
+                  <div class="fr-value">Escribe encima: <span class="fv-hl"># nombre_archivo.py</span></div>
+                </div>
+              </div>
+              <div class="d-step-desc" style="margin-top:10px">
+                <strong>Word Online:</strong> Inicio → Interlineado → 1.0 · Párrafo → espaciado 0/0. &nbsp;
+                <strong>Google Docs:</strong> Formato → Estilo de párrafo → Espaciado → 0/0 → Simple.
+              </div>
+            </div>
+          </div>
+
+          <div class="d-step">
+            <div class="d-step-num">5</div>
+            <div>
+              <div class="d-step-title">Sube el documento a la plataforma EVA</div>
+              <div class="d-step-desc">Guarda como <strong>.docx</strong> y súbelo a la tarea correspondiente en <span class="platform-badge">✓ EVA · ITB</span> antes de la fecha límite indicada.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div>
+        <div class="m-section-title">// Lista de verificación antes de entregar</div>
+        <div class="checklist">
+          <div class="check-item"><div class="ci-box"></div><div class="ci-text">Nombre correcto del archivo: <strong>Apellido_Nombre_PracticaAula_N.docx</strong></div></div>
+          <div class="check-item"><div class="ci-box"></div><div class="ci-text">Expliqué con <strong>mis propias palabras</strong> cómo resolví el problema</div></div>
+          <div class="check-item"><div class="ci-box"></div><div class="ci-text"><strong>Captura del código</strong> en VS Code y <strong>captura de la ejecución</strong> con resultado correcto</div></div>
+          <div class="check-item"><div class="ci-box"></div><div class="ci-text">Código en <strong>Arial o Verdana 11 pt</strong>, interlineado 1.0, espaciado 0/0</div></div>
+          <div class="check-item"><div class="ci-box"></div><div class="ci-text">El código tiene el nombre del archivo encima como comentario: <span class="ci-code"># historial_navegacion.py</span></div></div>
+          <div class="check-item"><div class="ci-box"></div><div class="ci-text">Subí el archivo <strong>.docx</strong> a la plataforma <strong>EVA</strong> antes del plazo</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <!-- HERO -->
 <section class="hero">
   <div class="hero-kicker">Instituto Tecnológico de Negocios · Python</div>
-
-  <!-- Terminal -->
   <div class="terminal">
     <div class="term-bar">
       <div class="term-dots"><span class="td1"></span><span class="td2"></span><span class="td3"></span></div>
       <div class="term-title">python — edd_itb</div>
     </div>
     <div class="term-body" id="term-output">
-      <span class="t-prompt">→ </span><span class="t-cmd" id="term-line"></span><span class="t-cursor" id="term-cursor"></span>
+      <span class="t-prompt">→ </span><span id="term-line"></span><span class="t-cursor" id="term-cursor"></span>
     </div>
   </div>
-
   <h1 class="hero-title">
     <span class="line1">Materia</span>
     Estructuras <span class="hl">Dinámicas</span><br>de <span class="hl2">Datos</span>
   </h1>
-
-  <p class="hero-sub">
-    Aprende a organizar, manipular y aplicar las estructuras de datos más importantes en
-    <strong>Python</strong>: listas, pilas, colas y más — con ejemplos reales y código descargable.
-  </p>
-
+  <p class="hero-sub">Aprende a organizar, manipular y aplicar las estructuras de datos más importantes en <strong>Python</strong>: listas, pilas, colas y más — con ejemplos reales y código descargable.</p>
   <div class="stats-row">
     <div class="stat"><div class="stat-n sn-teal">6</div><div class="stat-l">Clases</div></div>
-    <div class="stat"><div class="stat-n sn-green">2</div><div class="stat-l">Disponibles</div></div>
+    <div class="stat"><div class="stat-n sn-green">3</div><div class="stat-l">Disponibles</div></div>
     <div class="stat"><div class="stat-n sn-amber">1</div><div class="stat-l">En desarrollo</div></div>
     <div class="stat"><div class="stat-n sn-muted">3</div><div class="stat-l">Próximamente</div></div>
   </div>
-
   <a href="#clases" class="hero-cta">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
     Ver todas las clases
   </a>
-
   <div class="scroll-hint">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
     scroll
   </div>
 </section>
 
-<!-- ABOUT STRIP -->
+<!-- ABOUT -->
 <div class="about-strip">
   <div class="about-inner">
-    <div class="about-item">
-      <div class="ai-label">// Objetivo</div>
-      <div class="ai-text">Comprender las <strong>estructuras de datos abstractas lineales</strong> y aplicarlas en la resolución de problemas reales usando Python sin librerías externas.</div>
-    </div>
-    <div class="about-item">
-      <div class="ai-label">// Metodología</div>
-      <div class="ai-text">Cada clase incluye una <strong>página de referencia</strong> con teoría y retos, una <strong>actividad guiada</strong> para elaborar en clase y un <strong>taller por grupos</strong> con clave de acceso.</div>
-    </div>
-    <div class="about-item">
-      <div class="ai-label">// Requisitos</div>
-      <div class="ai-text"><strong>Python 3.x</strong> instalado y <strong>VS Code</strong> con la extensión de Python. Todo el código es descargable desde cada página. Sin instalaciones adicionales.</div>
-    </div>
+    <div><div class="ai-label">// Objetivo</div><div class="ai-text">Comprender las <strong>estructuras de datos abstractas lineales</strong> y aplicarlas en la resolución de problemas reales usando Python sin librerías externas.</div></div>
+    <div><div class="ai-label">// Metodología</div><div class="ai-text">Cada clase incluye una <strong>página de referencia</strong> con teoría y retos, una <strong>actividad guiada</strong> para elaborar en clase y un <strong>taller por grupos</strong> con clave de acceso.</div></div>
+    <div><div class="ai-label">// Requisitos</div><div class="ai-text"><strong>Python 3.x</strong> y <strong>VS Code</strong> con la extensión de Python. Todo el código es descargable. Sin instalaciones adicionales.</div></div>
   </div>
 </div>
 
-<!-- CLASES GRID -->
+<!-- CLASES -->
 <section class="section" id="clases">
   <div class="section-eyebrow">// Contenido del curso</div>
-
   <div class="class-grid">
 
-    <!-- CLASE 1 — EN DESARROLLO -->
+    <!-- CLASE 1 -->
     <div class="class-card status-dev">
       <div class="card-accent acc-dev"></div>
       <div class="card-top">
         <div class="card-class-num">01</div>
-        <div class="status-badge badge-dev">
-          <span class="pulse-dot amber" style="display:inline-block;margin-right:5px"></span>
-          En desarrollo
-        </div>
+        <div class="status-badge badge-dev"><span class="pulse-dot amber" style="display:inline-block;margin-right:5px;vertical-align:middle"></span>En desarrollo</div>
       </div>
       <div class="card-body">
         <div class="card-label">Clase 1</div>
         <div class="card-title">Introducción a las Estructuras de Datos</div>
-        <div class="card-desc">Conceptos fundamentales: tipos abstractos de datos, clasificación de estructuras, y la diferencia entre estructura estática y dinámica.</div>
-        <div class="card-topics">
-          <span class="topic">TAD</span>
-          <span class="topic">Clasificación</span>
-          <span class="topic">Estática vs Dinámica</span>
-          <span class="topic">Algoritmos base</span>
-        </div>
+        <div class="card-desc">Conceptos fundamentales: tipos abstractos de datos, clasificación de estructuras y la diferencia entre estructura estática y dinámica.</div>
+        <div class="card-topics"><span class="topic">TAD</span><span class="topic">Clasificación</span><span class="topic">Estática vs Dinámica</span><span class="topic">Algoritmos base</span></div>
       </div>
-      <div class="card-dev-msg">
-        <span class="pulse-dot amber"></span>
-        Contenido en preparación — disponible pronto
-      </div>
+      <div class="card-dev-msg"><span class="pulse-dot amber"></span>Contenido en preparación — disponible pronto</div>
     </div>
 
-    <!-- CLASE 2 — DISPONIBLE -->
+    <!-- CLASE 2 -->
     <div class="class-card status-active">
       <div class="card-accent acc-active"></div>
       <div class="card-top">
@@ -518,29 +434,15 @@ footer {
         <div class="card-label">Clase 2</div>
         <div class="card-title">Tipos Abstractos — Listas</div>
         <div class="card-desc">Listas de Python (array dinámico): agregar, eliminar, buscar, recorrer y ordenar elementos con casos reales.</div>
-        <div class="card-topics">
-          <span class="topic active-topic">append()</span>
-          <span class="topic active-topic">remove()</span>
-          <span class="topic active-topic">sort()</span>
-          <span class="topic active-topic">enumerate()</span>
-          <span class="topic active-topic">in / index()</span>
-        </div>
+        <div class="card-topics"><span class="topic active-topic">append()</span><span class="topic active-topic">remove()</span><span class="topic active-topic">sort()</span><span class="topic active-topic">enumerate()</span><span class="topic active-topic">in / index()</span></div>
       </div>
       <div class="card-files">
-        <a class="file-link" href="python-listas.html">
-          <span class="fl-icon">📖</span>
-          <span class="fl-name">python-listas.html</span>
-          <span class="fl-type">referencia</span>
-        </a>
-        <a class="file-link" href="taller-listas.html">
-          <span class="fl-icon">🔐</span>
-          <span class="fl-name">taller-listas.html</span>
-          <span class="fl-type">taller grupos</span>
-        </a>
+        <a class="file-link" href="python-listas.html"><span>📖</span><span class="fl-name">python-listas.html</span><span class="fl-type">referencia</span></a>
+        <a class="file-link" href="taller-listas.html"><span>🔐</span><span class="fl-name">taller-listas.html</span><span class="fl-type">taller grupos</span></a>
       </div>
     </div>
 
-    <!-- CLASE 3 — DISPONIBLE (ACTUAL) -->
+    <!-- CLASE 3 -->
     <div class="class-card status-current">
       <div class="card-accent acc-current"></div>
       <div class="card-top">
@@ -551,106 +453,87 @@ footer {
         <div class="card-label">Clase 3</div>
         <div class="card-title">Tipos Abstractos — Pilas (Stack)</div>
         <div class="card-desc">Principio LIFO, operaciones push/pop/peek e implementación con listas de Python. Historial de navegación, deshacer acciones y validación de paréntesis.</div>
-        <div class="card-topics">
-          <span class="topic active-topic">LIFO</span>
-          <span class="topic active-topic">push / pop</span>
-          <span class="topic active-topic">peek [-1]</span>
-          <span class="topic active-topic">dos pilas</span>
-        </div>
+        <div class="card-topics"><span class="topic active-topic">LIFO</span><span class="topic active-topic">push / pop</span><span class="topic active-topic">peek [-1]</span><span class="topic active-topic">dos pilas</span></div>
       </div>
       <div class="card-files">
-        <a class="file-link" href="clase3-pilas.html">
-          <span class="fl-icon">📖</span>
-          <span class="fl-name">clase3-pilas.html</span>
-          <span class="fl-type">referencia</span>
-        </a>
-        <a class="file-link" href="clase3-actividad.html">
-          <span class="fl-icon">💻</span>
-          <span class="fl-name">clase3-actividad.html</span>
-          <span class="fl-type">práctica aula</span>
-        </a>
-        <a class="file-link" href="clase3-taller.html">
-          <span class="fl-icon">🔐</span>
-          <span class="fl-name">clase3-taller.html</span>
-          <span class="fl-type">taller grupos</span>
-        </a>
+        <a class="file-link" href="clase3-pilas.html"><span>📖</span><span class="fl-name">clase3-pilas.html</span><span class="fl-type">referencia</span></a>
+        <a class="file-link" href="clase3-actividad.html"><span>💻</span><span class="fl-name">clase3-actividad.html</span><span class="fl-type">práctica aula</span></a>
+        <a class="file-link" href="clase3-taller.html"><span>🔐</span><span class="fl-name">clase3-taller.html</span><span class="fl-type">taller grupos</span></a>
       </div>
     </div>
 
     <!-- CLASE 4 -->
     <div class="class-card status-soon">
       <div class="card-accent acc-soon"></div>
-      <div class="card-top">
-        <div class="card-class-num">04</div>
-        <div class="status-badge badge-soon">Próximamente</div>
-      </div>
+      <div class="card-top"><div class="card-class-num">04</div><div class="status-badge badge-soon">Próximamente</div></div>
       <div class="card-body">
         <div class="card-label">Clase 4</div>
         <div class="card-title">Tipos Abstractos — Colas (Queue)</div>
         <div class="card-desc">Principio FIFO, operaciones enqueue/dequeue y casos de uso reales: fila de impresión, sistema de tickets y simulación de turnos.</div>
-        <div class="card-topics">
-          <span class="topic">FIFO</span>
-          <span class="topic">enqueue</span>
-          <span class="topic">dequeue</span>
-          <span class="topic">deque</span>
-        </div>
+        <div class="card-topics"><span class="topic">FIFO</span><span class="topic">enqueue</span><span class="topic">dequeue</span><span class="topic">deque</span></div>
       </div>
-      <div class="card-soon-msg">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Disponible en la próxima clase
-      </div>
+      <div class="card-soon-msg"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Disponible próxima clase</div>
     </div>
 
     <!-- CLASE 5 -->
     <div class="class-card status-soon">
       <div class="card-accent acc-soon"></div>
-      <div class="card-top">
-        <div class="card-class-num">05</div>
-        <div class="status-badge badge-soon">Próximamente</div>
-      </div>
+      <div class="card-top"><div class="card-class-num">05</div><div class="status-badge badge-soon">Próximamente</div></div>
       <div class="card-body">
         <div class="card-label">Clase 5</div>
         <div class="card-title">Por definir</div>
         <div class="card-desc">Contenido en planificación. Se anunciará el tema antes del inicio de la clase.</div>
-        <div class="card-topics">
-          <span class="topic">—</span>
-        </div>
+        <div class="card-topics"><span class="topic">—</span></div>
       </div>
-      <div class="card-soon-msg">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Próximamente
-      </div>
+      <div class="card-soon-msg"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Próximamente</div>
     </div>
 
     <!-- CLASE 6 -->
     <div class="class-card status-soon">
       <div class="card-accent acc-soon"></div>
-      <div class="card-top">
-        <div class="card-class-num">06</div>
-        <div class="status-badge badge-soon">Próximamente</div>
-      </div>
+      <div class="card-top"><div class="card-class-num">06</div><div class="status-badge badge-soon">Próximamente</div></div>
       <div class="card-body">
         <div class="card-label">Clase 6</div>
         <div class="card-title">Por definir</div>
         <div class="card-desc">Contenido en planificación. Se anunciará el tema antes del inicio de la clase.</div>
-        <div class="card-topics">
-          <span class="topic">—</span>
-        </div>
+        <div class="card-topics"><span class="topic">—</span></div>
       </div>
-      <div class="card-soon-msg">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Próximamente
-      </div>
+      <div class="card-soon-msg"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Próximamente</div>
     </div>
 
-  </div><!-- /class-grid -->
+  </div>
+
+  <!-- ═══════════ CLASE BONUS: CV CON REACT ═══════════ -->
+  <div class="section-eyebrow" style="margin-top:48px">// Clase adicional</div>
+  <div class="class-grid">
+    <div class="class-card" style="border-color:rgba(199,146,234,.3);grid-column:1 / -1">
+      <div class="card-accent" style="background:linear-gradient(90deg,#C792EA,#79C0FF)"></div>
+      <div class="card-top">
+        <div class="card-class-num" style="color:#C792EA;opacity:.18;font-size:40px">EXTRA</div>
+        <div class="status-badge" style="background:rgba(199,146,234,.1);color:#C792EA;border:1px solid rgba(199,146,234,.3)">✓ Disponible</div>
+      </div>
+      <div class="card-body">
+        <div class="card-label">Clase adicional · Fuera de la secuencia principal</div>
+        <div class="card-title">Construye tu CV con React</div>
+        <div class="card-desc">De Python a JavaScript: fundamentos de JS, qué es React, y construcción paso a paso de un currículum digital responsive con descarga a PDF, listo para publicar en GitHub Pages.</div>
+        <div class="card-topics">
+          <span class="topic" style="color:#C792EA;border-color:rgba(199,146,234,.2);background:#241a2e">JavaScript ES6</span>
+          <span class="topic" style="color:#C792EA;border-color:rgba(199,146,234,.2);background:#241a2e">React (CDN)</span>
+          <span class="topic" style="color:#C792EA;border-color:rgba(199,146,234,.2);background:#241a2e">Responsive</span>
+          <span class="topic" style="color:#C792EA;border-color:rgba(199,146,234,.2);background:#241a2e">Descarga a PDF</span>
+        </div>
+      </div>
+      <div class="card-files">
+        <a class="file-link" href="clase-extra-cv-react.html" style="border-color:rgba(199,146,234,.2)"><span>📖</span><span class="fl-name">clase-extra-cv-react.html</span><span class="fl-type">guía completa</span></a>
+        <a class="file-link" href="mi-cv-ejemplo.html" style="border-color:rgba(199,146,234,.2)"><span>🎓</span><span class="fl-name">mi-cv-ejemplo.html</span><span class="fl-type">CV de ejemplo</span></a>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-brand">
-    <span>{ EDD }</span> &nbsp;·&nbsp; Instituto Tecnológico de Negocios &nbsp;·&nbsp; Python 3.x
-  </div>
+  <div class="footer-brand"><span>{ EDD }</span> &nbsp;·&nbsp; Instituto Tecnológico de Negocios &nbsp;·&nbsp; Python 3.x</div>
   <div class="footer-links">
     <a href="README.md">README</a>
     <a href="https://www.python.org/downloads/" target="_blank">Python ↗</a>
@@ -659,74 +542,54 @@ footer {
 </footer>
 
 <script>
-/* ── TERMINAL TYPEWRITER ── */
+/* TERMINAL */
 const lines = [
-  { text: 'import estructuras_datos as edd', delay: 60 },
-  { text: 'edd.clases_disponibles()', delay: 55 },
+  {text:'import estructuras_datos as edd', delay:60},
+  {text:'edd.clases_disponibles()', delay:55}
 ];
-
 const outputs = [
   '<span class="t-out">  ✓ Clase 2: Listas     [disponible]</span>',
   '<span class="t-out">  ✓ Clase 3: Pilas      [</span><span class="t-teal">actual</span><span class="t-out">]</span>',
-  '<span class="t-out">  ○ Clase 4: Colas      [próximamente]</span>',
+  '<span class="t-out">  ○ Clase 4: Colas      [próximamente]</span>'
 ];
-
-const termLine   = document.getElementById('term-line');
-const termCursor = document.getElementById('term-cursor');
 const termOutput = document.getElementById('term-output');
+let phase=0, charIdx=0;
 
-let phase = 0, charIdx = 0, outIdx = 0;
+function getTermLine(){ return document.getElementById('term-line'); }
 
-function typeChar() {
-  if (phase >= lines.length) return;
-  const current = lines[phase];
-  if (charIdx < current.text.length) {
-    termLine.textContent += current.text[charIdx];
-    charIdx++;
-    setTimeout(typeChar, current.delay);
+function typeChar(){
+  if(phase >= lines.length) return;
+  const cur = lines[phase];
+  const tl = getTermLine();
+  if(!tl) return;
+  if(charIdx < cur.text.length){
+    tl.textContent += cur.text[charIdx++];
+    setTimeout(typeChar, cur.delay);
   } else {
-    // line done → add to output, start next line after pause
     const done = document.createElement('div');
-    done.innerHTML = `<span class="t-prompt">→ </span><span style="color:var(--text)">${current.text}</span>`;
-    termOutput.insertBefore(done, termOutput.firstChild.nextSibling || null);
-
-    if (phase === 1) {
-      // print output lines
-      let delay = 300;
-      outputs.forEach(html => {
-        setTimeout(() => {
-          const el = document.createElement('div');
-          el.innerHTML = html;
-          termOutput.appendChild(el);
-        }, delay);
-        delay += 220;
-      });
-      setTimeout(()=>{
-        const ready = document.createElement('div');
-        ready.innerHTML = `<span class="t-amber">  → Bienvenido al curso</span>`;
-        termOutput.appendChild(ready);
-      }, delay + 100);
+    done.innerHTML = '<span class="t-prompt">→ </span><span style="color:var(--text)">'+cur.text+'</span>';
+    termOutput.insertBefore(done, termOutput.children[0]);
+    if(phase===1){
+      let d=300;
+      outputs.forEach(html=>{ setTimeout(()=>{ const el=document.createElement('div'); el.innerHTML=html; termOutput.appendChild(el); },d); d+=220; });
+      setTimeout(()=>{ const el=document.createElement('div'); el.innerHTML='<span class="t-amber">  → Bienvenido al curso</span>'; termOutput.appendChild(el); }, d+100);
     }
-
-    termLine.textContent = '';
-    phase++;
-    charIdx = 0;
-    if (phase < lines.length) setTimeout(typeChar, 700);
-    else termCursor.style.display = 'none';
+    tl.textContent=''; phase++; charIdx=0;
+    if(phase<lines.length) setTimeout(typeChar,700);
+    else { const cur=document.getElementById('term-cursor'); if(cur) cur.style.display='none'; }
   }
 }
-
-// Clear default content and start
-termOutput.innerHTML = '<span class="t-prompt">→ </span><span class="t-cmd" id="term-line"></span><span class="t-cursor" id="term-cursor"></span>';
+termOutput.innerHTML='<span class="t-prompt">→ </span><span id="term-line"></span><span class="t-cursor" id="term-cursor"></span>';
 setTimeout(typeChar, 800);
 
-/* ── SMOOTH SCROLL ── */
-document.querySelectorAll('a[href^="#"]').forEach(a => {
-  a.addEventListener('click', e => {
-    e.preventDefault();
-    const target = document.querySelector(a.getAttribute('href'));
-    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
+/* MODAL */
+function openModal(){ document.getElementById('modal-overlay').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); document.body.style.overflow=''; }
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+
+/* SMOOTH SCROLL */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{ e.preventDefault(); const t=document.querySelector(a.getAttribute('href')); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); });
 });
 </script>
 </body>
