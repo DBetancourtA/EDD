@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CRUD Python SQLite - ITB</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Estilos -->
+    <style>
+        :root {
+            --bg: #0D1117;
+            --surface: #161B22;
+            --border: #30363D;
+            --green: #4ADE80;
+            --blue: #79C0FF;
+            --text: #E6EDF3;
+            --muted: #8B949E;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Inter;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            padding: 15px;
+            background: #0D1117;
+            border-bottom: 1px solid var(--border);
+        }
+
+        nav a {
+            color: var(--muted);
+            margin-right: 15px;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: white;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 70px 20px;
+        }
+
+        .hero h1 {
+            font-family: 'JetBrains Mono';
+            font-size: 3em;
+            margin: 0;
+        }
+
+        .hero span {
+            color: var(--green);
+        }
+
+        .hero p {
+            font-size: 1.2em;
+            color: var(--muted);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: var(--green);
+        }
+
+        .card p {
+            line-height: 1.6;
+        }
+
+        .card ul {
+            line-height: 1.8;
+        }
+
+        .code {
+            background: black;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'JetBrains Mono';
+            overflow: auto;
+            border: 1px solid var(--border);
+            font-size: 0.95em;
+        }
+
+        .btn {
+            background: var(--green);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            color: black;
+        }
+
+        .btn:hover {
+            background: #35d84f;
+        }
+    </style>
+</head><body>
+    <!-- Navegación -->
+    <nav>
+        <a href="#c1">Conectar</a>
+        <a href="#c2">Create</a>
+        <a href="#c3">Read</a>
+        <a href="#c4">Update</a>
+        <a href="#c5">Delete</a>
+        <a href="#c6">Proyecto</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>
+            <span>CRUD</span> + Python + SQLite
+        </h1>
+        <p>Guía visual paso a paso para estudiantes ITB</p>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="container">
+        <!-- Flujo Conceptual -->
+        <div class="card">
+            <h2>Flujo</h2>
+            <p>👤 Usuario → 🐍 Python → sqlite3 → 🗄️ Base de datos</p>
+        </div>
+
+        <!-- Card 1: Conectar SQLite -->
+        <div class="card" id="c1">
+            <h2>01 Conectar SQLite</h2>
+            
+            <p>
+                <strong>¿Qué es SQLite?</strong>
+                Es una base de datos pequeña, rápida y confiable que se almacena en un archivo. 
+                No necesita un servidor separado, ¡perfecto para aprender!
+            </p>
+            
+            <p>
+                <strong>¿Qué hace este código?</strong>
+                Conecta Python a una base de datos SQLite. Si el archivo no existe, lo crea automáticamente.
+            </p>
+            
+            <div class="code">
+import sqlite3
+conexion = sqlite3.connect("estudiantes.db")
+cursor = conexion.cursor()
+            </div>
+        </div>
+
+        <!-- Card 2: Create -->
+        <div class="card" id="c2">
+            <h2>02 Create (Crear)</h2>
+            
+            <p>
+                <strong>¿Qué es CREATE?</strong>
+                Significa agregar nuevos datos a la base de datos. 
+                En este caso, agregamos un nuevo estudiante con su nombre y edad.
+            </p>
+            
+            <p>
+                <strong>Cómo funciona:</strong>
+                INSERT INTO inserta (mete) datos nuevos en la tabla. 
+                Los "?" son marcadores de posición seguros para los valores.
+            </p>
+            
+            <div class="code">
+cursor.execute("INSERT INTO estudiantes(nombre,edad) VALUES(?,?)", ("Juan", 22))
+conexion.commit()
+            </div>
+        </div>
+
+        <!-- Card 3: Read -->
+        <div class="card" id="c3">
+            <h2>03 Read (Leer)</h2>
+            
+            <p>
+                <strong>¿Qué es READ?</strong>
+                Significa leer o consultar datos que ya existen en la base de datos. 
+                Es solo lectura, no modifica nada.
+            </p>
+            
+            <p>
+                <strong>Cómo funciona:</strong>
+                SELECT * FROM obtiene todos los registros. 
+                fetchall() devuelve todos los resultados como una lista de tuplas.
+            </p>
+            
+            <div class="code">
+cursor.execute("SELECT * FROM estudiantes")
+estudiantes = cursor.fetchall()
+print(estudiantes)
+            </div>
+        </div>
+
+        <!-- Card 4: Update -->
+        <div class="card" id="c4">
+            <h2>04 Update (Actualizar)</h2>
+            
+            <p>
+                <strong>¿Qué es UPDATE?</strong>
+                Significa modificar datos que ya existen. 
+                Por ejemplo, cambiar la edad de un estudiante.
+            </p>
+            
+            <p>
+                <strong>Cómo funciona:</strong>
+                UPDATE cambia valores. WHERE especifica cuál registro modificar. 
+                <strong style="color: var(--green);">¡Siempre usa WHERE o cambiarás TODO!</strong>
+            </p>
+            
+            <div class="code">
+cursor.execute("UPDATE estudiantes SET edad=? WHERE nombre=?", (30, "Juan"))
+conexion.commit()
+            </div>
+        </div>
+
+        <!-- Card 5: Delete -->
+        <div class="card" id="c5">
+            <h2>05 Delete (Eliminar)</h2>
+            
+            <p>
+                <strong>¿Qué es DELETE?</strong>
+                Significa borrar datos de la base de datos. 
+                <strong style="color: #ff6b6b;">¡Atención! Es destructivo, los datos se pierden.</strong>
+            </p>
+            
+            <p>
+                <strong>Cómo funciona:</strong>
+                DELETE FROM borra registros. WHERE especifica cuál eliminar. 
+                <strong style="color: var(--green);">¡SIEMPRE usa WHERE o perderás todo!</strong>
+            </p>
+            
+            <div class="code">
+cursor.execute("DELETE FROM estudiantes WHERE nombre=?", ("Juan",))
+conexion.commit()
+            </div>
+        </div>
+
+        <!-- Card 6: Proyecto Completo -->
+        <div class="card" id="c6">
+            <h2>06 Proyecto Completo</h2>
+            
+            <p>
+                <strong style="color: var(--green); font-size: 1.1em;">🚀 Ahora es tu turno:</strong>
+                Deberás crear un programa diferente usando estas operaciones CRUD. 
+                Algunas ideas:
+            </p>
+            
+            <ul>
+                <li>📚 <strong>Sistema de biblioteca</strong> (crear, leer, actualizar y eliminar libros)</li>
+                <li>🛒 <strong>Control de inventario</strong> (productos en almacén)</li>
+                <li>🎮 <strong>Lista de videojuegos</strong> (con puntuaciones)</li>
+                <li>🎵 <strong>Gestor de canciones favoritas</strong> (artista, duración, género)</li>
+                <li>📝 <strong>TODO List</strong> (tareas pendientes)</li>
+                <li>💰 <strong>Gestor de gastos</strong> (categoría, monto, fecha)</li>
+            </ul>
+            
+            <p>
+                <strong>Requisitos del proyecto:</strong>
+            </p>
+            <ul>
+                <li>Crear una tabla diferente a "estudiantes"</li>
+                <li>Implementar las 4 operaciones CRUD (Create, Read, Update, Delete)</li>
+                <li>Agregar al menos 3 campos diferentes en tu tabla</li>
+                <li>Probar cada operación correctamente</li>
+            </ul>
+            
+            <p><strong>Plantilla base:</strong></p>
+            <div class="code">
+import sqlite3
+
+# Conectar a la base de datos
+conexion = sqlite3.connect("miproyecto.db")
+cursor = conexion.cursor()
+
+# Crear tabla
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS mi_tabla (
+        id INTEGER PRIMARY KEY,
+        campo1 TEXT,
+        campo2 INTEGER
+    )
+""")
+
+# INSERT (Create)
+cursor.execute("INSERT INTO mi_tabla(campo1, campo2) VALUES(?, ?)", ("valor", 123))
+
+# SELECT (Read)
+cursor.execute("SELECT * FROM mi_tabla")
+print(cursor.fetchall())
+
+# UPDATE (Actualizar)
+cursor.execute("UPDATE mi_tabla SET campo1=? WHERE id=?", ("nuevo", 1))
+
+# DELETE (Eliminar)
+cursor.execute("DELETE FROM mi_tabla WHERE id=?", (1,))
+
+# Guardar cambios
+conexion.commit()
+conexion.close()
+            </div>
+            
+            <br>
+            <button class="btn" onclick="download()">📥 Descargar ejemplo .py</button>
+        </div>
+    </div>
+
+    <!-- Script JavaScript -->
+    <script>
+        function download() {
+            // Contenido del archivo Python
+            let contenido = `import sqlite3
+
+# Conectar a la base de datos
+conexion = sqlite3.connect("miproyecto.db")
+cursor = conexion.cursor()
+
+# Crear tabla
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS mi_tabla (
+        id INTEGER PRIMARY KEY,
+        campo1 TEXT,
+        campo2 INTEGER
+    )
+""")
+
+# INSERT (Create) - Agregar datos
+cursor.execute("INSERT INTO mi_tabla(campo1, campo2) VALUES(?, ?)", ("valor", 123))
+print("✅ Registro insertado")
+
+# SELECT (Read) - Leer datos
+cursor.execute("SELECT * FROM mi_tabla")
+registros = cursor.fetchall()
+print(f"📖 Registros encontrados: {registros}")
+
+# UPDATE (Actualizar) - Modificar datos
+cursor.execute("UPDATE mi_tabla SET campo1=? WHERE id=?", ("nuevo", 1))
+print("✏️ Registro actualizado")
+
+# DELETE (Eliminar) - Borrar datos
+cursor.execute("DELETE FROM mi_tabla WHERE id=?", (1,))
+print("🗑️ Registro eliminado")
+
+# Guardar cambios
+conexion.commit()
+conexion.close()
+print("✅ Base de datos cerrada correctamente")`;
+
+            // Crear blob con tipo text/plain
+            let blob = new Blob([contenido], { type: 'text/plain' });
+            
+            // Crear elemento <a> para descargar
+            let enlace = document.createElement('a');
+            enlace.href = URL.createObjectURL(blob);
+            enlace.download = 'crud_ejemplo.py';
+            
+            // Agregar al DOM, hacer click y eliminar
+            document.body.appendChild(enlace);
+            enlace.click();
+            document.body.removeChild(enlace);
+        }
+    </script>
+</body>
+</html>
