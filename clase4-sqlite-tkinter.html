@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 4 — Base de Datos con Python · ITB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0D1117;--surface:#161B22;--surface2:#1C2129;--border:#30363D;
+  --db:#F97316;--db-dim:#2d1a0a;
+  --green:#4ADE80;--green-dim:#1a4731;
+  --blue:#79C0FF;--purple:#D2A8FF;
+  --red:#FF7B72;--yellow:#E3B341;
+  --teal:#39D0D8;--muted:#8B949E;--text:#E6EDF3;
+  --radius:10px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.65}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(13,17,23,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:54px;gap:12px}
+.nav-brand{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:var(--db);display:flex;align-items:center;gap:7px;white-space:nowrap}
+.nav-brand .sep{color:var(--border)}
+.nav-brand .dim{color:var(--muted);font-weight:400}
+.nav-links{display:flex;gap:4px;overflow-x:auto}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:12px;font-family:'JetBrains Mono',monospace;padding:4px 10px;border-radius:6px;transition:all .2s;white-space:nowrap}
+.nav-links a:hover{color:var(--text);background:var(--surface)}
+.nav-badge{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--db-dim);border:1px solid rgba(249,115,22,.4);color:var(--db);padding:3px 10px;border-radius:20px;white-space:nowrap}
+
+/* ── HERO ── */
+.hero{max-width:920px;margin:0 auto;padding:60px 1.5rem 48px;text-align:center}
+.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:10px}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';flex:1;max-width:70px;height:1px;background:var(--border)}
+.hero h1{font-family:'JetBrains Mono',monospace;font-size:clamp(2rem,5vw,3.2rem);font-weight:700;line-height:1.1;margin-bottom:8px}
+.hero h1 .ac{color:var(--db)}
+.hero h1 .dm{color:var(--muted)}
+.hero-sub{font-family:'JetBrains Mono',monospace;font-size:clamp(.9rem,2vw,1.2rem);color:var(--muted);margin-bottom:16px}
+.hero p{color:var(--muted);font-size:15px;max-width:560px;margin:0 auto 32px}
+.hero-chips{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.chip{font-family:'JetBrains Mono',monospace;font-size:12px;padding:4px 12px;border-radius:20px;border:1px solid var(--border);color:var(--muted);background:var(--surface)}
+.chip.active{background:var(--db-dim);border-color:var(--db);color:var(--db)}
+
+/* ── WRAP ── */
+.wrap{max-width:920px;margin:0 auto;padding:0 1.5rem}
+
+/* ── PREREQ ── */
+.prereq{background:var(--db-dim);border:1px solid rgba(249,115,22,.3);border-radius:var(--radius);padding:18px 22px;margin-bottom:48px;display:flex;gap:14px;align-items:flex-start}
+.prereq-text{font-size:13px;color:var(--muted);line-height:1.6}
+.prereq-text strong{color:var(--db)}
+
+/* ── SECTION ── */
+.module{margin-bottom:64px}
+.sec-tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.sec-tag::after{content:'';flex:1;height:1px;background:var(--border)}
+.sec-title{font-size:22px;font-weight:700;margin-bottom:8px}
+.sec-desc{font-size:14px;color:var(--muted);max-width:700px;line-height:1.7}
+.sec-desc strong{color:var(--text)}
+
+/* ── COMPARE GRID ── */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+@media(max-width:640px){.compare-grid{grid-template-columns:1fr}}
+.compare-card{border:1px solid var(--border);border-radius:9px;overflow:hidden}
+.compare-card.py{border-color:rgba(121,192,255,.25)}
+.compare-card.sq{border-color:rgba(249,115,22,.25)}
+.compare-head{padding:9px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;display:flex;align-items:center;gap:6px}
+.compare-head.py{background:rgba(121,192,255,.08);color:var(--blue)}
+.compare-head.sq{background:rgba(249,115,22,.08);color:var(--db)}
+.compare-body{padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.8;background:#010409;white-space:pre}
+
+/* ── CONCEPTS GRID ── */
+.concepts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:16px 0}
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:16px}
+.cc-icon{font-size:20px;margin-bottom:8px}
+.cc-title{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--db);margin-bottom:5px}
+.cc-desc{font-size:12.5px;color:var(--muted);line-height:1.6}
+
+/* ── CODE BLOCK ── */
+.code-block{background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin:16px 0}
+.code-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.code-dots{display:flex;gap:5px}
+.code-dots span{width:10px;height:10px;border-radius:50%}
+.d1{background:#FF5F56}.d2{background:#FFBD2E}.d3{background:#27C93F}
+.code-file{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+.btn-cp{background:none;border:1px solid var(--border);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 9px;border-radius:4px;cursor:pointer;transition:all .2s}
+.btn-cp:hover{color:var(--text);border-color:var(--muted)}
+.code-body{padding:16px 18px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.8;white-space:pre}
+/* syntax */
+.kw{color:#FF7B72}.fn{color:#79C0FF}.str{color:#FFA657}
+.cm{color:#6A737D;font-style:italic}.num{color:#D2A8FF}
+.op{color:#8B949E}.vr{color:#E6EDF3}.dbo{color:#F97316}
+
+/* ── STEPS ── */
+.steps{display:flex;flex-direction:column;gap:9px;margin:12px 0}
+.step{display:flex;gap:10px;align-items:flex-start}
+.sn{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--db);background:var(--db-dim);border:1px solid rgba(249,115,22,.3);min-width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;margin-top:2px;flex-shrink:0}
+.st{font-size:13.5px;color:var(--text);line-height:1.55}
+.ic{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surface2);border:1px solid var(--border);color:var(--blue);padding:1px 6px;border-radius:4px}
+.ic-db{color:var(--db)}
+
+/* ── TIPS ── */
+.tryit{background:var(--green-dim);border:1px solid rgba(74,222,128,.3);border-radius:8px;padding:13px 17px;margin:14px 0;display:flex;gap:10px;align-items:flex-start}
+.tryit-text{font-size:13px;color:var(--text);line-height:1.6}
+.tryit-text strong{color:var(--green)}
+.warnbox{background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.25);border-radius:8px;padding:13px 17px;margin:14px 0;display:flex;gap:10px;align-items:flex-start}
+.warnbox-text{font-size:13px;color:var(--muted);line-height:1.6}
+.warnbox-text strong{color:var(--db)}
+
+/* ── SQL TABLE DIAGRAM ── */
+.sql-diagram{background:var(--surface);border:1px solid var(--border);border-radius:9px;overflow:hidden;margin:16px 0;max-width:500px}
+.sd-title{background:var(--db-dim);border-bottom:1px solid rgba(249,115,22,.3);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--db);display:flex;align-items:center;gap:8px}
+.sd-row{display:flex;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px}
+.sd-row:last-child{border-bottom:none}
+.sd-col{padding:8px 14px;flex:1;color:var(--muted)}
+.sd-col.name{color:var(--text);font-weight:600;border-right:1px solid var(--border)}
+.sd-col.pk{color:var(--yellow)}
+.sd-header{background:var(--surface2)}
+.sd-header .sd-col{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+
+/* ── CRUD BADGES ── */
+.crud-row{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.crud-badge{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;padding:5px 14px;border-radius:6px}
+.cb-c{background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.25)}
+.cb-r{background:rgba(121,192,255,.1);color:var(--blue);border:1px solid rgba(121,192,255,.25)}
+.cb-u{background:rgba(227,179,65,.1);color:var(--yellow);border:1px solid rgba(227,179,65,.25)}
+.cb-d{background:rgba(255,123,114,.1);color:var(--red);border:1px solid rgba(255,123,114,.25)}
+
+/* ── TKINTER DIAGRAM ── */
+.tk-diagram{background:#2b2b2b;border:1px solid #555;border-radius:8px;overflow:hidden;margin:16px 0;max-width:480px}
+.tk-title-bar{background:#3c3f41;border-bottom:1px solid #555;padding:6px 12px;display:flex;align-items:center;gap:8px}
+.tk-dots{display:flex;gap:5px}
+.tk-dots span{width:10px;height:10px;border-radius:50%}
+.tk-red{background:#ff5f56}.tk-yellow{background:#ffbd2e}.tk-green{background:#27c93f}
+.tk-win-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:#aaa;margin:0 auto}
+.tk-body{padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.tk-row{display:flex;align-items:center;gap:10px}
+.tk-label{font-size:12px;color:#ccc;min-width:80px;font-family:'JetBrains Mono',monospace}
+.tk-entry{flex:1;background:#45494a;border:1px solid #666;border-radius:3px;padding:5px 8px;font-size:12px;color:#e6edf3;font-family:'JetBrains Mono',monospace}
+.tk-btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.tk-btn{padding:6px 14px;border-radius:4px;font-size:12px;font-family:'JetBrains Mono',monospace;border:none;cursor:pointer}
+.tk-btn.green{background:#4c9a52;color:white}
+.tk-btn.blue{background:#4472c4;color:white}
+.tk-btn.yellow{background:#c4a044;color:white}
+.tk-btn.red{background:#9e3b3b;color:white}
+.tk-table{background:#1e1e1e;border:1px solid #444;border-radius:4px;padding:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#ccc}
+.tk-table-head{color:#79C0FF;border-bottom:1px solid #444;margin-bottom:4px;padding-bottom:4px}
+
+/* ── DL BTN ── */
+.btn-dl{display:inline-flex;align-items:center;gap:7px;background:var(--db);color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;padding:9px 20px;border-radius:7px;border:none;cursor:pointer;transition:opacity .2s,transform .15s;margin-top:20px}
+.btn-dl:hover{opacity:.85;transform:translateY(-1px)}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--border);padding:28px 2rem;text-align:center;color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace}
+footer span{color:var(--db)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+    ITB <span class="sep">/</span> <span class="dim">clase-4</span> <span class="sep">/</span> sqlite-tkinter
+  </div>
+  <div class="nav-links">
+    <a href="#que-es-bd">BD</a>
+    <a href="#sqlite">SQLite</a>
+    <a href="#sql">SQL</a>
+    <a href="#tkinter">Tkinter</a>
+    <a href="#crud-completo">CRUD</a>
+  </div>
+  <div class="nav-badge">🗄 Base de Datos</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Clase 4 de 6 · Base de Datos</div>
+  <h1><span class="dm">Python +</span><br><span class="ac">Base de Datos</span></h1>
+  <div class="hero-sub">SQLite · Tkinter · CRUD completo</div>
+  <p>Conecta Python a una base de datos real, aprende los comandos SQL esenciales y construye una interfaz gráfica funcional para gestionar registros — sin instalar nada extra.</p>
+  <div class="hero-chips">
+    <span class="chip">sqlite3 (incluido en Python)</span>
+    <span class="chip">tkinter (incluido en Python)</span>
+    <span class="chip">Sin instalaciones</span>
+    <span class="chip active">● Clase actual</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="prereq">
+    <div style="font-size:20px;flex-shrink:0">🗄️</div>
+    <div class="prereq-text">
+      <strong>Buena noticia:</strong> tanto <strong>sqlite3</strong> como <strong>tkinter</strong> vienen incluidos con Python — no necesitas instalar nada con pip. Solo abre VS Code, crea un archivo <strong>.py</strong> y sigues la guía. Al final tendrás un programa de escritorio completo que guarda datos permanentemente.
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       MÓDULO 1: QUÉ ES UNA BASE DE DATOS
+       ═══════════════════════════════════════ -->
+  <div class="module" id="que-es-bd">
+    <div class="sec-header">
+      <div class="sec-tag">// Módulo 1</div>
+      <div class="sec-title">¿Qué es una base de datos?</div>
+      <div class="sec-desc">Hasta ahora hemos guardado datos en <strong>listas y diccionarios</strong> que desaparecen cuando el programa termina. Una base de datos guarda la información <strong>en un archivo en disco</strong> — los datos persisten para siempre.</div>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-card py">
+        <div class="compare-head py">🐍 Lista en Python (temporal)</div>
+        <div class="compare-body"><span class="vr">estudiantes</span> <span class="op">=</span> [
+  {<span class="str">"nombre"</span>: <span class="str">"Ana"</span>, <span class="str">"nota"</span>: <span class="num">9.5</span>},
+  {<span class="str">"nombre"</span>: <span class="str">"Luis"</span>, <span class="str">"nota"</span>: <span class="num">8.0</span>}
+]
+
+<span class="cm"># ❌ Al cerrar el programa, se pierde todo</span></div>
+      </div>
+      <div class="compare-card sq">
+        <div class="compare-head sq">🗄️ SQLite (permanente)</div>
+        <div class="compare-body"><span class="cm"># Los datos viven en estudiantes.db</span>
+<span class="kw">INSERT INTO</span> estudiantes
+  VALUES (<span class="str">'Ana'</span>, <span class="num">9.5</span>);
+
+<span class="cm"># ✅ Siguen ahí aunque cierres Python</span></div>
+      </div>
+    </div>
+
+    <div class="concepts-grid">
+      <div class="concept-card">
+        <div class="cc-icon">📁</div>
+        <div class="cc-title">Archivo .db</div>
+        <div class="cc-desc">SQLite guarda todo en un solo archivo (ej: <code style="font-family:'JetBrains Mono';font-size:11px;color:#79C0FF">estudiantes.db</code>). Puedes copiarlo, enviarlo por correo — los datos van con él.</div>
+      </div>
+      <div class="concept-card">
+        <div class="cc-icon">📋</div>
+        <div class="cc-title">Tabla</div>
+        <div class="cc-desc">Como una hoja de cálculo: filas (registros) y columnas (campos). Una base de datos puede tener muchas tablas.</div>
+      </div>
+      <div class="concept-card">
+        <div class="cc-icon">🔑</div>
+        <div class="cc-title">Primary Key</div>
+        <div class="cc-desc">Un identificador único para cada fila — como el número de cédula. SQLite lo genera automáticamente con <code style="font-family:'JetBrains Mono';font-size:11px;color:#F97316">AUTOINCREMENT</code>.</div>
+      </div>
+      <div class="concept-card">
+        <div class="cc-icon">💬</div>
+        <div class="cc-title">SQL</div>
+        <div class="cc-desc">El lenguaje para hablarle a la base de datos. 5 comandos son todo lo que necesitas para el CRUD completo.</div>
+      </div>
+    </div>
+
+    <!-- Diagrama de la tabla -->
+    <div class="sec-tag" style="margin-bottom:12px">// Así se ve nuestra tabla de estudiantes</div>
+    <div class="sql-diagram">
+      <div class="sd-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+        tabla: estudiantes
+      </div>
+      <div class="sd-row sd-header">
+        <div class="sd-col name">COLUMNA</div>
+        <div class="sd-col">TIPO</div>
+        <div class="sd-col">DESCRIPCIÓN</div>
+      </div>
+      <div class="sd-row">
+        <div class="sd-col name">id <span class="sd-col pk">🔑 PK</span></div>
+        <div class="sd-col" style="color:var(--yellow)">INTEGER</div>
+        <div class="sd-col">Generado automático</div>
+      </div>
+      <div class="sd-row">
+        <div class="sd-col name">nombre</div>
+        <div class="sd-col" style="color:var(--orange)">TEXT</div>
+        <div class="sd-col">Nombre del estudiante</div>
+      </div>
+      <div class="sd-row">
+        <div class="sd-col name">carrera</div>
+        <div class="sd-col" style="color:var(--orange)">TEXT</div>
+        <div class="sd-col">Carrera que estudia</div>
+      </div>
+      <div class="sd-row">
+        <div class="sd-col name">nota</div>
+        <div class="sd-col" style="color:var(--purple)">REAL</div>
+        <div class="sd-col">Calificación (decimal)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       MÓDULO 2: SQLITE EN PYTHON
+       ═══════════════════════════════════════ -->
+  <div class="module" id="sqlite">
+    <div class="sec-tag">// Módulo 2</div>
+    <div class="sec-title">Conectarse a SQLite desde Python</div>
+    <div class="sec-desc" style="margin-bottom:20px">Para usar una base de datos desde Python necesitas tres objetos clave: la <strong>conexión</strong>, el <strong>cursor</strong> y el <strong>commit</strong>. Piénsalos como abrir un cuaderno, escribir con lápiz, y confirmar los cambios.</div>
+
+    <div class="sec-tag" style="margin-bottom:12px">// Los tres objetos que siempre usarás</div>
+    <div class="concepts-grid" style="margin-bottom:20px">
+      <div class="concept-card">
+        <div class="cc-icon">🔌</div>
+        <div class="cc-title">conexion</div>
+        <div class="cc-desc">Abre (o crea) el archivo <code style="font-family:'JetBrains Mono';font-size:11px;color:#79C0FF">.db</code>. Si no existe, SQLite lo crea en ese momento.</div>
+      </div>
+      <div class="concept-card">
+        <div class="cc-icon">✏️</div>
+        <div class="cc-title">cursor</div>
+        <div class="cc-desc">El "lápiz" que ejecuta los comandos SQL. Todo pasa a través de él con <code style="font-family:'JetBrains Mono';font-size:11px;color:#F97316">.execute()</code>.</div>
+      </div>
+      <div class="concept-card">
+        <div class="cc-icon">💾</div>
+        <div class="cc-title">commit</div>
+        <div class="cc-desc">Guarda los cambios en el archivo. Sin <code style="font-family:'JetBrains Mono';font-size:11px;color:#F97316">.commit()</code> las inserciones y ediciones no se guardan.</div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <div class="code-file">conexion_basica.py</div>
+        <button class="btn-cp" onclick="copyCode(this,'m2c1')">copiar</button>
+      </div>
+      <div class="code-body" id="m2c1"><span class="kw">import</span> <span class="dbo">sqlite3</span>
+
+<span class="cm"># 1. Conectar (crea el archivo si no existe)</span>
+<span class="vr">conexion</span> <span class="op">=</span> <span class="dbo">sqlite3</span>.<span class="fn">connect</span>(<span class="str">"estudiantes.db"</span>)
+
+<span class="cm"># 2. Crear el cursor (el "lápiz" que ejecuta SQL)</span>
+<span class="vr">cursor</span> <span class="op">=</span> <span class="vr">conexion</span>.<span class="fn">cursor</span>()
+
+<span class="cm"># 3. Crear la tabla si no existe todavía</span>
+<span class="vr">cursor</span>.<span class="fn">execute</span>(<span class="str">"""
+    CREATE TABLE IF NOT EXISTS estudiantes (
+        id      INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre  TEXT    NOT NULL,
+        carrera TEXT    NOT NULL,
+        nota    REAL    NOT NULL
+    )
+"""</span>)
+
+<span class="cm"># 4. Guardar los cambios</span>
+<span class="vr">conexion</span>.<span class="fn">commit</span>()
+
+<span class="fn">print</span>(<span class="str">"Base de datos lista ✓"</span>)</div>
+    </div>
+    <div class="tryit">
+      <div style="font-size:16px;flex-shrink:0">💡</div>
+      <div class="tryit-text"><strong>CREATE TABLE IF NOT EXISTS</strong> — este comando crea la tabla solo si no existe. Si la ejecutas dos veces no da error. Es el patrón estándar para inicializar una base de datos.</div>
+    </div>
+    <div class="warnbox">
+      <div style="font-size:16px;flex-shrink:0">⚠️</div>
+      <div class="warnbox-text"><strong>¿Dónde se crea el archivo .db?</strong> En la misma carpeta donde esté tu archivo .py. En VS Code puedes verlo aparecer en el explorador de archivos de la izquierda después de ejecutar el programa por primera vez.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       MÓDULO 3: SQL — LOS 5 COMANDOS
+       ═══════════════════════════════════════ -->
+  <div class="module" id="sql">
+    <div class="sec-tag">// Módulo 3</div>
+    <div class="sec-title">SQL — Los 5 comandos del CRUD</div>
+    <div class="sec-desc" style="margin-bottom:20px">CRUD significa <strong>Create, Read, Update, Delete</strong> — las cuatro operaciones de cualquier sistema de datos. En SQL, cada una tiene su propio comando.</div>
+
+    <div class="crud-row">
+      <span class="crud-badge cb-c">CREATE → INSERT</span>
+      <span class="crud-badge cb-r">READ → SELECT</span>
+      <span class="crud-badge cb-u">UPDATE → UPDATE</span>
+      <span class="crud-badge cb-d">DELETE → DELETE</span>
+    </div>
+
+    <!-- INSERT -->
+    <div class="sec-tag" style="margin-bottom:12px;margin-top:28px">// C — INSERT: agregar un registro</div>
+    <div class="code-block">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <div class="code-file">INSERT — agregar estudiante</div>
+        <button class="btn-cp" onclick="copyCode(this,'sql1')">copiar</button>
+      </div>
+      <div class="code-body" id="sql1"><span class="cm"># Los ? son placeholders — NUNCA pegues variables directamente</span>
+<span class="cm"># (previene ataques de inyección SQL)</span>
+<span class="vr">cursor</span>.<span class="fn">execute</span>(
+    <span class="str">"INSERT INTO estudiantes (nombre, carrera, nota) VALUES (?, ?, ?)"</span>,
+    (<span class="str">"Ana García"</span>, <span class="str">"Administración"</span>, <span class="num">9.5</span>)
+)
+<span class="vr">conexion</span>.<span class="fn">commit</span>()  <span class="cm"># ← no olvides esto</span></div>
+    </div>
+    <div class="tryit">
+      <div style="font-size:16px;flex-shrink:0">💡</div>
+      <div class="tryit-text"><strong>Los signos <code style="color:#F97316">?</code></strong> son marcadores de posición — SQLite los reemplaza con los valores de la tupla en orden. Siempre usa <code style="color:#F97316">?</code> en vez de formatear el string directamente con <code style="color:#79C0FF">f"...{variable}..."</code>.</div>
+    </div>
+
+    <!-- SELECT -->
+    <div class="sec-tag" style="margin-bottom:12px;margin-top:28px">// R — SELECT: leer registros</div>
+    <div class="code-block">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <div class="code-file">SELECT — leer estudiantes</div>
+        <button class="btn-cp" onclick="copyCode(this,'sql2')">copiar</button>
+      </div>
+      <div class="code-body" id="sql2"><span class="cm"># Obtener TODOS los estudiantes</span>
+<span class="vr">cursor</span>.<span class="fn">execute</span>(<span class="str">"SELECT * FROM estudiantes"</span>)
+<span class="vr">todos</span> <span class="op">=</span> <span class="vr">cursor</span>.<span class="fn">fetchall</span>()  <span class="cm"># retorna una lista de tuplas</span>
+
+<span class="kw">for</span> <span class="vr">fila</span> <span class="kw">in</span> <span class="vr">todos</span>:
+    <span class="fn">print</span>(<span class="vr">fila</span>)
+<span class="cm"># Resultado: (1, 'Ana García', 'Administración', 9.5)</span>
+
+<span class="cm"># Buscar UN estudiante por id</span>
+<span class="vr">cursor</span>.<span class="fn">execute</span>(<span class="str">"SELECT * FROM estudiantes WHERE id = ?"</span>, (<span class="num">1</span>,))
+<span class="vr">uno</span> <span class="op">=</span> <span class="vr">cursor</span>.<span class="fn">fetchone</span>()  <span class="cm"># retorna una sola fila (o None)</span></div>
+    </div>
+
+    <!-- UPDATE -->
+    <div class="sec-tag" style="margin-bottom:12px;margin-top:28px">// U — UPDATE: modificar un registro</div>
+    <div class="code-block">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <div class="code-file">UPDATE — editar estudiante</div>
+        <button class="btn-cp" onclick="copyCode(this,'sql3')">copiar</button>
+      </div>
+      <div class="code-body" id="sql3"><span class="cm"># El WHERE es crucial — sin él actualizas TODA la tabla</span>
+<span class="vr">cursor</span>.<span class="fn">execute</span>(
+    <span class="str">"UPDATE estudiantes SET nota = ?, carrera = ? WHERE id = ?"</span>,
+    (<span class="num">9.8</span>, <span class="str">"Contabilidad"</span>, <span class="num">1</span>)
+)
+<span class="vr">conexion</span>.<span class="fn">commit</span>()</div>
+    </div>
+    <div class="warnbox">
+      <div style="font-size:16px;flex-shrink:0">⚠️</div>
+      <div class="warnbox-text"><strong>Siempre usa WHERE en UPDATE y DELETE.</strong> Si olvidas el <code style="color:#F97316">WHERE id = ?</code>, el comando modifica o elimina <em>todos</em> los registros de la tabla — no hay Ctrl+Z en SQL.</div>
+    </div>
+
+    <!-- DELETE -->
+    <div class="sec-tag" style="margin-bottom:12px;margin-top:28px">// D — DELETE: eliminar un registro</div>
+    <div class="code-block">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <div class="code-file">DELETE — eliminar estudiante</div>
+        <button class="btn-cp" onclick="copyCode(this,'sql4')">copiar</button>
+      </div>
+      <div class="code-body" id="sql4"><span class="vr">cursor</span>.<span class="fn">execute</span>(
+    <span class="str">"DELETE FROM estudiantes WHERE id = ?"</span>,
+    (<span class="num">1</span>,)  <span class="cm"># ← nota la coma: es una tupla de un elemento</span>
+)
+<span class="vr">conexion</span>.<span class="fn">commit</span>()</div>
+    </div>
+    <div class="tryit">
+      <div style="font-size:16px;flex-shrink:0">💡</div>
+      <div class="tryit-text"><strong><code style="color:#F97316">(1,)</code> con coma</strong> — en Python, <code style="color:#79C0FF">(1)</code> es simplemente el número 1 entre paréntesis, no una tupla. Para hacer una tupla de un elemento necesitas la coma: <code style="color:#79C0FF">(1,)</code>. SQLite espera una tupla, no un número suelto.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       MÓDULO 4: TKINTER
+       ═══════════════════════════════════════ -->
+  <div class="module" id="tkinter">
+    <div class="sec-tag">// Módulo 4</div>
+    <div class="sec-title">Tkinter — Interfaz gráfica para el CRUD</div>
+    <div class="sec-desc" style="margin-bottom:20px">Tkinter es la librería de Python para crear ventanas y botones. Con 5 widgets básicos puedes construir la interfaz completa de nuestro sistema.</div>
+
+    <!-- Mockup visual -->
+    <div class="sec-tag" style="margin-bottom:12px">// Así se verá la ventana final</div>
+    <div class="tk-diagram">
+      <div class="tk-title-bar">
+        <div class="tk-dots"><span class="tk-red"></span><span class="tk-yellow"></span><span class="tk-green"></span></div>
+        <div class="tk-win-title">Sistema de Estudiantes — ITB</div>
+      </div>
+      <div class="tk-body">
+        <div class="tk-row"><div class="tk-label">Nombre:</div><div class="tk-entry">Ana García</div></div>
+        <div class="tk-row"><div class="tk-label">Carrera:</div><div class="tk-entry">Administración</div></div>
+        <div class="tk-row"><div class="tk-label">Nota:</div><div class="tk-entry">9.5</div></div>
+        <div class="tk-btn-row">
+          <button class="tk-btn green">➕ Agregar</button>
+          <button class="tk-btn blue">✏️ Editar</button>
+          <button class="tk-btn yellow">🔍 Buscar</button>
+          <button class="tk-btn red">🗑️ Eliminar</button>
+        </div>
+        <div class="tk-table">
+          <div class="tk-table-head">ID  │  Nombre       │  Carrera         │  Nota</div>
+          <div>1   │  Ana García   │  Administración  │  9.5</div>
+          <div>2   │  Luis Torres  │  Contabilidad    │  8.0</div>
+          <div>3   │  María López  │  Marketing       │  9.2</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Widgets -->
+    <div class="sec-tag" style="margin-bottom:14px;margin-top:24px">// Los 5 widgets que usarás</div>
+    <div class="concepts-grid" style="margin-bottom:20px">
+      <div class="concept-card">
+        <div class="cc-icon">🪟</div>
+        <div class="cc-title">Tk() — Ventana</div>
+        <div class="cc-desc">La ventana principal. Toda la app vive dentro de ella. Se abre con <code style="font-family:'JetBrains Mono';font-size:11px;color:#F97316">.mainloop()</code>.</div>
+      </div>
+      <div class="concept-card">
+        <div class="cc-icon">🏷️</div>
+        <div class="cc-title">Label — Etiqueta</div>
+        <div class="cc-desc">Texto fijo en la ventana. Sirve para los nombres de campos como "Nombre:" o "Carrera:".</div>
+      </div>
+      <div class="concept-card">
+        <div class="cc-icon">📝</div>
+        <div class="cc-title">Entry — Campo de texto</div>
+        <div class="cc-desc">Caja de entrada editable. El usuario escribe aquí. Se lee con <code style="font-family:'JetBrains Mono';font-size:11px;color:#F97316">.get()</code>.</div>
+      </div>
+      <div class="concept-card">
+        <div class="cc-icon">🔘</div>
+        <div class="cc-title">Button — Botón</div>
+        <div class="cc-desc">Ejecuta una función al hacer clic. Se conecta con el parámetro <code style="font-family:'JetBrains Mono';font-size:11px;color:#F97316">command=</code>.</div>
+      </div>
+      <div class="concept-card">
+        <div class="cc-icon">📋</div>
+        <div class="cc-title">Treeview — Tabla</div>
+        <div class="cc-desc">Muestra datos en filas y columnas, como una tabla. Viene en el módulo <code style="font-family:'JetBrains Mono';font-size:11px;color:#F97316">ttk</code>.</div>
+      </div>
+    </div>
+
+    <div class="sec-tag" style="margin-bottom:12px">// Estructura básica de una ventana Tkinter</div>
+    <div class="code-block">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <div class="code-file">ventana_basica.py</div>
+        <button class="btn-cp" onclick="copyCode(this,'tk1')">copiar</button>
+      </div>
+      <div class="code-body" id="tk1"><span class="kw">import</span> <span class="dbo">tkinter</span> <span class="kw">as</span> <span class="vr">tk</span>
+<span class="kw">from</span> <span class="dbo">tkinter</span> <span class="kw">import</span> <span class="vr">ttk</span>, <span class="vr">messagebox</span>
+
+<span class="cm"># 1. Crear la ventana principal</span>
+<span class="vr">ventana</span> <span class="op">=</span> <span class="vr">tk</span>.<span class="fn">Tk</span>()
+<span class="vr">ventana</span>.<span class="fn">title</span>(<span class="str">"Sistema de Estudiantes — ITB"</span>)
+<span class="vr">ventana</span>.<span class="fn">geometry</span>(<span class="str">"640x480"</span>)  <span class="cm"># ancho x alto en píxeles</span>
+
+<span class="cm"># 2. Crear una etiqueta y un campo de texto</span>
+<span class="vr">tk</span>.<span class="fn">Label</span>(<span class="vr">ventana</span>, <span class="vr">text</span><span class="op">=</span><span class="str">"Nombre:"</span>).<span class="fn">grid</span>(<span class="vr">row</span><span class="op">=</span><span class="num">0</span>, <span class="vr">column</span><span class="op">=</span><span class="num">0</span>, <span class="vr">padx</span><span class="op">=</span><span class="num">8</span>, <span class="vr">pady</span><span class="op">=</span><span class="num">6</span>)
+<span class="vr">entry_nombre</span> <span class="op">=</span> <span class="vr">tk</span>.<span class="fn">Entry</span>(<span class="vr">ventana</span>, <span class="vr">width</span><span class="op">=</span><span class="num">30</span>)
+<span class="vr">entry_nombre</span>.<span class="fn">grid</span>(<span class="vr">row</span><span class="op">=</span><span class="num">0</span>, <span class="vr">column</span><span class="op">=</span><span class="num">1</span>, <span class="vr">padx</span><span class="op">=</span><span class="num">8</span>, <span class="vr">pady</span><span class="op">=</span><span class="num">6</span>)
+
+<span class="cm"># 3. Crear un botón que ejecuta una función</span>
+<span class="kw">def</span> <span class="fn">saludar</span>():
+    <span class="vr">nombre</span> <span class="op">=</span> <span class="vr">entry_nombre</span>.<span class="fn">get</span>()
+    <span class="vr">messagebox</span>.<span class="fn">showinfo</span>(<span class="str">"Hola"</span>, <span class="str">f"Hola, {<span class="vr">nombre</span>}!"</span>)
+
+<span class="vr">tk</span>.<span class="fn">Button</span>(<span class="vr">ventana</span>, <span class="vr">text</span><span class="op">=</span><span class="str">"Saludar"</span>, <span class="vr">command</span><span class="op">=</span><span class="vr">saludar</span>).<span class="fn">grid</span>(
+    <span class="vr">row</span><span class="op">=</span><span class="num">1</span>, <span class="vr">column</span><span class="op">=</span><span class="num">1</span>, <span class="vr">pady</span><span class="op">=</span><span class="num">8</span>
+)
+
+<span class="cm"># 4. Iniciar el loop de la ventana (siempre al final)</span>
+<span class="vr">ventana</span>.<span class="fn">mainloop</span>()</div>
+    </div>
+    <div class="tryit">
+      <div style="font-size:16px;flex-shrink:0">💡</div>
+      <div class="tryit-text"><strong>.grid(row=, column=)</strong> es el sistema de posicionamiento. Piénsalo como una tabla: row=0 es la primera fila, column=0 es la primera columna. <code style="color:#F97316">padx</code> y <code style="color:#F97316">pady</code> añaden espacio alrededor.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       MÓDULO 5: CRUD COMPLETO
+       ═══════════════════════════════════════ -->
+  <div class="module" id="crud-completo">
+    <div class="sec-tag">// Módulo 5</div>
+    <div class="sec-title">El CRUD completo — SQLite + Tkinter unidos</div>
+    <div class="sec-desc" style="margin-bottom:20px">Ahora unimos todo. El programa completo tiene: conexión a la base de datos, una ventana con campos de entrada, cuatro botones y una tabla que muestra todos los registros en tiempo real.</div>
+
+    <div class="steps">
+      <div class="step"><div class="sn">1</div><div class="st">Importa las librerías y conecta la base de datos <strong>al inicio del archivo</strong></div></div>
+      <div class="step"><div class="sn">2</div><div class="st">Define las <strong>4 funciones</strong> del CRUD: <span class="ic ic-db">agregar()</span>, <span class="ic ic-db">leer()</span>, <span class="ic ic-db">editar()</span>, <span class="ic ic-db">eliminar()</span></div></div>
+      <div class="step"><div class="sn">3</div><div class="st">Construye la <strong>ventana</strong>: Labels + Entries para los campos, Buttons conectados a las funciones, Treeview para mostrar los datos</div></div>
+      <div class="step"><div class="sn">4</div><div class="st">Llama a <span class="ic ic-db">leer()</span> al inicio para cargar los datos existentes</div></div>
+      <div class="step"><div class="sn">5</div><div class="st">Inicia el loop con <span class="ic ic-db">ventana.mainloop()</span></div></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <div class="code-file">crud_estudiantes.py — PARTE 1: setup y funciones</div>
+        <button class="btn-cp" onclick="copyCode(this,'crud1')">copiar</button>
+      </div>
+      <div class="code-body" id="crud1"><span class="kw">import</span> <span class="dbo">sqlite3</span>
+<span class="kw">import</span> <span class="dbo">tkinter</span> <span class="kw">as</span> <span class="vr">tk</span>
+<span class="kw">from</span> <span class="dbo">tkinter</span> <span class="kw">import</span> <span class="vr">ttk</span>, <span class="vr">messagebox</span>
+
+<span class="cm"># ── BASE DE DATOS ──────────────────────────────</span>
+<span class="vr">conexion</span> <span class="op">=</span> <span class="dbo">sqlite3</span>.<span class="fn">connect</span>(<span class="str">"estudiantes.db"</span>)
+<span class="vr">cursor</span> <span class="op">=</span> <span class="vr">conexion</span>.<span class="fn">cursor</span>()
+<span class="vr">cursor</span>.<span class="fn">execute</span>(<span class="str">"""
+    CREATE TABLE IF NOT EXISTS estudiantes (
+        id      INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre  TEXT    NOT NULL,
+        carrera TEXT    NOT NULL,
+        nota    REAL    NOT NULL
+    )
+"""</span>)
+<span class="vr">conexion</span>.<span class="fn">commit</span>()
+
+<span class="cm"># ── FUNCIONES CRUD ─────────────────────────────</span>
+
+<span class="kw">def</span> <span class="fn">leer</span>():
+    <span class="cm">"""Carga todos los registros en la tabla visual"""</span>
+    <span class="kw">for</span> <span class="vr">fila</span> <span class="kw">in</span> <span class="vr">tabla</span>.<span class="fn">get_children</span>():
+        <span class="vr">tabla</span>.<span class="fn">delete</span>(<span class="vr">fila</span>)  <span class="cm"># limpia la tabla visual</span>
+    <span class="vr">cursor</span>.<span class="fn">execute</span>(<span class="str">"SELECT * FROM estudiantes"</span>)
+    <span class="kw">for</span> <span class="vr">registro</span> <span class="kw">in</span> <span class="vr">cursor</span>.<span class="fn">fetchall</span>():
+        <span class="vr">tabla</span>.<span class="fn">insert</span>(<span class="str">""</span>, <span class="vr">tk</span>.<span class="vr">END</span>, <span class="vr">values</span><span class="op">=</span><span class="vr">registro</span>)
+
+<span class="kw">def</span> <span class="fn">agregar</span>():
+    <span class="cm">"""Lee los campos y guarda un nuevo estudiante"""</span>
+    <span class="vr">nombre</span>  <span class="op">=</span> <span class="vr">entry_nombre</span>.<span class="fn">get</span>().<span class="fn">strip</span>()
+    <span class="vr">carrera</span> <span class="op">=</span> <span class="vr">entry_carrera</span>.<span class="fn">get</span>().<span class="fn">strip</span>()
+    <span class="vr">nota</span>    <span class="op">=</span> <span class="vr">entry_nota</span>.<span class="fn">get</span>().<span class="fn">strip</span>()
+
+    <span class="kw">if not</span> <span class="vr">nombre</span> <span class="kw">or not</span> <span class="vr">carrera</span> <span class="kw">or not</span> <span class="vr">nota</span>:
+        <span class="vr">messagebox</span>.<span class="fn">showwarning</span>(<span class="str">"Aviso"</span>, <span class="str">"Completa todos los campos."</span>)
+        <span class="kw">return</span>
+
+    <span class="kw">try</span>:
+        <span class="vr">cursor</span>.<span class="fn">execute</span>(
+            <span class="str">"INSERT INTO estudiantes (nombre, carrera, nota) VALUES (?, ?, ?)"</span>,
+            (<span class="vr">nombre</span>, <span class="vr">carrera</span>, <span class="fn">float</span>(<span class="vr">nota</span>))
+        )
+        <span class="vr">conexion</span>.<span class="fn">commit</span>()
+        <span class="fn">leer</span>()
+        <span class="fn">limpiar_campos</span>()
+    <span class="kw">except</span> <span class="vr">ValueError</span>:
+        <span class="vr">messagebox</span>.<span class="fn">showerror</span>(<span class="str">"Error"</span>, <span class="str">"La nota debe ser un número."</span>)
+
+<span class="kw">def</span> <span class="fn">editar</span>():
+    <span class="cm">"""Actualiza el registro seleccionado en la tabla"""</span>
+    <span class="vr">seleccion</span> <span class="op">=</span> <span class="vr">tabla</span>.<span class="fn">focus</span>()
+    <span class="kw">if not</span> <span class="vr">seleccion</span>:
+        <span class="vr">messagebox</span>.<span class="fn">showwarning</span>(<span class="str">"Aviso"</span>, <span class="str">"Selecciona un estudiante de la tabla."</span>)
+        <span class="kw">return</span>
+    <span class="vr">id_sel</span> <span class="op">=</span> <span class="vr">tabla</span>.<span class="fn">item</span>(<span class="vr">seleccion</span>)[<span class="str">"values"</span>][<span class="num">0</span>]
+    <span class="kw">try</span>:
+        <span class="vr">cursor</span>.<span class="fn">execute</span>(
+            <span class="str">"UPDATE estudiantes SET nombre=?, carrera=?, nota=? WHERE id=?"</span>,
+            (<span class="vr">entry_nombre</span>.<span class="fn">get</span>(), <span class="vr">entry_carrera</span>.<span class="fn">get</span>(), <span class="fn">float</span>(<span class="vr">entry_nota</span>.<span class="fn">get</span>()), <span class="vr">id_sel</span>)
+        )
+        <span class="vr">conexion</span>.<span class="fn">commit</span>()
+        <span class="fn">leer</span>()
+        <span class="fn">limpiar_campos</span>()
+    <span class="kw">except</span> <span class="vr">ValueError</span>:
+        <span class="vr">messagebox</span>.<span class="fn">showerror</span>(<span class="str">"Error"</span>, <span class="str">"La nota debe ser un número."</span>)
+
+<span class="kw">def</span> <span class="fn">eliminar</span>():
+    <span class="cm">"""Elimina el registro seleccionado con confirmación"""</span>
+    <span class="vr">seleccion</span> <span class="op">=</span> <span class="vr">tabla</span>.<span class="fn">focus</span>()
+    <span class="kw">if not</span> <span class="vr">seleccion</span>:
+        <span class="vr">messagebox</span>.<span class="fn">showwarning</span>(<span class="str">"Aviso"</span>, <span class="str">"Selecciona un estudiante de la tabla."</span>)
+        <span class="kw">return</span>
+    <span class="vr">id_sel</span> <span class="op">=</span> <span class="vr">tabla</span>.<span class="fn">item</span>(<span class="vr">seleccion</span>)[<span class="str">"values"</span>][<span class="num">0</span>]
+    <span class="vr">conf</span> <span class="op">=</span> <span class="vr">messagebox</span>.<span class="fn">askyesno</span>(<span class="str">"Confirmar"</span>, <span class="str">"¿Eliminar este estudiante?"</span>)
+    <span class="kw">if</span> <span class="vr">conf</span>:
+        <span class="vr">cursor</span>.<span class="fn">execute</span>(<span class="str">"DELETE FROM estudiantes WHERE id = ?"</span>, (<span class="vr">id_sel</span>,))
+        <span class="vr">conexion</span>.<span class="fn">commit</span>()
+        <span class="fn">leer</span>()
+        <span class="fn">limpiar_campos</span>()
+
+<span class="kw">def</span> <span class="fn">seleccionar_fila</span>(<span class="vr">event</span>):
+    <span class="cm">"""Al hacer clic en la tabla, carga los datos en los campos"""</span>
+    <span class="vr">seleccion</span> <span class="op">=</span> <span class="vr">tabla</span>.<span class="fn">focus</span>()
+    <span class="kw">if</span> <span class="vr">seleccion</span>:
+        <span class="vr">valores</span> <span class="op">=</span> <span class="vr">tabla</span>.<span class="fn">item</span>(<span class="vr">seleccion</span>)[<span class="str">"values"</span>]
+        <span class="fn">limpiar_campos</span>()
+        <span class="vr">entry_nombre</span>.<span class="fn">insert</span>(<span class="num">0</span>, <span class="vr">valores</span>[<span class="num">1</span>])
+        <span class="vr">entry_carrera</span>.<span class="fn">insert</span>(<span class="num">0</span>, <span class="vr">valores</span>[<span class="num">2</span>])
+        <span class="vr">entry_nota</span>.<span class="fn">insert</span>(<span class="num">0</span>, <span class="vr">valores</span>[<span class="num">3</span>])
+
+<span class="kw">def</span> <span class="fn">limpiar_campos</span>():
+    <span class="cm">"""Vacía los campos de texto"""</span>
+    <span class="vr">entry_nombre</span>.<span class="fn">delete</span>(<span class="num">0</span>, <span class="vr">tk</span>.<span class="vr">END</span>)
+    <span class="vr">entry_carrera</span>.<span class="fn">delete</span>(<span class="num">0</span>, <span class="vr">tk</span>.<span class="vr">END</span>)
+    <span class="vr">entry_nota</span>.<span class="fn">delete</span>(<span class="num">0</span>, <span class="vr">tk</span>.<span class="vr">END</span>)</div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <div class="code-file">crud_estudiantes.py — PARTE 2: ventana e interfaz</div>
+        <button class="btn-cp" onclick="copyCode(this,'crud2')">copiar</button>
+      </div>
+      <div class="code-body" id="crud2"><span class="cm"># ── VENTANA ────────────────────────────────────</span>
+<span class="vr">ventana</span> <span class="op">=</span> <span class="vr">tk</span>.<span class="fn">Tk</span>()
+<span class="vr">ventana</span>.<span class="fn">title</span>(<span class="str">"Sistema de Estudiantes — ITB"</span>)
+<span class="vr">ventana</span>.<span class="fn">geometry</span>(<span class="str">"680x500"</span>)
+<span class="vr">ventana</span>.<span class="fn">resizable</span>(<span class="kw">True</span>, <span class="kw">True</span>)
+
+<span class="cm"># ── CAMPOS DE ENTRADA ──────────────────────────</span>
+<span class="vr">tk</span>.<span class="fn">Label</span>(<span class="vr">ventana</span>, <span class="vr">text</span><span class="op">=</span><span class="str">"Nombre:"</span>, <span class="vr">font</span><span class="op">=</span>(<span class="str">"Arial"</span>, <span class="num">11</span>)).<span class="fn">grid</span>(<span class="vr">row</span><span class="op">=</span><span class="num">0</span>, <span class="vr">column</span><span class="op">=</span><span class="num">0</span>, <span class="vr">padx</span><span class="op">=</span><span class="num">10</span>, <span class="vr">pady</span><span class="op">=</span><span class="num">8</span>, <span class="vr">sticky</span><span class="op">=</span><span class="str">"e"</span>)
+<span class="vr">entry_nombre</span> <span class="op">=</span> <span class="vr">tk</span>.<span class="fn">Entry</span>(<span class="vr">ventana</span>, <span class="vr">width</span><span class="op">=</span><span class="num">35</span>, <span class="vr">font</span><span class="op">=</span>(<span class="str">"Arial"</span>, <span class="num">11</span>))
+<span class="vr">entry_nombre</span>.<span class="fn">grid</span>(<span class="vr">row</span><span class="op">=</span><span class="num">0</span>, <span class="vr">column</span><span class="op">=</span><span class="num">1</span>, <span class="vr">padx</span><span class="op">=</span><span class="num">10</span>, <span class="vr">pady</span><span class="op">=</span><span class="num">8</span>, <span class="vr">columnspan</span><span class="op">=</span><span class="num">2</span>)
+
+<span class="vr">tk</span>.<span class="fn">Label</span>(<span class="vr">ventana</span>, <span class="vr">text</span><span class="op">=</span><span class="str">"Carrera:"</span>, <span class="vr">font</span><span class="op">=</span>(<span class="str">"Arial"</span>, <span class="num">11</span>)).<span class="fn">grid</span>(<span class="vr">row</span><span class="op">=</span><span class="num">1</span>, <span class="vr">column</span><span class="op">=</span><span class="num">0</span>, <span class="vr">padx</span><span class="op">=</span><span class="num">10</span>, <span class="vr">pady</span><span class="op">=</span><span class="num">8</span>, <span class="vr">sticky</span><span class="op">=</span><span class="str">"e"</span>)
+<span class="vr">entry_carrera</span> <span class="op">=</span> <span class="vr">tk</span>.<span class="fn">Entry</span>(<span class="vr">ventana</span>, <span class="vr">width</span><span class="op">=</span><span class="num">35</span>, <span class="vr">font</span><span class="op">=</span>(<span class="str">"Arial"</span>, <span class="num">11</span>))
+<span class="vr">entry_carrera</span>.<span class="fn">grid</span>(<span class="vr">row</span><span class="op">=</span><span class="num">1</span>, <span class="vr">column</span><span class="op">=</span><span class="num">1</span>, <span class="vr">padx</span><span class="op">=</span><span class="num">10</span>, <span class="vr">pady</span><span class="op">=</span><span class="num">8</span>, <span class="vr">columnspan</span><span class="op">=</span><span class="num">2</span>)
+
+<span class="vr">tk</span>.<span class="fn">Label</span>(<span class="vr">ventana</span>, <span class="vr">text</span><span class="op">=</span><span class="str">"Nota:"</span>, <span class="vr">font</span><span class="op">=</span>(<span class="str">"Arial"</span>, <span class="num">11</span>)).<span class="fn">grid</span>(<span class="vr">row</span><span class="op">=</span><span class="num">2</span>, <span class="vr">column</span><span class="op">=</span><span class="num">0</span>, <span class="vr">padx</span><span class="op">=</span><span class="num">10</span>, <span class="vr">pady</span><span class="op">=</span><span class="num">8</span>, <span class="vr">sticky</span><span class="op">=</span><span class="str">"e"</span>)
+<span class="vr">entry_nota</span> <span class="op">=</span> <span class="vr">tk</span>.<span class="fn">Entry</span>(<span class="vr">ventana</span>, <span class="vr">width</span><span class="op">=</span><span class="num">15</span>, <span class="vr">font</span><span class="op">=</span>(<span class="str">"Arial"</span>, <span class="num">11</span>))
+<span class="vr">entry_nota</span>.<span class="fn">grid</span>(<span class="vr">row</span><span class="op">=</span><span class="num">2</span>, <span class="vr">column</span><span class="op">=</span><span class="num">1</span>, <span class="vr">padx</span><span class="op">=</span><span class="num">10</span>, <span class="vr">pady</span><span class="op">=</span><span class="num">8</span>, <span class="vr">sticky</span><span class="op">=</span><span class="str">"w"</span>)
+
+<span class="cm"># ── BOTONES ────────────────────────────────────</span>
+<span class="vr">frame_btns</span> <span class="op">=</span> <span class="vr">tk</span>.<span class="fn">Frame</span>(<span class="vr">ventana</span>)
+<span class="vr">frame_btns</span>.<span class="fn">grid</span>(<span class="vr">row</span><span class="op">=</span><span class="num">3</span>, <span class="vr">column</span><span class="op">=</span><span class="num">0</span>, <span class="vr">columnspan</span><span class="op">=</span><span class="num">3</span>, <span class="vr">pady</span><span class="op">=</span><span class="num">10</span>)
+
+<span class="vr">tk</span>.<span class="fn">Button</span>(<span class="vr">frame_btns</span>, <span class="vr">text</span><span class="op">=</span><span class="str">"➕ Agregar"</span>, <span class="vr">bg</span><span class="op">=</span><span class="str">"#2d6a4f"</span>, <span class="vr">fg</span><span class="op">=</span><span class="str">"white"</span>, <span class="vr">command</span><span class="op">=</span><span class="vr">agregar</span>, <span class="vr">width</span><span class="op">=</span><span class="num">12</span>).<span class="fn">grid</span>(<span class="vr">row</span><span class="op">=</span><span class="num">0</span>, <span class="vr">column</span><span class="op">=</span><span class="num">0</span>, <span class="vr">padx</span><span class="op">=</span><span class="num">5</span>)
+<span class="vr">tk</span>.<span class="fn">Button</span>(<span class="vr">frame_btns</span>, <span class="vr">text</span><span class="op">=</span><span class="str">"✏️ Editar"</span>, <span class="vr">bg</span><span class="op">=</span><span class="str">"#1d3557"</span>, <span class="vr">fg</span><span class="op">=</span><span class="str">"white"</span>, <span class="vr">command</span><span class="op">=</span><span class="vr">editar</span>, <span class="vr">width</span><span class="op">=</span><span class="num">12</span>).<span class="fn">grid</span>(<span class="vr">row</span><span class="op">=</span><span class="num">0</span>, <span class="vr">column</span><span class="op">=</span><span class="num">1</span>, <span class="vr">padx</span><span class="op">=</span><span class="num">5</span>)
+<span class="vr">tk</span>.<span class="fn">Button</span>(<span class="vr">frame_btns</span>, <span class="vr">text</span><span class="op">=</span><span class="str">"🗑️ Eliminar"</span>, <span class="vr">bg</span><span class="op">=</span><span class="str">"#9e2a2b"</span>, <span class="vr">fg</span><span class="op">=</span><span class="str">"white"</span>, <span class="vr">command</span><span class="op">=</span><span class="vr">eliminar</span>, <span class="vr">width</span><span class="op">=</span><span class="num">12</span>).<span class="fn">grid</span>(<span class="vr">row</span><span class="op">=</span><span class="num">0</span>, <span class="vr">column</span><span class="op">=</span><span class="num">2</span>, <span class="vr">padx</span><span class="op">=</span><span class="num">5</span>)
+<span class="vr">tk</span>.<span class="fn">Button</span>(<span class="vr">frame_btns</span>, <span class="vr">text</span><span class="op">=</span><span class="str">"🔄 Actualizar"</span>, <span class="vr">bg</span><span class="op">=</span><span class="str">"#555"</span>, <span class="vr">fg</span><span class="op">=</span><span class="str">"white"</span>, <span class="vr">command</span><span class="op">=</span><span class="vr">leer</span>, <span class="vr">width</span><span class="op">=</span><span class="num">12</span>).<span class="fn">grid</span>(<span class="vr">row</span><span class="op">=</span><span class="num">0</span>, <span class="vr">column</span><span class="op">=</span><span class="num">3</span>, <span class="vr">padx</span><span class="op">=</span><span class="num">5</span>)
+
+<span class="cm"># ── TABLA (TREEVIEW) ───────────────────────────</span>
+<span class="vr">cols</span> <span class="op">=</span> (<span class="str">"ID"</span>, <span class="str">"Nombre"</span>, <span class="str">"Carrera"</span>, <span class="str">"Nota"</span>)
+<span class="vr">tabla</span> <span class="op">=</span> <span class="vr">ttk</span>.<span class="fn">Treeview</span>(<span class="vr">ventana</span>, <span class="vr">columns</span><span class="op">=</span><span class="vr">cols</span>, <span class="vr">show</span><span class="op">=</span><span class="str">"headings"</span>, <span class="vr">height</span><span class="op">=</span><span class="num">12</span>)
+
+<span class="kw">for</span> <span class="vr">col</span> <span class="kw">in</span> <span class="vr">cols</span>:
+    <span class="vr">tabla</span>.<span class="fn">heading</span>(<span class="vr">col</span>, <span class="vr">text</span><span class="op">=</span><span class="vr">col</span>)
+    <span class="vr">tabla</span>.<span class="fn">column</span>(<span class="vr">col</span>, <span class="vr">width</span><span class="op">=</span><span class="num">140</span> <span class="kw">if</span> <span class="vr">col</span> <span class="op">!=</span> <span class="str">"ID"</span> <span class="kw">else</span> <span class="num">50</span>)
+
+<span class="vr">tabla</span>.<span class="fn">grid</span>(<span class="vr">row</span><span class="op">=</span><span class="num">4</span>, <span class="vr">column</span><span class="op">=</span><span class="num">0</span>, <span class="vr">columnspan</span><span class="op">=</span><span class="num">3</span>, <span class="vr">padx</span><span class="op">=</span><span class="num">10</span>, <span class="vr">pady</span><span class="op">=</span><span class="num">10</span>, <span class="vr">sticky</span><span class="op">=</span><span class="str">"nsew"</span>)
+<span class="vr">tabla</span>.<span class="fn">bind</span>(<span class="str">"&lt;&lt;TreeviewSelect&gt;&gt;"</span>, <span class="vr">seleccionar_fila</span>)
+
+<span class="cm"># Scrollbar para la tabla</span>
+<span class="vr">scroll</span> <span class="op">=</span> <span class="vr">ttk</span>.<span class="fn">Scrollbar</span>(<span class="vr">ventana</span>, <span class="vr">orient</span><span class="op">=</span><span class="str">"vertical"</span>, <span class="vr">command</span><span class="op">=</span><span class="vr">tabla</span>.<span class="vr">yview</span>)
+<span class="vr">scroll</span>.<span class="fn">grid</span>(<span class="vr">row</span><span class="op">=</span><span class="num">4</span>, <span class="vr">column</span><span class="op">=</span><span class="num">3</span>, <span class="vr">sticky</span><span class="op">=</span><span class="str">"ns"</span>, <span class="vr">pady</span><span class="op">=</span><span class="num">10</span>)
+<span class="vr">tabla</span>.<span class="fn">configure</span>(<span class="vr">yscrollcommand</span><span class="op">=</span><span class="vr">scroll</span>.<span class="vr">set</span>)
+
+<span class="cm"># Expandir tabla al redimensionar ventana</span>
+<span class="vr">ventana</span>.<span class="fn">grid_rowconfigure</span>(<span class="num">4</span>, <span class="vr">weight</span><span class="op">=</span><span class="num">1</span>)
+<span class="vr">ventana</span>.<span class="fn">grid_columnconfigure</span>(<span class="num">1</span>, <span class="vr">weight</span><span class="op">=</span><span class="num">1</span>)
+
+<span class="cm"># ── INICIO ─────────────────────────────────────</span>
+<span class="fn">leer</span>()              <span class="cm"># cargar datos al abrir</span>
+<span class="vr">ventana</span>.<span class="fn">mainloop</span>()  <span class="cm"># iniciar la ventana</span></div>
+    </div>
+
+    <div class="tryit">
+      <div style="font-size:16px;flex-shrink:0">🎉</div>
+      <div class="tryit-text"><strong>Para ejecutarlo:</strong> guarda ambas partes en <strong>un solo archivo</strong> <code style="color:#F97316">crud_estudiantes.py</code> (primero el bloque de setup/funciones, luego el de ventana), y ejecútalo con <code style="color:#79C0FF">F5</code> en VS Code. La ventana se abrirá y ya podrás agregar, editar y eliminar estudiantes.</div>
+    </div>
+
+    <!-- Descarga -->
+    <div class="code-block" style="margin-top:28px">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <div class="code-file">crud_estudiantes.py — archivo completo listo para ejecutar</div>
+      </div>
+      <div style="padding:20px;text-align:center">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Descarga el programa completo y funcional. Solo ábrelo en VS Code y ejecútalo con F5.</p>
+        <button onclick="downloadCrud()" class="btn-dl">
+          ⬇ Descargar crud_estudiantes.py
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<footer>
+  ITB — Instituto Tecnológico de Negocios &nbsp;·&nbsp; <span>Clase 4 — SQLite + Tkinter</span>
+</footer>
+
+<script>
+function copyCode(btn, id) {
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => {
+    btn.textContent = '✓ copiado';
+    setTimeout(() => btn.textContent = 'copiar', 2000);
+  });
+}
+
+const crudCode = `import sqlite3
+import tkinter as tk
+from tkinter import ttk, messagebox
+
+# ── BASE DE DATOS ──────────────────────────────
+conexion = sqlite3.connect("estudiantes.db")
+cursor = conexion.cursor()
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS estudiantes (
+        id      INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre  TEXT    NOT NULL,
+        carrera TEXT    NOT NULL,
+        nota    REAL    NOT NULL
+    )
+""")
+conexion.commit()
+
+# ── FUNCIONES CRUD ─────────────────────────────
+
+def leer():
+    """Carga todos los registros en la tabla visual"""
+    for fila in tabla.get_children():
+        tabla.delete(fila)
+    cursor.execute("SELECT * FROM estudiantes")
+    for registro in cursor.fetchall():
+        tabla.insert("", tk.END, values=registro)
+
+def agregar():
+    """Lee los campos y guarda un nuevo estudiante"""
+    nombre  = entry_nombre.get().strip()
+    carrera = entry_carrera.get().strip()
+    nota    = entry_nota.get().strip()
+
+    if not nombre or not carrera or not nota:
+        messagebox.showwarning("Aviso", "Completa todos los campos.")
+        return
+
+    try:
+        cursor.execute(
+            "INSERT INTO estudiantes (nombre, carrera, nota) VALUES (?, ?, ?)",
+            (nombre, carrera, float(nota))
+        )
+        conexion.commit()
+        leer()
+        limpiar_campos()
+    except ValueError:
+        messagebox.showerror("Error", "La nota debe ser un numero.")
+
+def editar():
+    """Actualiza el registro seleccionado en la tabla"""
+    seleccion = tabla.focus()
+    if not seleccion:
+        messagebox.showwarning("Aviso", "Selecciona un estudiante de la tabla.")
+        return
+    id_sel = tabla.item(seleccion)["values"][0]
+    try:
+        cursor.execute(
+            "UPDATE estudiantes SET nombre=?, carrera=?, nota=? WHERE id=?",
+            (entry_nombre.get(), entry_carrera.get(), float(entry_nota.get()), id_sel)
+        )
+        conexion.commit()
+        leer()
+        limpiar_campos()
+    except ValueError:
+        messagebox.showerror("Error", "La nota debe ser un numero.")
+
+def eliminar():
+    """Elimina el registro seleccionado con confirmacion"""
+    seleccion = tabla.focus()
+    if not seleccion:
+        messagebox.showwarning("Aviso", "Selecciona un estudiante de la tabla.")
+        return
+    id_sel = tabla.item(seleccion)["values"][0]
+    conf = messagebox.askyesno("Confirmar", "Eliminar este estudiante?")
+    if conf:
+        cursor.execute("DELETE FROM estudiantes WHERE id = ?", (id_sel,))
+        conexion.commit()
+        leer()
+        limpiar_campos()
+
+def seleccionar_fila(event):
+    """Al hacer clic en la tabla, carga los datos en los campos"""
+    seleccion = tabla.focus()
+    if seleccion:
+        valores = tabla.item(seleccion)["values"]
+        limpiar_campos()
+        entry_nombre.insert(0, valores[1])
+        entry_carrera.insert(0, valores[2])
+        entry_nota.insert(0, valores[3])
+
+def limpiar_campos():
+    """Vacia los campos de texto"""
+    entry_nombre.delete(0, tk.END)
+    entry_carrera.delete(0, tk.END)
+    entry_nota.delete(0, tk.END)
+
+# ── VENTANA ────────────────────────────────────
+ventana = tk.Tk()
+ventana.title("Sistema de Estudiantes — ITB")
+ventana.geometry("680x500")
+ventana.resizable(True, True)
+
+# ── CAMPOS DE ENTRADA ──────────────────────────
+tk.Label(ventana, text="Nombre:", font=("Arial", 11)).grid(row=0, column=0, padx=10, pady=8, sticky="e")
+entry_nombre = tk.Entry(ventana, width=35, font=("Arial", 11))
+entry_nombre.grid(row=0, column=1, padx=10, pady=8, columnspan=2)
+
+tk.Label(ventana, text="Carrera:", font=("Arial", 11)).grid(row=1, column=0, padx=10, pady=8, sticky="e")
+entry_carrera = tk.Entry(ventana, width=35, font=("Arial", 11))
+entry_carrera.grid(row=1, column=1, padx=10, pady=8, columnspan=2)
+
+tk.Label(ventana, text="Nota:", font=("Arial", 11)).grid(row=2, column=0, padx=10, pady=8, sticky="e")
+entry_nota = tk.Entry(ventana, width=15, font=("Arial", 11))
+entry_nota.grid(row=2, column=1, padx=10, pady=8, sticky="w")
+
+# ── BOTONES ────────────────────────────────────
+frame_btns = tk.Frame(ventana)
+frame_btns.grid(row=3, column=0, columnspan=3, pady=10)
+
+tk.Button(frame_btns, text="Agregar",    bg="#2d6a4f", fg="white", command=agregar,  width=12).grid(row=0, column=0, padx=5)
+tk.Button(frame_btns, text="Editar",     bg="#1d3557", fg="white", command=editar,   width=12).grid(row=0, column=1, padx=5)
+tk.Button(frame_btns, text="Eliminar",   bg="#9e2a2b", fg="white", command=eliminar, width=12).grid(row=0, column=2, padx=5)
+tk.Button(frame_btns, text="Actualizar", bg="#555",    fg="white", command=leer,     width=12).grid(row=0, column=3, padx=5)
+
+# ── TABLA (TREEVIEW) ───────────────────────────
+cols = ("ID", "Nombre", "Carrera", "Nota")
+tabla = ttk.Treeview(ventana, columns=cols, show="headings", height=12)
+
+for col in cols:
+    tabla.heading(col, text=col)
+    tabla.column(col, width=140 if col != "ID" else 50)
+
+tabla.grid(row=4, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
+tabla.bind("<<TreeviewSelect>>", seleccionar_fila)
+
+scroll = ttk.Scrollbar(ventana, orient="vertical", command=tabla.yview)
+scroll.grid(row=4, column=3, sticky="ns", pady=10)
+tabla.configure(yscrollcommand=scroll.set)
+
+ventana.grid_rowconfigure(4, weight=1)
+ventana.grid_columnconfigure(1, weight=1)
+
+# ── INICIO ─────────────────────────────────────
+leer()
+ventana.mainloop()
+`;
+
+function downloadCrud() {
+  const blob = new Blob([crudCode], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'crud_estudiantes.py';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+</script>
+</body>
+</html>
