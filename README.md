@@ -22,7 +22,7 @@
 | 01 | **Introducción a las Listas** — Agregar, eliminar, buscar, ordenar | [`index.html`](./index.html) | ✅ Disponible |
 | 02 | **Taller — Uso de Listas en Python** — Sistema de calificaciones, inventario, asistencia, encuesta y ranking | [`taller-listas.html`](./taller-listas.html) | ✅ Disponible |
 | 03 | Diccionarios en Python | — | 🔜 Próximamente |
-| 04 | Funciones y modularización | — | 🔜 Próximamente |
+| 04 | **Base de Datos con Python — SQLite + Tkinter** | [`clase4-sqlite-tkinter.html`](./clase4-sqlite-tkinter.html) | ✅ Disponible |
 | 05 | Manejo de archivos `.txt` y `.csv` | — | 🔜 Próximamente |
 | 06 | Programación Orientada a Objetos (POO) | — | 🔜 Próximamente |
 | 07 | Introducción a Pandas y análisis de datos | — | 🔜 Próximamente |
@@ -104,3 +104,13 @@ git push -u origin main
 <p align="center">
   Hecho para el <strong>Instituto Tecnológico de Negocios</strong> · ITB Ecuador
 </p>
+
+---
+
+## 🖥️ Arquitectura de Computadoras
+
+| # | Tema | Archivo | Estado |
+|---|------|---------|--------|
+| S1 | **Fundamentos y Arquitecturas** — 12 temas: CPU, Von Neumann, Harvard, RISC/CISC, ISA, Microcontroladores | [`arq-computadoras-semana1.html`](./arq-computadoras-semana1.html) | ✅ Disponible |
+| S2 | Semana 2 — por definir | — | 🔜 Próximamente |
+

@@ -13,11 +13,11 @@
      ╚══════════════════════════════════════════════════════════╝ */
 
   const ACCESS_PASSWORDS = {
-     1: "pila1ASD5fg8",
-    2: "pila2wdXCv98",
-    3: "pila3rtYVd1F",
-    4: "pila423hPMjk",
-    5: "pila5xZtG13n"
+    1: "pila1",
+    2: "pila2",
+    3: "pila3",
+    4: "pila4",
+    5: "pila5"
   };
 
   const SOLUTION_PASSWORD = "stack2025"; // ← clave maestra de soluciones
@@ -892,35 +892,34 @@ while True:
     if op == "1":
         n = int(input("Numero: "))
         pila.append(n)
-        print(f"Apilado: \${n} | Tope: \${pila[-1]}")
+        print(f"Apilado: {n} | Tope: {pila[-1]}")
 
     elif op == "2":
         if pila:
-            print(f"Pop: \${pila.pop()}")
+            print(f"Pop: {pila.pop()}")
         else:
             print("Pila vacia.")
 
     elif op == "3":
         if pila:
-            print(f"Tope (peek): \${pila[-1]}")
+            print(f"Tope (peek): {pila[-1]}")
         else:
             print("Pila vacia.")
 
     elif op == "4":
-        print(f"isEmpty: \${len(pila) == 0}")
+        print(f"isEmpty: {len(pila) == 0}")
 
     elif op == "5":
         if pila:
             print("--- Pila (tope arriba) ---")
             for i, x in enumerate(reversed(pila), 1):
-                print(f"  \${x}")
+                print(f"  {x}")
         else:
             print("Pila vacia.")
 
     elif op == "6":
         break
-`},
-  2:{
+`},{
     file:'validador_sol.py',
     code:`# SOLUCION — Validador de Parentesis
 print("Validador de parentesis. Escribe 'salir' para terminar.")
@@ -946,8 +945,7 @@ while True:
         print("Balanceada")
     else:
         print("No balanceada")
-`},
-  3:{
+`},{
     file:'decimal_binario_sol.py',
     code:`# SOLUCION — Conversor Decimal a Binario
 print("Conversor Decimal a Binario. '0' para salir.")
@@ -971,9 +969,8 @@ while True:
     while pila:
         resultado += str(pila.pop())
 
-    print(f"\${numero} en binario = \${resultado}")
-`},
-  4:{
+    print(f"{numero} en binario = {resultado}")
+`},{
     file:'invertir_cadena_sol.py',
     code:`# SOLUCION — Invertir Cadena con Pila
 print("Inversor de cadenas. Escribe 'salir' para terminar.")
@@ -991,15 +988,14 @@ while True:
     while pila:
         invertida += pila.pop()
 
-    print(f"Original : \${cadena}")
-    print(f"Invertida: \${invertida}")
+    print(f"Original : {cadena}")
+    print(f"Invertida: {invertida}")
 
     if cadena.lower() == invertida.lower():
         print("Es un palindromo!")
     else:
         print("No es palindromo.")
-`},
-  5:{
+`},{
     file:'historial_sol.py',
     code:`# SOLUCION — Historial de Navegacion con Dos Pilas
 atras    = []
@@ -1014,19 +1010,19 @@ while True:
         if url:
             atras.append(url)
             adelante.clear()
-            print(f"Navegando a: \${url}")
+            print(f"Navegando a: {url}")
 
     elif op == "2":
         if len(atras) > 1:
             adelante.append(atras.pop())
-            print(f"Atras. Pagina actual: \${atras[-1]}")
+            print(f"Atras. Pagina actual: {atras[-1]}")
         else:
             print("No hay paginas anteriores.")
 
     elif op == "3":
         if adelante:
             atras.append(adelante.pop())
-            print(f"Adelante. Pagina actual: \${atras[-1]}")
+            print(f"Adelante. Pagina actual: {atras[-1]}")
         else:
             print("No hay paginas adelante.")
 
@@ -1035,7 +1031,7 @@ while True:
             print("--- Historial ---")
             for i, url in enumerate(atras, 1):
                 marca = " <- actual" if i == len(atras) else ""
-                print(f"  \${i}. \${url}\${marca}")
+                print(f"  {i}. {url}{marca}")
         else:
             print("Historial vacio.")
 
