@@ -1029,7 +1029,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,17,23,.9);backdrop-filt
       </div>
       <div style="padding:20px;text-align:center">
         <p style="font-size:13px;color:#8B949E;margin-bottom:14px">Descarga el ejemplo completo ya armado — ábrelo en VS Code, reemplaza los datos por los tuyos y listo.</p>
-        <button onclick="downloadExample()" style="display:inline-flex;align-items:center;gap:7px;background:#C792EA;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;padding:9px 22px;border-radius:8px;border:none;cursor:pointer">
+        <button onclick="window.downloadExampleFixed()" style="display:inline-flex;align-items:center;gap:7px;background:#C792EA;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;padding:9px 22px;border-radius:8px;border:none;cursor:pointer">
           ⬇ Descargar mi-cv-ejemplo.html
         </button>
       </div>
@@ -1042,8 +1042,13 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,17,23,.9);backdrop-filt
   ITB — Instituto Tecnológico de Negocios &nbsp;·&nbsp; <span style="color:#C792EA">Clase Adicional</span> — CV con React
 </div>
 
+<script src="download-example.js"></script>
 <script>
+</script>
 
+<!-- <script>
+
+/*
 function downloadExample() {
   const content = `<!DOCTYPE html>
 <html lang="es">
@@ -1052,7 +1057,7 @@ function downloadExample() {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mi CV — Ejemplo</title>
 
-<!-- Estas 3 líneas cargan React, sin instalar nada -->
+-- Estas 3 líneas cargan React, sin instalar nada -->*/
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -1160,7 +1165,7 @@ body {
   // ════════════════════════════════════════════
   // PERSONALIZA AQUÍ TUS DATOS
   // ════════════════════════════════════════════
-  const datosCV = {
+   datosCV = {
     nombre: "Hermes Lozano Mercado",
     titulo: "Gestor de proyectos",
     email: "nombre@mail.com",
@@ -1343,7 +1348,7 @@ body {
   }
 
   // Monta la app dentro del <div id="root">
-  const root = ReactDOM.createRoot(document.getElementById("root"));
+   root = ReactDOM.createRoot(document.getElementById("root"));
   root.render(<App />);
 
 </script>
@@ -1447,7 +1452,7 @@ body {
   // ════════════════════════════════════════════
   // PERSONALIZA AQUÍ TUS DATOS
   // ════════════════════════════════════════════
-  const datosCV = {
+   datosCV = {
     nombre: "Diego Torres",
     titulo: "Docente · Desarrollador Web",
     email: "diego@ejemplo.com",
@@ -1537,10 +1542,7 @@ body {
           <div key={i} className="skill-row">
             <span>{skill.nombre}</span>
             <div className="skill-bar-bg">
-              <div
-                className="skill-bar-fill"
-                style={{ width: \`\${skill.nivel}%\` }}
-              ></div>
+              <div className="skill-bar-fill" style={{ width: skill.nivel + '%' }}></div>
             </div>
           </div>
         ))}
@@ -1581,6 +1583,57 @@ body {
   a.href = url; a.download = 'mi-cv-ejemplo.html'; a.click();
   URL.revokeObjectURL(url);
 }
+*/
+
+window.downloadExampleFixed = function() {
+  const content = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi CV — Ejemplo</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+body{font-family:Arial,sans-serif;background:#f0f2f5;padding:24px;margin:0}
+.cv-container{max-width:820px;margin:0 auto;background:white;padding:32px 36px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.cv-header{text-align:center;padding-bottom:14px;border-bottom:3px solid #1a1a1a;margin-bottom:24px}
+.cv-header h1{font-size:30px;color:#1a1a1a;margin:0 0 4px}
+.cv-header h2{font-size:16px;color:#444;font-weight:400;margin:0 0 12px}
+.cv-contacto{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;font-size:13px;color:#333}
+.cv-body{display:flex;gap:28px;margin-top:24px}
+.cv-sidebar{width:200px;flex-shrink:0}
+.cv-main{flex:1}
+.cv-section-title{font-size:19px;color:#1a1a1a;border-bottom:1px solid #ddd;padding-bottom:6px;margin:22px 0 14px}
+.cv-item{margin-bottom:14px}
+.cv-puesto{font-size:14px;font-weight:700;color:#2c5f8a;margin:0 0 4px}
+.cv-meta{font-size:13px;color:#333;margin:0 0 6px}
+.cv-item ul{padding-left:20px;margin:6px 0 0}
+.cv-item li{font-size:13px;color:#444;line-height:1.6;margin-bottom:3px}
+@media (max-width:700px){body{padding:0}.cv-container{padding:24px 20px}.cv-body{flex-direction:column;gap:20px}.cv-sidebar{width:100%}.cv-header h1{font-size:24px}.cv-contacto{flex-direction:column;gap:4px}}</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const datosCV={nombre:'Diego Torres',titulo:'Docente · Desarrollador Web',email:'diego@ejemplo.com',telefono:'+593 99 999 9999',ubicacion:'Quito, Ecuador',resumen:'Docente de programación con experiencia en Python y desarrollo web.',experiencia:[{puesto:'Docente de Programación',empresa:'ITB — Instituto Tecnológico de Negocios',periodo:'2023 — Presente',descripcion:'Enseñanza de Python, estructuras de datos y desarrollo web.'},{puesto:'Desarrollador Freelance',empresa:'Independiente',periodo:'2021 — 2023',descripcion:'Desarrollo de sistemas web con PHP, MySQL y JavaScript.'}],educacion:[{titulo:'Ingeniería en Sistemas',institucion:'Universidad XYZ',periodo:'2017 — 2022'}],habilidades:[{nombre:'Python',nivel:90},{nombre:'JavaScript / React',nivel:75},{nombre:'SQL',nivel:80},{nombre:'HTML / CSS',nivel:85}]};
+function Encabezado({datos}){return(<header className="cv-header"><h1>{datos.nombre}</h1><h2>{datos.titulo}</h2><div className="cv-contacto"><span>📧 {datos.email}</span><span>📱 {datos.telefono}</span><span>📍 {datos.ubicacion}</span></div></header>);}
+function Experiencia({lista}){return(<section className="cv-section"><h3 className="cv-section-title">Experiencia</h3>{lista.map((item,i)=><div key={i} className="cv-item"><h4 className="cv-puesto">{item.puesto}</h4><p className="cv-meta">{item.empresa} · {item.periodo}</p><p>{item.descripcion}</p></div>)}</section>);}
+function Educacion({lista}){return(<section className="cv-section"><h3 className="cv-section-title">Educación</h3>{lista.map((item,i)=><div key={i} className="cv-item"><h4 className="cv-puesto">{item.titulo}</h4><p className="cv-meta">{item.institucion} · {item.periodo}</p></div>)}</section>);}
+function Habilidades({lista}){return(<section className="cv-section"><h3 className="cv-section-title">Habilidades</h3>{lista.map((skill,i)=><div key={i} className="cv-item"><strong>{skill.nombre}</strong><div style={{height:'8px',background:'#eee',borderRadius:'20px',marginTop:'6px',overflow:'hidden'}}><div style={{width:skill.nivel+'%',height:'100%',background:'linear-gradient(90deg, #6C5CE7, #a29bfe)'}}></div></div></div>)}</section>);}
+function App(){return(<><div className="cv-container"><Encabezado datos={datosCV} /><p style={{margin:'18px 0 0',color:'#555',lineHeight:1.6}}>{datosCV.resumen}</p><div className="cv-body"><aside className="cv-sidebar"><h3 className="cv-section-title">Datos</h3><p>{datosCV.email}</p><p>{datosCV.telefono}</p><p>{datosCV.ubicacion}</p></aside><main className="cv-main"><Experiencia lista={datosCV.experiencia} /><Educacion lista={datosCV.educacion} /><Habilidades lista={datosCV.habilidades} /></main></div></div></>);} root=ReactDOM.createRoot(document.getElementById('root'));root.render(<App />);</script>
+</body>
+</html>`;
+  const blob = new Blob([content], {type: 'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'mi-cv-ejemplo.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
 
 function copyCode(btn, id) {
   const text = document.getElementById(id).innerText;
@@ -1590,5 +1643,6 @@ function copyCode(btn, id) {
   });
 }
 </script>
+--> 
 </body>
 </html>
