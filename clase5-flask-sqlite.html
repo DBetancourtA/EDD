@@ -825,43 +825,10 @@ footer span{color:var(--green)}
 <script>
 /* ── copy to clipboard ── */
 function copyCode(btn, id) {
-  const source = document.getElementById(id);
-  if (!source) return;
-
-  const text = (source.innerText || source.textContent || '').trim();
-
-  const finishCopy = () => {
-    const original = btn.textContent;
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => {
     btn.textContent = '✓ copiado';
-    setTimeout(() => {
-      btn.textContent = original;
-    }, 1600);
-  };
-
-  const fallbackCopy = () => {
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.setAttribute('readonly', '');
-    textarea.style.position = 'fixed';
-    textarea.style.left = '-9999px';
-    document.body.appendChild(textarea);
-    textarea.select();
-    try {
-      document.execCommand('copy');
-      finishCopy();
-    } catch (err) {
-      console.warn('No se pudo copiar el texto:', err);
-    }
-    document.body.removeChild(textarea);
-  };
-
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text)
-      .then(() => finishCopy())
-      .catch(() => fallbackCopy());
-  } else {
-    fallbackCopy();
-  }
+    setTimeout(() => btn.textContent = 'copiar', 2000);
+  });
 }
 
 /* ── Download project ZIP (base64 encoded) ── */
@@ -972,7 +939,7 @@ if __name__ == "__main__":
   <tbody id="tbody"></tbody>
 </table>
 
-<script src="/static/app.js"><\/script>
+<script src="/static/app.js"></script>
 </body>
 </html>
 `,
